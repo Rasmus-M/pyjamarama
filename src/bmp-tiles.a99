@@ -555,3 +555,11 @@ LD2D8  byte >04,>04,>04,>04,>34,>72,>E2,>A2
 LD2E0  byte >00,>00,>18,>34,>2A,>14,>2C,>20
 LD2E8  byte >22,>12,>12,>12,>0A,>0A,>0A,>00
 LD2F0  byte >48,>4C,>4E,>87,>88,>90,>90,>00
+
+tile_ceiling:
+       equ  $
+L8C4D  byte >FF,>FF,>88,>44,>22,>11,>FF,>FF    ; Ceiling Tile
+tile_floor:
+       equ  $
+L8C55  byte >7E,>81,>FF,>FF,>FF,>FF,>FF,>FF    ; Ceiling Tile
+L8C5D  byte >FF,>FF,>FF,>FF,>FF,>FF,>FF,>00    ; Wall Tile

@@ -56,8 +56,27 @@ padvar equ  stack+>10                  ; Start of pad variables
 *
 * PAD variables
 *
+wally_room_no:
+       equ  padvar
+bitmap_x:
+       equ  wally_room_no+2
+bitmap_y:
+       equ  bitmap_x+2
 pad_max:
-       equ  padvar+2
+       equ  bitmap_y+2
+
+**
+* Macros
+*
+       .defm proc
+       mov  r11,*r10+
+       .endm
+
+       .defm endproc
+       dect r10
+       mov  *r10,r11
+       b    *r11
+       .endm
 
 ********************************************************************************
 *
@@ -72,12 +91,144 @@ main:
 loop:
        jmp  loop
 
+
+********************************************************************************
+*
+* Room draw
+*
+room_draw:
+       .proc
+       mov  @wally_room_no,r4          ; Get room number.
+       sla  r4,1                       ; Work out address of room pointer.
+       mov  @room_data(r4),r4          ; Get address to room description data.
+       movb *r4,r0
+       cb   r0,@byte_f5                ; Get first byte and test for drawing of walls etc.
+       jne  room_draw_0
+       bl   @draw_ceiling_wall_floor
+room_draw_0:
+       movb *r4+,r0
+       cb   r0,@byte_ff
+       jeq  room_draw_5
+       cb   r0,@byte_f4
+       jne  room_draw_2
+       li   r3,tile_draw_flip
+room_draw_1:
+       mov  r3,@furniture_draw_tile+2  ; Modify code so that the furniture draw routine calls the function
+                                       ; to draw normal or upside down tiles.
+       jmp  room_draw_0
+room_draw_2:
+       cb   r0,@byte_f3
+       jne  room_draw_3
+       li   r3,tile_draw
+       jmp  room_draw_1
+room_draw_3:
+       cb   r0,@byte_de
+       jne  room_draw_4
+       movb *r4+,r1                    ; Get address of action flag.
+       movb *r4+,@r1lb
+       movb *r1,r0                     ; Get action flag
+       jeq  room_draw_5                ; If not set then handle action,
+       jmp  room_draw_0                ; else continue onto next byte.
+room_draw_4:
+       movb *r4+,@r0lb                 ; Y position
+       clr  r1
+       movb *r4+,@r1lb                 ; Get index of furniture item.
+       sla  r1,1
+       mov  @furniture_table(r1),r1    ; Workout address of item string.
+       bl   @furniture_draw
+       jmp  room_draw_0
+room_draw_5:
+       mov  @wally_room_no,r3
+       sla  r3,1                       ; x2
+       a    @wally_room_no,r3          ; x3
+       ai   r3,room_obj_slots
+       clr  r0
+       movb *r3+,@r0lb
+       mov  r0,@bitmap_x
+       movb *r3+,@r0lb
+       ai   r0,>10
+       mov  r0,@bitmap_y
+       movb *r3,@r0lb
+       ai   r0,>50
+       bl   @bitmap_16_draw
+       .endproc
+*// room_draw
+
+*********************************************************************************
+*
+* Draw furniture
+*
+* Input:
+* r0 MSB: x position
+* r0 LSB: y position
+* r1b: Address of furniture item string
+*
+furniture_draw:
+       .proc
+furniture_draw_tile:
+       bl   @tile_draw
+       .endproc
+*// furniture_draw
+
+*********************************************************************************
+*
+* Draw ceiling, wall and floor
+*
+* Input:
+*
+draw_ceiling_wall_floor:
+       .proc
+       .endproc
+*// draw_ceiling_wall_floor
+
+*********************************************************************************
+*
+* Draw tile
+*
+* Input:
+* r0 MSB: x position
+* r0 LSB: y position
+* tile number, color
+*
+tile_draw:
+       .proc
+       .endproc
+*// tile_draw
+
+*********************************************************************************
+*
+* Draw tile upside down
+*
+* Input:
+* r0 MSB: x position
+* r0 LSB: y position
+* tile number, color
+*
+tile_draw_flip:
+       .proc
+       .endproc
+*// tile_draw_flip
+
+*********************************************************************************
+*
+* Draw 16x16 bitmap
+*
+* Input:
+* r0: Index of bitmap to draw
+* @bitmap_x: x coordinate
+* @bitmap_y: y coordinate
+*
+bitmap_16_draw:
+       .proc
+       .endproc
+*// bitmap_16_draw
+
 *********************************************************************************
 *
 * Set full bitmap mode
 *
 bitmap_mode:
-       mov  r11,*r10+                  ; Push return address onto the stack
+       .proc
        clr  r0
        li   r1,vregs2
        li   r2,8
@@ -102,9 +253,7 @@ bitmap_mode_2:
        li   r1,>d000
        bl   @vsbw
 *      Return
-       dect r10                        ; Pop return address off the stack
-       mov  *r10,r11
-       b    *r11
+       .endproc
 *      VDP registers
 vregs2:
        byte >02                        ; Graphics II mode
@@ -295,11 +444,28 @@ vdpwr3:
        b    *r11
 *// vdpwr
 
+*********************************************************************
+*
+* Data
+*
+byte_ff:
+       byte >ff
+byte_f5:
+       byte >f5
+byte_f4:
+       byte >f4
+byte_f3:
+       byte >f3
+byte_de:
+       byte >de
+       even
+
        copy "bmp-milk.a99"
        copy "bmp-objects.a99"
        copy "bmp-tiles.a99"
        copy "bmp-wally.a99"
        copy "furniture.a99"
        copy "rooms.a99"
+       copy "room-object-slots.a99"
 
        end

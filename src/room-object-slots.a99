@@ -1,0 +1,71 @@
+room_obj_slots:
+       equ  $
+L8535    byte >3A                      X Position
+L8536    byte >88                      Y Position
+room_obj_slot_Obj:
+       equ  $
+L8537    byte >02                      Square Key, object currently in room 0.
+* Room 01
+L8538    byte >48,>98,>03              Door Handle
+* Room 02
+L853B    byte >98,>98,>04              Magnet
+* Room 03
+L853E    byte >CC,>70,>05              Pound Coin
+* Room 04
+L8541    byte >78,>98,>06              Beach Ball
+* Room 05
+L8544    byte >68,>98,>07              Plant Pot
+* Room 06
+L8547    byte >78,>98                  Petrol Can
+obj_slot_05_bmp:
+       equ  $
+L8549    byte >08
+* Room 07
+L854A    byte >60,>98,>09              Triangle Key
+* Room 08
+L854D    byte >08,>80,>0A              Fire Extingiusha
+* Room 09
+L8550    byte >C8,>28,>0B              Key
+* Room 0A
+L8553    byte >86,>68,>0C              Library Ticket
+* Room 0B
+L8556    byte >48,>98,>0D              Gun
+* Room 0C
+L8559    byte >B0,>98,>0E              Hammer
+* Room 0D
+L855C    byte >C0,>78,>0F              Helmet
+* Room 0E
+L855F    byte >8C,>68,>10              Bucket
+* Room 0F
+L8562    byte >90,>70,>11              Scissors
+* Room 10
+L8565    byte >32,>80,>12              Remote Control
+* Room 11
+L8568    byte >74,>70,>13              Book
+* Room 12
+L856B    byte >C0,>80,>14              Penny
+* Room 13
+L856E    byte >78,>98,>15              Towel
+* Room 14
+L8571    byte >38,>98,>16              Joystick
+* Room 15
+L8574    byte >60,>98,>17              Bowl
+* Room 16
+L8577    byte >DE,>98,>18              Drivers License
+* Room 17
+L857A    byte >78,>68,>19              Cross
+* Room 18
+L857D    byte >64,>68,>1A              Bunch of Keys
+* Room 19
+L8580    byte >46,>88                  Lense
+obj_slot_19:
+       equ  $
+L8582    byte >1B
+* Room 1A
+L8583    byte >68,>70,>1C              Thing
+* Room 1B
+L8586    byte >B0,>70,>1D              Battery
+* Room 1C
+L8589    byte >32,>88,>1E    
+* Room 1D
+L858C    byte >A8,>60,>1F              Clockwork Key

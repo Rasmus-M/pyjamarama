@@ -1,4 +1,4 @@
-furniture_ptr_table:
+furniture_table:
        equ  $
 L8CAA  data LD2F8
 L8CAC  data LD64B

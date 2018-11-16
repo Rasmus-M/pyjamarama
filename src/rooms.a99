@@ -1,0 +1,188 @@
+room_data:
+L8D2E  data room_0                     ; >8D6A
+L8D30  data room_1                     ; >8D83
+L8D32  data room_2                     ; >8D94
+L8D34  data room_3                     ; >8DB1
+L8D36  data room_4                     ; >8DC8
+L8D38  data room_5                     ; >8DEB
+L8D3A  data room_6                     ; >8E02
+L8D3C  data room_7                     ; >8E1F
+L8D3E  data room_8                     ; >8E36
+L8D40  data room_9                     ; >8E4D
+L8D42  data room_10                    ; >8E64
+L8D44  data room_11                    ; >8E81
+L8D46  data room_12                    ; >8E9B
+L8D48  data room_13                    ; >8EA9
+L8D4A  data room_14                    ; >8EBD
+L8D4C  data room_15                    ; >8EE0
+L8D4E  data room_16                    ; >8EFD
+L8D50  data room_17                    ; >8F14
+L8D52  data room_18                    ; >8F25
+L8D54  data room_19                    ; >8F48
+L8D56  data room_20                    ; >8F62
+L8D58  data room_21                    ; >8F79
+L8D5A  data room_22                    ; >8F9B
+L8D5C  data room_23                    ; >8FBE
+L8D5E  data room_24                    ; >8FE1
+L8D60  data room_25                    ; >8FFD
+L8D62  data room_26                    ; >9013
+L8D64  data room_27                    ; >902A
+L8D66  data room_28                    ; >9047
+L8D68  data room_29                    ; >9060
+
+room_0:
+L8D6A  byte >02,>15,>1F,>00,>05,>1F,>00,>08
+L8D72  byte >1F,>00,>0B,>1F,>10,>05,>20,>10
+L8D7A  byte >08,>20,>10,>0B,>20,>12,>15,>20
+L8D82  byte >FF
+room_1:
+L8D83  byte >F5,>00,>08,>04,>02,>14,>15,>18
+L8D8B  byte >0F,>11,>1E,>0D,>05,>13,>06,>00
+L8D93  byte >FF
+room_2:
+L8D94  byte >F5,>17,>09,>26,>0E,>12,>07,>12
+L8D9C  byte >14,>3D,>10,>10,>24,>05,>0D,>23
+L8DA4  byte >09,>06,>22,>00,>0F,>06,>0F,>09
+L8DAC  byte >25,>1F,>0F,>0A,>FF
+room_3:
+L8DB1  byte >F5,>1E,>0D,>05,>00,>0D,>03,>07
+L8DB9  byte >06,>00,>14,>06,>00,>11,>12,>07
+L8DC1  byte >04,>0D,>01,>0D,>11,>08,>FF
+room_4:
+L8DC8  byte >F5,>03,>09,>25,>0C,>09,>25,>15
+L8DD0  byte >09,>25,>09,>06,>22,>0E,>10,>33
+L8DD8  byte >1B,>12,>0D,>04,>0E,>31,>14,>0E
+L8DE0  byte >31,>00,>0F,>32,>DE,>77,>F1,>0F
+L8DE8  byte >11,>3B,>FF
+room_5:
+L8DEB  byte >F5,>03,>06,>22,>19,>06,>27,>00
+L8DF3  byte >0D,>03,>18,>12,>02,>04,>0D,>23
+L8DFB  byte >10,>12,>0D,>11,>0E,>28,>FF
+room_6:
+L8E02  byte >F5
+L8E03  byte >0A,>0E,>28,>12,>0E,>28,>06,>06
+L8E0B  byte >27,>10,>06,>27,>19,>06,>27,>00
+L8E13  byte >0D,>03,>18,>12,>02,>09,>12,>07
+L8E1B  byte >04,>17,>29,>FF
+room_7:
+L8E1F  byte >F5,>1D,>06,>13
+L8E23  byte >01,>0E,>14,>00,>08,>04,>1F,>0E
+L8E2B  byte >0B,>01,>12,>0D,>19,>07,>0E,>06
+L8E33  byte >12,>0F,>FF
+room_8:
+L8E36  byte >F5,>07,>10,>2B,>08
+L8E3B  byte >06,>2A,>0E,>06,>2A,>14,>06,>2A
+L8E43  byte >1A,>06,>2A,>1F,>0E,>0B,>01,>11
+L8E4B  byte >1B,>FF
+room_9:
+L8E4D  byte >F5  [DRAW WALLS]
+L8E4E  byte >00,>0F,>3A,>0D,>12,>0D,>1B,>12  Draw items
+L8E56  byte >0D,>05,>0B,>10,>0E,>0B,>10
+L8E5D  byte >DE,>78,>F1  [FLAG] (>f178) Help switch.
+L8E60  byte >17,>0C,>15  Draw items (if flag set)
+L8E63  byte >FF  [END]
+room_10:
+L8E64  byte >F5,>08,>06,>2A,>16,>06,>2A,>00
+L8E6C  byte >0D,>03,>1E,>0D,>05,>08,>0D,>23
+L8E74  byte >04,>11,>08,>11,>11,>08,>15,>11
+L8E7C  byte >08,>19,>11,>08,>FF
+room_11:
+L8E81  byte >F5,>12,>06
+L8E84  byte >2A,>07,>06,>2A,>05,>12,>2D,>00
+L8E8C  byte >0D,>03,>1E,>0D,>05,>17,>0D,>2C
+L8E94  byte >18,>0D,>2C,>19,>0D,>2C,>FF
+room_12:
+L8E9B  byte >F5
+L8E9C  byte >10,>11,>2F,>1B,>0D,>2E,>02,>0D
+L8EA4  byte >01,>0E,>06,>00,>FF
+room_13:
+L8EA9  byte >F5,>19,>06
+L8EAC  byte >27,>00,>08,>04,>1E,>0D,>05,>00
+L8EB4  byte >0F,>06,>17,>13,>10,>03,>13,>10
+L8EBC  byte >FF
+room_14:
+L8EBD  byte >F5,>00,>0F,>06,>1F,>0F,>0A
+L8EC4  byte >09,>08,>0D,>04,>12,>0D,>09,>12
+L8ECC  byte >0D,>06,>0D,>0F,>0C,>0D,>0D,>0D
+L8ED4  byte >12,>0F,>16,>13,>10,>12,>11,>08
+L8EDC  byte >17,>0D,>08,>FF
+room_15:
+L8EE0  byte >F5,>00,>0E,>0C
+L8EE4  byte >04,>11,>08,>17,>11,>08,>08,>12
+L8EEC  byte >07,>1F,>0F,>0A,>14,>08,>09,>14
+L8EF4  byte >0C,>09,>05,>08,>09,>05,>0C,>09
+L8EFC  byte >FF
+room_16:
+L8EFD  byte >F5,>11,>06,>00,>18,>12,>02
+L8F04  byte >0B,>0D,>01,>00,>0E,>0C,>06,>06
+L8F0C  byte >27,>04,>14,>15,>19,>06,>3E,>FF
+room_17:
+L8F14  byte >F5,>01,>10,>21,>11,>11,>08,>15
+L8F1C  byte >0D,>01,>1E,>0D,>05,>08,>06,>00
+L8F24  byte >FF
+room_18:
+L8F25  byte >F5,>00,>0D,>03,>1E,>0D,>05
+L8F2C  byte >16,>0F,>34,>05,>06,>00,>12,>11
+L8F34  byte >08,>16,>06,>00,>05,>12,>07,>08
+L8F3C  byte >0E,>28,>0E,>0B,>3C,>DE,>78,>F1
+L8F44  byte >0F,>0C,>3B,>FF
+room_19:
+L8F48  byte >F5,>0A,>13,>37
+L8F4C  byte >00,>0D,>03,>1F,>0F,>0A,>04,>11
+L8F54  byte >2F,>13,>12,>41,>06,>0B,>26,>14
+L8F5C  byte >0B,>25,>09,>06,>22,>FF
+room_20:
+L8F62  byte >F5,>17
+L8F64  byte >0F,>11,>1E,>0D,>05,>12,>06,>2A
+L8F6C  byte >01,>10,>30,>04,>08,>09,>04,>0C
+L8F74  byte >09,>10,>12,>3F,>FF
+room_21:
+L8F79  byte >F5,>F4,>07
+L8F7C  byte >12,>07,>02,>11,>08,>15,>11,>08
+L8F84  byte >1A,>14,>15,>1A,>0F,>0D,>00,>06
+L8F8C  byte >03,>06,>06,>00,>0F,>06,>00,>19
+L8F94  byte >06,>11,>F3,>1A,>0F,>40,>FF
+room_22:
+L8F9B  byte >F5
+L8F9C  byte >01,>06,>14,>1D,>06,>13,>16,>0F
+L8FA4  byte >11,>1F,>0F,>0A,>00,>0E,>0C,>05
+L8FAC  byte >13,>10,>06,>0E,>13,>08,>0E,>14
+L8FB4  byte >0D,>13,>10,>06,>08,>12,>14,>08
+L8FBC  byte >12,>FF
+room_23:
+L8FBE  byte >F5,>02,>0F,>11,>15,>07
+L8FC4  byte >12,>1D,>06,>13,>01,>06,>14,>17
+L8FCC  byte >14,>13,>12,>0E,>15,>0E,>11,>15
+L8FD4  byte >15,>11,>15,>0B,>14,>15,>11,>14
+L8FDC  byte >15,>19,>14,>15,>FF
+room_24:
+L8FE1  byte >00,>11,>17
+L8FE4  byte >00,>12,>18,>00,>14,>18,>00,>16
+L8FEC  byte >18,>15,>0E,>16,>03,>07,>1A,>1B
+L8FF4  byte >0E,>16,>00,>0A,>19,>00,>0C,>12
+L8FFC  byte >FF
+room_25:
+L8FFD  byte >03,>06,>1A,>03,>0C,>1A,>03
+L9004  byte >05,>0E,>18,>07,>1D,>0C,>0B,>1E
+L900C  byte >00,>15,>1C,>1F,>0D,>0A,>FF
+room_26:
+L9013  byte >F5
+L9014  byte >08,>06,>36,>17,>06,>36,>07,>0F
+L901C  byte >35,>00,>0F,>06,>1E,>0D,>05,>0C
+L9024  byte >12,>07,>19,>11,>08,>FF
+room_27:
+L902A  byte >F5,>09
+L902C  byte >06,>36,>16,>06,>36,>07,>11,>15
+L9034  byte >04,>14,>15,>0A,>14,>15,>0E,>12
+L903C  byte >07,>1B,>12,>0D,>00,>0D,>03,>12
+L9044  byte >17,>29,>FF
+room_28:
+L9047  byte >00,>05,>1F,>00,>08
+L904C  byte >1F,>00,>0B,>1F,>00,>15,>1F,>12
+L9054  byte >05,>20,>12,>08,>20,>12,>0B,>20
+L905C  byte >10,>15,>20,>FF
+room_29:
+L9060  byte >F5,>00,>0F,>06
+L9064  byte >05,>0E,>39,>15,>10,>38,>FF
+
+       even

@@ -1,4 +1,5 @@
 bmp_milk_full:
+       equ  $
 L8302  byte >80,>FF,>01,>BF,>55,>FD,>AA,>AA
 L830A  byte >AD,>B5,>55,>55,>AA,>AA,>AD,>B5
 L8312  byte >55,>55,>5F,>FF,>FA,>5F,>FF,>FA
@@ -13,6 +14,7 @@ L8352  byte >D0,>0B,>FF,>D0,>0B,>FF,>D0,>0B
 L835A  byte >FF,>D0,>08,>00,>10,>07,>FF,>E0
 
 bmp_milk_empty:
+       equ  $
 L8362  byte >80,>00,>01,>80,>00,>01,>80,>00  
 L836A  byte >01,>80,>00,>01,>80,>00,>01,>80  
 L8372  byte >00,>01,>40,>00,>02,>40,>00,>02  

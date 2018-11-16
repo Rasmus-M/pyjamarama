@@ -1,4 +1,5 @@
 furniture_ptr_table:
+       equ  $
 L8CAA  data LD2F8
 L8CAC  data LD64B
 L8CAE  data LD3B7
@@ -67,6 +68,7 @@ L8D2A  data LDC22
 L8D2C  data LD45D
 
 furniture_items:
+       equ  $
 LD2F8  byte >FB,>A0,>C5,>FE,>05,>00,>01,>02
 LD300  byte >03,>04,>FC,>FD,>01,>05,>FC,>FC
 LD308  byte >01,>FE,>06,>08,>11,>12,>FE,>05
@@ -110,9 +112,9 @@ LD3EF  byte >03,>0A,>02,>0A,>01,>FF
 LD3F5  byte >FB,>E0
 LD3F7  byte >CF,>FE,>43,>00,>01,>FC,>FE,>01
 LD3FF  byte >02,>FC,>FF
-LD302  byte >01,>02,>FC,>FF
-LD305  byte >01,>03,>FF
-LD308  byte >FB,>E0,>CF,>FE,>44,>04
+LD402  byte >01,>02,>FC,>FF
+LD406  byte >01,>03,>FF
+LD409  byte >FB,>E0,>CF,>FE,>44,>04
 LD40F  byte >04,>FC,>FC,>01,>04,>04,>FC,>FC
 LD417  byte >01,>04,>04,>FC,>FC,>01,>04,>04
 LD41F  byte >FC,>FC,>01,>04,>04,>FE,>42,>FC
@@ -230,7 +232,7 @@ LD733  byte >05,>FE,>43,>0D,>06,>0D,>06,>0D
 LD73B  byte >FE,>07,>04,>FC,>F9,>01,>05,>FE
 LD743  byte >43,>00,>0C,>00,>0C,>00,>FE,>07
 LD74B  byte >04,>FF
-LD74F  byte >FB,>80,>CC,>FE,>44,>00
+LD74D  byte >FB,>80,>CC,>FE,>44,>00
 LD753  byte >01,>02,>03,>FC,>FC,>01,>04,>FC
 LD75B  byte >02,>00,>05,>FC,>FC,>01,>04,>FC
 LD763  byte >02,>00,>05,>FF
@@ -504,7 +506,7 @@ LDDE1  byte >04,>FC,>F8,>01,>FE,>06,>01,>02
 LDDE9  byte >FC,>01,>00,>FE,>44,>05,>FE,>05
 LDDF1  byte >08,>09,>FE,>46,>0A,>FE,>07,>05
 LDDF9  byte >FE,>43,>01,>02,>FF
-LDEFE  byte >FB,>38,>CB
+LDDFE  byte >FB,>38,>CB
 LDE01  byte >FE,>46,>00,>03,>FE,>44,>04,>FE
 LDE09  byte >45,>06,>07,>FC,>01,>00,>FE,>07
 LDE11  byte >04,>FC,>F8,>01,>FE,>06,>01,>02
@@ -598,7 +600,7 @@ LE046  byte >01,>06,>FC,>0A,>FD,>03,>FC,>FF
 LE04E  byte >01,>04,>FC,>FF
 LE052  byte >01,>05,>FC,>FF
 LE056  byte >01,>06,>FF
-LE05B  byte >FB
+LE059  byte >FB
 LE05A  byte >70,>CD,>FE,>47,>21,>FC,>FF
 LE061  byte >01
 LE062  byte >21,>FC,>FF

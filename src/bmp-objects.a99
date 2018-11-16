@@ -1,4 +1,5 @@
 bmp_objects:
+       equ  $
 L9BEB  byte >00,>00,>00,>00,>00,>00,>00,>1C
 L9BF3  byte >00,>3E,>00,>67,>FF,>EB,>80,>67
 L9BFB  byte >FF,>EB,>00,>6B,>F8,>3E,>D8,>1C
@@ -444,6 +445,7 @@ LA9B3  byte >8D,>F1,>FC,>BF,>7D,>3F,>1F,>BE
 LA9BB  byte >07,>F0,>03,>E0,>07,>C0,>07,>C0
 LA9C3  byte >07,>C0,>07,>E0,>03,>78,>06,>30
 bmp_knife_fork:
+       equ  $
 LA9CB  byte >00,>00,>54,>06,>54,>0E,>54,>0E
 LA9D3  byte >54,>0E,>7C,>0E,>38,>0E,>00,>06
 LA9DB  byte >10,>00,>10,>06,>10,>06,>10,>06

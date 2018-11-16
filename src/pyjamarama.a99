@@ -1,0 +1,10 @@
+       aorg >a000
+
+       copy "bmp-milk.a99"
+       copy "bmp-objects.a99"
+       copy "bmp-tiles.a99"
+       copy "bmp-wally.a99"
+       copy "furniture.a99"
+       copy "rooms.a99"
+
+       end

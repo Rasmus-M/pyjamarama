@@ -51,6 +51,12 @@ r0lb   equ  wrksp+1                    ; r0 low byte required for VDP routines
 r1lb   equ  wrksp+3
 r2lb   equ  wrksp+5
 r3lb   equ  wrksp+7
+r4lb   equ  wrksp+9
+r5lb   equ  wrksp+11
+r6lb   equ  wrksp+13
+r7lb   equ  wrksp+15
+r8lb   equ  wrksp+17
+r9lb   equ  wrksp+19
 stack  equ  pad+>20                    ; Stack (grows up)
 padvar equ  stack+>10                  ; Start of pad variables
 *
@@ -62,8 +68,10 @@ bitmap_x:
        equ  wally_room_no+2
 bitmap_y:
        equ  bitmap_x+2
-pad_max:
+tile_start_ptr:
        equ  bitmap_y+2
+pad_max:
+       equ  tile_start_ptr+2
 
 **
 * Macros
@@ -88,6 +96,8 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @bitmap_mode
+       clr  @wally_room_no
+       bl   @room_draw
 loop:
        jmp  loop
 
@@ -105,6 +115,7 @@ room_draw:
        cb   r0,@byte_f5                ; Get first byte and test for drawing of walls etc.
        jne  room_draw_0
        bl   @draw_ceiling_wall_floor
+*      Draw furniture
 room_draw_0:
        movb *r4+,r0
        cb   r0,@byte_ff
@@ -113,8 +124,8 @@ room_draw_0:
        jne  room_draw_2
        li   r3,tile_draw_flip
 room_draw_1:
-       mov  r3,@furniture_draw_tile+2  ; Modify code so that the furniture draw routine calls the function
-                                       ; to draw normal or upside down tiles.
+       mov  r3,@furniture_draw_tile_1+2 ; Modify code so that the furniture draw routine calls the function
+       mov  r3,@furniture_draw_tile_2+2 ; to draw normal or upside down tiles.
        jmp  room_draw_0
 room_draw_2:
        cb   r0,@byte_f3
@@ -130,13 +141,14 @@ room_draw_3:
        jeq  room_draw_5                ; If not set then handle action,
        jmp  room_draw_0                ; else continue onto next byte.
 room_draw_4:
-       movb *r4+,@r0lb                 ; Y position
+       movb *r4+,@r0lb                 ; Y position (X in MSB)
        clr  r1
        movb *r4+,@r1lb                 ; Get index of furniture item.
        sla  r1,1
        mov  @furniture_table(r1),r1    ; Workout address of item string.
        bl   @furniture_draw
        jmp  room_draw_0
+*      Draw object
 room_draw_5:
        mov  @wally_room_no,r3
        sla  r3,1                       ; x2
@@ -161,12 +173,63 @@ room_draw_5:
 * Input:
 * r0 MSB: x position
 * r0 LSB: y position
-* r1b: Address of furniture item string
+* r1: Address of furniture item string
+* r4: Room data pointer, do not change
+*
+* HL	Address of furniture string.
+* DE	Position(Py, Px)
+* must not change r4
 *
 furniture_draw:
        .proc
-furniture_draw_tile:
+furniture_draw_6:
+       mov  r1,r5                      ; Save address
+       mov  r0,r6                      ; Save position
+       movb *r5+,r0                    ; Get next byte in string.
+       jgt  furniture_draw_4           ; Test for normal tile.
+       jeq  furniture_draw_4
+       cb   r0,@byte_fe                ; Test for END OF STRING value.
+       jeq  furniture_draw_5
+       cb   r0,@byte_fe                ; Test for code.
+       jne  furniture_draw_0
+       movb *r5+,r0                    ; Get colour.
+       bl   @ti_color                  ; Convert to TI color
+       mov  r5,r7                      ; Save color
+       jmp  furniture_draw_6
+furniture_draw_0:
+       cb   r0,@byte_fc                ; Test for code.
+       jne  furniture_draw_1
+       ab   *r5+,r6                    ; Px += Sx
+       ab   *r5+,@r6lb                 ; Py += Sy
+       jmp  furniture_draw_6
+furniture_draw_1:
+       cb   r0,@byte_fb                ; Test for code.
+       jne  furniture_draw_2
+       movb *r5+,r0                    ; Get next two bytes holding new tile start address.
+       movb *r5+,@r0lb
+       mov  r0,@tile_start_ptr         ; TODO: adjust address
+       jmp  furniture_draw_6
+furniture_draw_2:
+       clr  r8
+       movb *r5+,@r8lb                 ; Get number of times to draw.
+       movb *r5+,@r1lb                 ; Get tile(n) to draw.
+furniture_draw_3:
+       mov  r6,r1                      ; Position
+       mov  r7,r2                      ; Color
+furniture_draw_tile_1:
+       bl   @tile_draw                 ; Draw tile.
+       ab   @byte_01,r6                ; Px++
+       dec  r8
+       jne  furniture_draw_3
+       jmp  furniture_draw_6
+furniture_draw_4:
+       mov  r6,r1                      ; Position
+       mov  r7,r2                      ; Color
+furniture_draw_tile_2:
        bl   @tile_draw
+       dec  r8
+       jmp  furniture_draw_6
+furniture_draw_5:
        .endproc
 *// furniture_draw
 
@@ -175,6 +238,7 @@ furniture_draw_tile:
 * Draw ceiling, wall and floor
 *
 * Input:
+* r4: Room data pointer, do not change
 *
 draw_ceiling_wall_floor:
        .proc
@@ -186,9 +250,13 @@ draw_ceiling_wall_floor:
 * Draw tile
 *
 * Input:
-* r0 MSB: x position
-* r0 LSB: y position
-* tile number, color
+* r0 MSB: Tile number
+* r1 MSB: x position
+* r1 LSB: y position
+* r2 MSB: color
+* r4: Room data pointer, do not change
+* r5: Furniture pointer, do not change
+* r6-r8: Do not change
 *
 tile_draw:
        .proc
@@ -200,9 +268,13 @@ tile_draw:
 * Draw tile upside down
 *
 * Input:
-* r0 MSB: x position
-* r0 LSB: y position
-* tile number, color
+* r0 MSB: Tile number
+* r1 MSB: x position
+* r1 LSB: y position
+* r2 MSB: color
+* r4: Room data pointer, do not change
+* r5: Furniture pointer, do not change
+* r6-r8: Do not change
 *
 tile_draw_flip:
        .proc
@@ -222,6 +294,64 @@ bitmap_16_draw:
        .proc
        .endproc
 *// bitmap_16_draw
+
+*********************************************************************************
+*
+* Get TI-99 color from ZX Spectrum color
+*
+* r0 MSB: Colour-byte FBPPPIII
+*  - I - Ink colour (0-7)
+*  - P - Paper colour (0-7)
+*  - B - Bright (0-No, 1-Yes)
+*  - F - Flash  (0-No, 1-Yes)
+*
+* Modifies r2-r3
+* On return r1 MSB contains the TI color FFFFBBBB.
+*
+ti_color:
+       clr  r1
+*      Foreground
+       mov  r0,r2
+       andi r2,>0700                   ; Foreground bits
+       mov  r0,r3
+       andi r3,>4000                   ; Bright bit
+       srl  r3,3
+       soc  r3,r2
+       swpb r2
+       movb @tipal(r2),r1
+       sla  r1,4
+*      Background
+       mov  r0,r2
+       andi r2,>3800                   ; Background bits
+       srl  r2,3
+       soc  r3,r2
+       swpb r2
+       movb @tipal(r2),r3
+       socb r3,r1
+*      Flash
+       andi r0,>8000
+       jeq  !
+       srl  r1,4
+       andi r1,>0ff0
+       socb @r1lb,r1
+       rt
+
+* Spectrum palette
+* 0  Black,    1 D Blue,   2 D Red,     3 D Magenta
+* 4  D Green,  5 D Cyan,   6 D Yellow,  7 Grey
+* 8  Black,    9 Blue,    10 Red,      11 Magenta
+* 12 Green,   13 Cyan,    14 Yellow,   15 White
+
+* TI palette
+* 0  Trans,    1 Black,    2 M Green,   3 L Green
+* 4  D Blue,   5 L Blue,   6 D Red,     7 Cyan
+* 8  M Red,    9 L Red,   10 D Yellow, 11 L Yellow
+* 12 D Green, 13 Magenta, 14 Gray,     15 White
+
+tipal  byte 1,4,6,13,12,7,10,14,1,5,8,13,2,7,11,15
+* Not used: 3 L Green, 9 L Red
+* Not available: D Cyan, D Magenta
+*// ti_color
 
 *********************************************************************************
 *
@@ -369,7 +499,6 @@ vmbr1:
 * Modifies r0-r3
 *
 vdpcp:
-       mov  r11,*r10+                  ; Push return address onto the stack
        swpb r0
        movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
        swpb r0
@@ -398,9 +527,7 @@ vdpcp2:
        dec  r2
        jne  vdpcp2
 vdpcp3:
-       dect r10                        ; Pop return address off the stack
-       mov  *r10,r11
-       b    *r11
+       rt
 *// vdpcp
 
 *********************************************************************
@@ -441,7 +568,7 @@ vdpwr2:
        dec  r2
        jne  vdpwr2
 vdpwr3:
-       b    *r11
+       rt
 *// vdpwr
 
 *********************************************************************
@@ -450,6 +577,12 @@ vdpwr3:
 *
 byte_ff:
        byte >ff
+byte_fe:
+       byte >fe
+byte_fc:
+       byte >fc
+byte_fb:
+       byte >fb
 byte_f5:
        byte >f5
 byte_f4:
@@ -458,6 +591,8 @@ byte_f3:
        byte >f3
 byte_de:
        byte >de
+byte_01:
+       byte >01
        even
 
        copy "bmp-milk.a99"

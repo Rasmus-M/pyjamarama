@@ -98,14 +98,17 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @bitmap_mode
-       li   r0,1
-       mov  r0,@wally_room_no
+       clr  @wally_room_no
 loop:  bl   @clear_screen
        bl   @room_draw
        bl   @wait_key
-       inc  @wally_room_no
+       mov  @wally_room_no,r0
+       inc  r0
+       ci   r0,30
+       jlt  !
+       clr  r0
+!      mov  r0,@wally_room_no
        jmp  loop
-
 
 ********************************************************************************
 *
@@ -144,7 +147,8 @@ room_draw_3:
        jeq  room_draw_5                ; If not set then handle action,
        jmp  room_draw_1                ; else continue onto next byte.
 room_draw_4:
-       movb *r4+,@r0lb                 ; y position (x in MSB)
+       swpb r0
+       movb *r4+,r0                    ; y position (x in MSB)
        clr  r1
        movb *r4+,@r1lb                 ; Get index of furniture item.
        sla  r1,1
@@ -174,8 +178,8 @@ room_draw_5:
 * Draw furniture
 *
 * Input:
-* r0 MSB: x position
-* r0 LSB: y position
+* r0 MSB: y position
+* r0 LSB: x position
 * r1: Address of furniture item string
 * r4: Room data pointer, do not change
 *
@@ -198,8 +202,8 @@ furniture_draw_6:
 furniture_draw_0:
        cb   r0,@byte_fc                ; Test for code.
        jne  furniture_draw_1
-       ab   *r5+,r6                    ; Px += Sx
-       ab   *r5+,@r6lb                 ; Py += Sy
+       ab   *r5+,@r6lb                 ; Px += Sx
+       ab   *r5+,r6                    ; Py += Sy
        jmp  furniture_draw_6
 furniture_draw_1:
        cb   r0,@byte_fb                ; Test for code.
@@ -218,7 +222,7 @@ furniture_draw_3:
        mov  r6,r1                      ; Position
        mov  r7,r2                      ; Color
        bl   @tile_draw                 ; Draw tile.
-       ab   @byte_01,r6                ; Px++
+       inc  r6                         ; Px++
        dec  r8
        jne  furniture_draw_3
        jmp  furniture_draw_6
@@ -226,7 +230,7 @@ furniture_draw_4:
        mov  r6,r1                      ; Position
        mov  r7,r2                      ; Color
        bl   @tile_draw
-       ab   @byte_01,r6                ; Px++
+       inc  r6                         ; Px++
        jmp  furniture_draw_6
 furniture_draw_5:
        .endproc
@@ -241,6 +245,52 @@ furniture_draw_5:
 *
 draw_ceiling_wall_floor:
        .proc
+       li   r0,tile_ceiling
+       mov  r0,@tile_start_ptr
+*      Ceiling
+       li   r6,>0500
+       li   r8,>20
+draw_ceiling_wall_floor_1:
+       clr  r0
+       mov  r6,r1
+       li   r2,>d100
+       bl   @tile_draw
+       inc  r6
+       dec  r8
+       jne  draw_ceiling_wall_floor_1
+*      Floor
+       li   r6,>1700
+       li   r8,>20
+draw_ceiling_wall_floor_2:
+       li   r0,>0100
+       mov  r6,r1
+       li   r2,>7100
+       bl   @tile_draw
+       inc  r6
+       dec  r8
+       jne  draw_ceiling_wall_floor_2
+*      Left wall
+       li   r6,>0600
+       li   r8,>11
+draw_ceiling_wall_floor_3:
+       li   r0,>0200
+       mov  r6,r1
+       li   r2,>8100
+       bl   @tile_draw
+       ab   @byte_01,r6
+       dec  r8
+       jne  draw_ceiling_wall_floor_3
+*      Right wall
+       li   r6,>061f
+       li   r8,>11
+draw_ceiling_wall_floor_4:
+       li   r0,>0200
+       mov  r6,r1
+       li   r2,>8100
+       bl   @tile_draw
+       ab   @byte_01,r6
+       dec  r8
+       jne  draw_ceiling_wall_floor_4
        .endproc
 *// draw_ceiling_wall_floor
 
@@ -250,16 +300,13 @@ draw_ceiling_wall_floor:
 *
 * Input:
 * r0 MSB: Tile number
-* r1 MSB: x position
-* r1 LSB: y position
+* r1 MSB: y position
+* r1 LSB: x position
 * r2 MSB: color
-* r4: Room data pointer, do not change
-* r5: Furniture pointer, do not change
-* r6-r9: Do not change
+* Modifies r3
 *
 tile_draw:
        .proc
-       swpb r1                         ; Swap x and y
        mov  r1,r3                      ; x and y positions
        andi r3,>001f                   ; x position
        sla  r3,3                       ; x8

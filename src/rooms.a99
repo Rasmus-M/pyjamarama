@@ -30,7 +30,6 @@ L8D62  data room_26                    ; >9013
 L8D64  data room_27                    ; >902A
 L8D66  data room_28                    ; >9047
 L8D68  data room_29                    ; >9060
-       data room_30
 
 room_0:
        equ  $
@@ -216,6 +215,3 @@ room_29:
        equ  $
 L9060  byte >F5,>00,>0F,>06
 L9064  byte >05,>0E,>39,>15,>10,>38,>FF
-room_30:
-       byte >F5,>05,>0D,>23,>FF
-       even

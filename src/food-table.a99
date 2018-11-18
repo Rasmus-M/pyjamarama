@@ -1,0 +1,25 @@
+* All food are always placed on y position $98
+* There are always two food items active at one time.
+* The first, from table A, is pointed to by food_active_ptr and the second is always the same index in table B.
+
+food_table:
+       equ  $
+* Food items A
+LEE62  byte >02,>D0,>86                ; Candy
+LEE65  byte >0F,>A0,>87                ; Drink
+LEE68  byte >15,>B0,>88                ; Burger
+LEE6B  byte >11,>40,>89                ; Apple
+LEE6E  byte >09,>A8,>8A                ; Jam
+LEE71  byte >1A,>88,>8B                ; Ice cream
+LEE74  byte >17,>40,>8C                ; Cup of Tea
+LEE77  byte >FF
+* Food Items B
+LEE78  byte >09,>A8,>8A                ; Jam
+sweets_pickup:
+       equ $
+LEE7B  byte >1A,>88,>8B                ; Ice cream
+LEE7E  byte >17,>40,>8C                ; Cup of Tea
+LEE81  byte >02,>D0,>86                ; Candy
+LEE84  byte >0F,>A0,>87                ; Drink
+LEE87  byte >15,>B0,>88                ; Burger
+LEE8A  byte >11,>40,>89                ; Apple

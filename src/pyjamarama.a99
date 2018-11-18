@@ -64,17 +64,28 @@ padvar equ  stack+>10                  ; Start of pad variables
 *
 wally_room_no:
        equ  padvar
-bitmap_x:
+wally_lives:
        equ  wally_room_no+2
+wally_x:
+       equ  wally_lives+2
+wally_y:
+       equ  wally_x+2
+pocket_1:
+       equ  wally_y+2
+pocket_2:
+       equ  pocket_1+2
+tile_flip_vertical:
+       equ  pocket_2+2
+tile_start_ptr:
+       equ  tile_flip_vertical+2
+bitmap_x:
+       equ  tile_start_ptr+2
 bitmap_y:
        equ  bitmap_x+2
-tile_start_ptr:
+food_active_ptr:
        equ  bitmap_y+2
-vertical_flip:
-       equ  tile_start_ptr+2
 pad_max:
-       equ  vertical_flip+2
-
+       equ  food_active_ptr+2
 **
 * Macros
 *
@@ -98,6 +109,12 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd                  ; Do not change
+       li   r0,padvar
+       li   r2,pad_max-padvar
+init_pad:
+       clr  *r0+
+       dect r2
+       jne  init_pad
        bl   @bitmap_mode
        li   r0,1
        mov  r0,@wally_room_no
@@ -113,18 +130,125 @@ loop:  bl   @game_start
 
 ********************************************************************************
 *
-* Room draw
+* Start a new game
 *
 game_start:
        .proc
-       bl   @clear_screen
+       bl   @screen_clear_simple
+       bl   @game_init_stats
        bl   @room_draw
        li   r0,>0001
        li   r1,scoreboard_item
        bl   @furniture_draw
+       bl   @inv_redraw
+       bl   @lives_reset
        bl   @milk_draw_full
        .endproc
 *// game_start
+
+********************************************************************************
+*
+* Start a new game
+*
+game_init_stats:
+       .proc
+       li   r0,>0000                   ; The Round Key
+       mov  r0,@pocket_1
+       li   r0,>0001                   ; The Radio
+       mov  r0,@pocket_2
+       li   r0,food_table              ; Reset active food
+       mov  r0,@food_active_ptr
+*      Clear all the object flags
+       li   r2,>16                      .
+       li   r0,lift_count
+game_init_stats_0:
+       clr  *r0+
+       dect r2
+       jne  game_init_stats_0
+*      Reset object positions by filling in the object slots, for each room, with and object index in incremental steps
+       li   r0,room_obj_slot_Obj
+       li   r2,>1e
+       li   r1,>0200
+game_init_stats_1:
+       movb r1,*r0+
+       inct r0
+       ai   r1,>0100
+       dec  r2
+       jne  game_init_stats_1
+*      Clear all object found markers
+       li   r0,object_found_table      ;
+       li   r2,>20
+       clr  r1
+game_init_stats_2:
+       movb r1,*r0
+       inct r0
+       dec  r2
+       jne  game_init_stats_2
+*      Clear all rooms visited
+       li   r2,>23
+game_init_stats_3:
+       movb r1,*r0+
+       dec  r2
+       jne  game_init_stats_3
+       .endproc
+*// game_init_stats
+
+********************************************************************************
+*
+* Reset lives
+*
+lives_reset:
+       .proc
+       li   r0,3
+       mov  r0,@wally_lives
+       li   r0,3
+lives_reset_1:
+       mov  r0,*r10+                   ; Push r0
+       bl   @life_draw_blit
+       dect r10                        , Pop r0
+       mov  *r10,r0
+       dec  r0
+       jne  lives_reset_1
+       .endproc
+*// lives_reset
+
+********************************************************************************
+*
+* Redraw inventory area
+*
+inv_redraw:
+       .proc
+       bl   @screen_clear
+       mov  @pocket_1,r1
+       sla  r1,1
+       mov  @object_text_ptr_table(r1),r4
+       mov  @pocket_2,r1
+       sla  r1,1
+       mov  @object_text_ptr_table(r1),r5
+       li   r0,bmp_tiles               ; Reset the start address of the tiles back to tile zero for true ZX ASCII letters within tiles.
+       mov  r0,@tile_start_ptr
+;E51D	LD E,$14
+;E51F	LD D,$00
+;E521	LD C,$44
+;E523	CALL InventoryDrawText
+;E526	POP HL
+;E527	LD E,$14
+;E529	LD D,$02
+;E52B	LD C,$45
+;E52D	CALL InventoryDrawText
+       mov  @pocket_1,r0
+       ai   r0,>50
+       li   r1,>0088
+       mov  r1,@bitmap_x
+       clr  @bitmap_y
+       bl   @bitmap_16_draw
+       mov  @pocket_2,r0
+       ai   r0,>50
+       li   r1,>0010
+       mov  r1,@bitmap_y
+       bl   @bitmap_16_draw
+       .endproc
+*// inv_redraw
 
 ********************************************************************************
 *
@@ -147,12 +271,12 @@ room_draw_1:
        jeq  room_draw_5                ; End marker
        cb   r0,@byte_f4
        jne  room_draw_2
-       seto @vertical_flip             ; Draw upside down
+       seto @tile_flip_vertical             ; Draw upside down
        jmp  room_draw_1
 room_draw_2:
        cb   r0,@byte_f3
        jne  room_draw_3
-       clr  @vertical_flip             ; Draw normal
+       clr  @tile_flip_vertical             ; Draw normal
        jmp  room_draw_1
 room_draw_3:
        cb   r0,@byte_de
@@ -327,7 +451,7 @@ tile_draw:
        andi r3,>001f                   ; x position
        sla  r3,3                       ; x8
        andi r1,>1f00                   ; y position
-       abs  @vertical_flip
+       abs  @tile_flip_vertical
        jeq  !
        neg  r1                         ; Invert y
        ai   r1,>1C00
@@ -349,7 +473,7 @@ tile_draw:
        movb r2,*r15
        movb r2,*r15
 *      Draw tile
-       abs  @vertical_flip
+       abs  @tile_flip_vertical
        jne  tile_draw_1
 *      Draw normal tile
        mov  r3,r0
@@ -521,6 +645,25 @@ opcode_nop:
        nop
 *// bitmap_16_draw
 
+********************************************************************************
+*
+* Draw life
+*
+* Input:
+* r0: life number 0-
+*
+life_draw_blit:
+       .proc
+       dec  r0
+       sla  r0,4                       ; x16
+       mov  r0,@bitmap_x
+       li   r0,16
+       mov  r0,@bitmap_y
+       li   r0,>4c                     ; Index for Life Bitmap
+       bl   @bitmap_16_draw
+       .endproc
+*// life_draw_blit
+
 *********************************************************************
 *
 * Calculate screen address and bit mask from coordinates
@@ -606,9 +749,30 @@ tipal  byte 1,4,6,13,12,7,10,14,1,5,8,13,2,7,11,15
 
 *********************************************************************************
 *
-* Clear screen
+* Clear inventory area
 *
-clear_screen:
+screen_clear:
+       .proc
+       li   r0,17*8
+       li   r2,4
+screen_clear_1:
+       bl   @vwad
+       li   r3,15*8
+screen_clear_2:
+       clr  *r15
+       dec  r3
+       jne  screen_clear_2
+       ai   r0,256
+       dec  r2
+       jne  screen_clear_1
+       .endproc
+*// screen_clear
+
+*********************************************************************************
+*
+* Clear whole screen
+*
+screen_clear_simple:
        .proc
 *      Patterns
        li   r0,ptrntb
@@ -621,8 +785,7 @@ clear_screen:
        li   r2,>1800
        bl   @vdpwr
        .endproc
-*      VDP registers
-*// clear_screen
+*// screen_clear_simple
 
 *********************************************************************************
 *
@@ -1030,5 +1193,9 @@ byte_01:
        copy "bmp-milk.a99"
        copy "bmp-wally.a99"
        copy "bmp-objects.a99"
+       copy "object-text.a99"
+       copy "object-flags.a99"
+       copy "food-table.a99"
+       copy "object-found-table.a99"
 
-       end
+       end  main

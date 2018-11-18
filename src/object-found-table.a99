@@ -1,0 +1,37 @@
+* Each two bytes represents an object.
+* The first byte marks the object as 'found' by setting to '1' when picked up by player.
+* The second byte holds the percent value of object if collected.
+object_found_table:
+       equ  $
+L8491  byte >00,>00  
+L8493  byte >00,>00  
+L8495  byte >00,>04  
+L8497  byte >00,>02  
+L8499  byte >00,>04  
+L849B  byte >00,>03  
+L849D  byte >00,>01  
+L849F  byte >00,>01  
+L84A1  byte >00,>03  
+L84A3  byte >00,>02  
+L84A5  byte >00,>03  
+L84A7  byte >00,>02  
+L84A9  byte >00,>02  
+L84AB  byte >00,>04  
+L84AD  byte >00,>03  
+L84AF  byte >00,>02  
+L84B1  byte >00,>03  
+L84B3  byte >00,>02  
+L84B5  byte >00,>01  
+L84B7  byte >00,>02  
+L84B9  byte >00,>02  
+L84BB  byte >00,>02  
+L84BD  byte >00,>01  
+L84BF  byte >00,>01  
+L84C1  byte >00,>02  
+L84C3  byte >00,>01  
+L84C5  byte >00,>02  
+L84C7  byte >00,>03  
+L84C9  byte >00,>02  
+L84CB  byte >00,>03  
+L84CD  byte >00,>01  
+L84CF  byte >00,>04

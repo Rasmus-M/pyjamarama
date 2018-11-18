@@ -1,0 +1,199 @@
+       even
+object_text_ptr_table:
+       equ  $
+LE48E  DATA LE27D
+LE490  DATA LE28D
+LE492  DATA LE297
+LE494  DATA LE2A8
+LE496  DATA LE2BA
+LE498  DATA LE2C5
+LE49A  DATA LE2D6
+LE49C  DATA LE2E7
+LE49E  DATA LE2F7
+LE4A0  DATA LE307
+LE4A2  DATA LE31A
+LE4A4  DATA LE332
+LE4A6  DATA LE340
+LE4A8  DATA LE355
+LE4AA  DATA LE366
+LE4AC  DATA LE371
+LE4AE  DATA LE384
+LE4B0  DATA LE398
+LE4B2  DATA LE3AD
+LE4B4  DATA LE3C4
+LE4B6  DATA LE3D7
+LE4B8  DATA LE3E1
+LE4BA  DATA LE3EB
+LE4BC  DATA LE3F8
+LE4BE  DATA LE40B
+LE4C0  DATA LE421
+LE4C2  DATA LE42B
+LE4C4  DATA LE43E
+LE4C6  DATA LE451
+LE4C8  DATA LE463
+LE4CA  DATA LE474
+LE4CC  DATA LE47E
+
+LE27D  text "THE ROUND"  
+LE286  byte >FC  
+LE287  byte >F7  
+LE288  byte >01  
+LE289  text "KEY"  
+LE28C  byte >FF  
+LE28D  text "THE RADIO"  
+LE296  byte >FF  
+LE297  text "THE SQUARE"  
+LE2A1  byte >FC  
+LE2A2  byte >F6  
+LE2A3  byte >01  
+LE2A4  text "KEY"  
+LE2A7  byte >FF  
+LE2A8  text "THE DOOR"  
+LE2B0  byte >FC  
+LE2B1  byte >F8  
+LE2B2  byte >01  
+LE2B3  text "HANDLE"  
+LE2B9  byte >FF  
+LE2BA  text "THE MAGNET"  
+LE2C4  byte >FF  
+LE2C5  text "THE POUND"  
+LE2CE  byte >FC  
+LE2CF  byte >F7  
+LE2D0  byte >01  
+LE2D1  text "COIN"  
+LE2D5  byte >FF  
+LE2D6  text "THE BEACH"  
+LE2DF  byte >FC  
+LE2E0  byte >F7  
+LE2E1  byte >01  
+LE2E2  text "BALL"  
+LE2E6  byte >FF  
+LE2E7  text "THE PLANT"  
+LE2F0  byte >FC  
+LE2F1  byte >F7  
+LE2F2  byte >01  
+LE2F3  text "POT"  
+LE2F6  byte >FF  
+LE2F7  text "THE FUEL"  
+LE2FF  byte >FC  
+LE300  byte >F8  
+LE301  byte >01  
+LE302  text "CAN"  
+LE305  byte >FF  
+LE306  byte >FA  
+LE307  text "THE TRIANGLE"  
+LE313  byte >FC  
+LE314  byte >F4  
+LE315  byte >01  
+LE316  text "KEY"  
+LE319  byte >FF  
+LE31A  text "THE FIRE"  
+LE322  byte >FC  
+LE323  byte >F8  
+LE324  byte >01  
+LE325  text "EXTINGUISHER"  
+LE331  byte >FF  
+LE332  text "THE BOX"  
+LE339  byte >FC  
+LE33A  byte >F9  
+LE33B  byte >01  
+LE33C  text "KEY"  
+LE33F  byte >FF  
+LE340  text "THE LIBRARY"  
+LE34B  byte >FC  
+LE34C  byte >F5  
+LE34D  byte >01  
+LE34E  text "TICKET"  
+LE354  byte >FF  
+LE355  text "THE LASER"  
+LE35E  byte >FC  
+LE35F  byte >F7  
+LE360  byte >01  
+LE361  text "GUN"  
+LE364  byte >FF  
+LE365  byte >FA  
+LE366  text "THE HAMMER"  
+LE370  byte >FF  
+LE371  text "THE CRASH"  
+LE37A  byte >FC  
+LE37B  byte >F7  
+LE37C  byte >01  
+LE37D  text "HELMET"  
+LE383  byte >FF  
+LE384  text "THE WATER"  
+LE38D  byte >FC  
+LE38E  byte >F7  
+LE38F  byte >01  
+LE390  text "BUCKET"  
+LE396  byte >FF  
+LE397  byte >FA  
+LE398  text "THE SHARP"  
+LE3A1  byte >FC  
+LE3A2  byte >F7  
+LE3A3  byte >01  
+LE3A4  text "SCISSORS"  
+LE3AC  byte >FF  
+LE3AD  text "THE CONVEYOR"  
+LE3B9  byte >FC  
+LE3BA  byte >F4  
+LE3BB  byte >01  
+LE3BC  text "CONTROL"  
+LE3C3  byte >FF  
+LE3C4  text "THE LIBRARY"  
+LE3CF  byte >FC  
+LE3D0  byte >F5  
+LE3D1  byte >01  
+LE3D2  text "BOOK"  
+LE3D6  byte >FF  
+LE3D7  text "THE PENNY"  
+LE3E0  byte >FF  
+LE3E1  text "THE TOWEL"  
+LE3EA  byte >FF  
+LE3EB  text "THE JOYSTICK"  
+LE3F7  byte >FF  
+LE3F8  text "THE COOKING"  
+LE403  byte >FC  
+LE404  byte >F5  
+LE405  byte >01  
+LE406  text "BOWL"  
+LE40A  byte >FF  
+LE40B  text "THE DRIVING"  
+LE416  byte >FC  
+LE417  byte >F5  
+LE418  byte >01  
+LE419  text "LICENCE"  
+LE420  byte >FF  
+LE421  text "THE CROSS"  
+LE42A  byte >FF  
+LE42B  text "THE IGNITION"  
+LE437  byte >FC  
+LE438  byte >F4  
+LE439  byte >01  
+LE43A  text "KEY"  
+LE43D  byte >FF  
+LE43E  text "THE MOON"  
+LE446  byte >FC  
+LE447  byte >F8  
+LE448  byte >01  
+LE449  text "CRYSTAL"  
+LE450  byte >FF  
+LE451  text "THE CRYSTAL"  
+LE45C  byte >FC  
+LE45D  byte >F5  
+LE45E  byte >01  
+LE45F  text "ORB"  
+LE462  byte >FF  
+LE463  text "THE POWER"  
+LE46C  byte >FC  
+LE46D  byte >F7  
+LE46E  byte >01  
+LE46F  text "PACK"  
+LE473  byte >FF  
+LE474  text "THE SWORD"  
+LE47D  byte >FF  
+LE47E  text "THE CLOCK"  
+LE487  byte >FC  
+LE488  byte >F7  
+LE489  byte >01  
+LE48A  text "KEY"  
+LE48D  byte >FF  

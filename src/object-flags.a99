@@ -1,0 +1,61 @@
+       even
+lift_count:
+       equ  $
+LF177  byte >00                        ; Lift counter. Everytime Wally leaves the lift this counts down. When it is at zero Wally cannot use the life until he turns it on again.
+flag_help_switch:
+       equ  $
+LF178  byte >00                        ; Flag for the Help Switch.
+flag_laser_gun:
+       equ  $
+LF179  byte >00                        ; '0D' Laser gun, Full/Empty
+flag_water_bucket:
+       equ  $
+LF17A  byte >00                        ; '10' Water bucket, Full/Empty
+flag_mag_lock:
+       equ  $
+LF17B  byte >00                        ; Stores the position of the MagLock when drawing.
+flag_baddy_init:
+       equ  $
+LF17C  byte >00                        ; When zero the baddies need initialising.
+obj_event_pause:
+       equ  $
+LF17D  byte >00                        ; Stops any picking up when set.
+flag_fuel_can:
+       equ  $
+LF17E  byte >00                        ; '08' Fuel can, Full/Empty
+milk_level:
+       equ  $
+LF17F  byte >00                        ; Milk Level. Holds the screen row of the milk level.
+death_flag:
+       equ  $
+LF180  byte >00                        ; Set to one to trigger death.
+lift_floor_no:
+       equ  $
+LF181  byte >00                        ; Stores values representing each floor level: (1,3),(2,1),(3,0),(4,2).
+wally_dir:
+       equ  $
+LF182  byte >00                        ; Sets current direction when moving. (FF - left, 01 - right)
+wally_jump_dir:
+       equ  $
+LF183  byte >00                        ; Copy of last direction when jumping.
+wally_frame:
+       equ  $
+LF184  byte >00                        ; Index to bitmap representing Wally's current frame.
+wally_falling:
+       equ  $
+LF185  byte >00                        ; Set when Wally is falling
+wally_jump_count:
+       equ  $
+LF186  byte >00                        ; Counter for jumping. (0x0C means end of jump.)
+is_arcade_mode:
+       equ  $
+LF187  byte >00                        ; Set to 1 when game is in arcade mode for the Space Invaders room.
+LF188  byte >00  
+wally_head_turned:
+       equ  $
+LF189  byte >00                        ; Wally turns head when set.
+LF18A  byte >00  
+LF18B  byte >00  
+flag_food_drawn:
+       equ  $
+LF18C  byte >00                        ; Determines if the food requires drawing if set to 0. A 1 means the food has been drawn.

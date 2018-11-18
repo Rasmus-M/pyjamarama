@@ -1,0 +1,36 @@
+scoreboard_item:
+       equ  $
+L826C  byte >FE,>45  Set colour
+L826E  byte >FB,>A0,>C1  Set position
+L8271  text "LIFE"  
+L8275  byte >FC,>02,>01  
+L8278  byte >FE,>43  
+L827A  text "SNOOZE"  
+L8280  byte >FC,>FA,>01  
+L8283  text "ENERGY"  
+L8289  byte >FC,>00,>FE  
+L828C  byte >FE,>47  
+L828E  text "    "  
+L8292  byte >FE,>45  
+L8294  text "  "  
+L8296  byte >FC,>FA,>01  
+L8299  byte >FE,>47  
+L829B  text "    "  
+L829F  byte >FE,>45  
+L82A1  text "  "  
+L82A3  byte >FC,>FA,>01  
+L82A6  byte >FE,>47  
+L82A8  text "    "  
+L82AC  byte >FE,>46  
+L82AE  text "  "  
+L82B0  byte >FC,>FA,>01  
+L82B3  byte >FE,>47  
+L82B5  text "    "  
+L82B9  byte >FE,>46  
+L82BB  text "  "  
+L82BD  byte >FC,>ED,>01  
+L82C0  byte >FE,>42  
+L82C2  byte >FD  
+L82C3  text " "  
+L82C4  byte >1F  
+L82C5  byte >FF

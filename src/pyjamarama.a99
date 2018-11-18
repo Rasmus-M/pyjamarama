@@ -97,11 +97,11 @@ main:
        limi 0                          ; Interrupts off
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
+       li   r15,vdpwd                  ; Do not change
        bl   @bitmap_mode
        li   r0,1
        mov  r0,@wally_room_no
-loop:  bl   @clear_screen
-       bl   @room_draw
+loop:  bl   @game_start
        bl   @wait_key
        mov  @wally_room_no,r0
        inc  r0
@@ -110,6 +110,21 @@ loop:  bl   @clear_screen
        clr  r0
 !      mov  r0,@wally_room_no
        jmp  loop
+
+********************************************************************************
+*
+* Room draw
+*
+game_start:
+       .proc
+       bl   @clear_screen
+       bl   @room_draw
+       li   r0,>0001
+       li   r1,scoreboard_item
+       bl   @furniture_draw
+       bl   @milk_draw_full
+       .endproc
+*// game_start
 
 ********************************************************************************
 *
@@ -182,7 +197,6 @@ room_draw_5:
 * r0 MSB: y position
 * r0 LSB: x position
 * r1: Address of furniture item string
-* r4: Room data pointer, do not change
 *
 furniture_draw:
        .proc
@@ -244,9 +258,6 @@ furniture_draw_5:
 *********************************************************************************
 *
 * Draw ceiling, wall and floor
-*
-* Input:
-* r4: Room data pointer, do not change
 *
 draw_ceiling_wall_floor:
        .proc
@@ -329,56 +340,82 @@ tile_draw:
        mov  r3,r0
        ai   r0,colrtb
        bl   @vwad
-       li   r0,vdpwd
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
-       movb r2,*r0
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
 *      Draw tile
        abs  @vertical_flip
        jne  tile_draw_1
 *      Draw normal tile
        mov  r3,r0
        bl   @vwad
-       li   r0,vdpwd
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
        jmp  tile_draw_2
 tile_draw_1:
 *      Draw upside down tile
        mov  r3,r0
        bl   @vwad
-       li   r0,vdpwd
        ai   r1,7
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
-       movb *r1,*r0
+       movb *r1,*r15
        dec  r1
 tile_draw_2:
        .endproc
 *// tile_draw
+
+*********************************************************************************
+*
+* Draw full milk glass
+*
+milk_draw_full:
+       .proc
+       li   r0,13*8                    ; Destination
+       li   r1,bmp_milk_full
+       li   r2,4                       ; 4 rows
+milk_draw_full_1:
+       bl   @vwad
+       li   r3,3                       ; 3 columns
+milk_draw_full_2:
+       li   r4,8                       ; 8 lines
+milk_draw_full_3:
+       movb *r1+,*r15
+       inct r1
+       dec  r4
+       jne  milk_draw_full_3
+       ai   r1,-23
+       dec  r3
+       jne  milk_draw_full_2
+       ai   r0,256
+       ai   r1,21
+       dec  r2
+       jne  milk_draw_full_1
+       .endproc
+*// milk_draw_full
 
 *********************************************************************************
 *
@@ -398,7 +435,6 @@ bitmap_16_draw:
        mov  @bitmap_y,r1
        bl   @screen_address            ; Result in r6,r7
        ori  r6,>4000                   ; Setup as write address
-       li   r15,vdpwd
 *      Setup shifts
        mov  r7,r0                      ; Bit offset
        jeq  bitmap_16_draw_1
@@ -609,7 +645,7 @@ bitmap_mode_1:
        clr  r1
        li   r2,>300
 bitmap_mode_2:
-       movb r1,@vdpwd
+       movb r1,*r15
        ai   r1,>0100
        dec  r2
        jne  bitmap_mode_2
@@ -628,7 +664,7 @@ vregs2:
        byte ptrntb/>800+>03            ; Pattern table
        byte spratb/>80                 ; Sprite attribute table
        byte sprptb/>800                ; Sprite pattern table
-       byte >03                        ; Backdrop color
+       byte >01                        ; Backdrop color
 *// bitmap_mode
 
 *********************************************************************
@@ -695,7 +731,7 @@ vsbw:
        swpb r0
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       movb r1,@vdpwd                  ; Write byte to VDP RAM
+       movb r1,*15                     ; Write byte to VDP RAM
        b    *r11
 *// vsbw
 
@@ -739,20 +775,19 @@ vdpcp:
        swpb r0
        ori  r0,>4000                   ; Set the two MSbits to 01 for write
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       li   r0,vdpwd
 vdpcp0:
        mov  r2,r3
        srl  r3,3                       ; Number of groups of 8
        jeq  vdpcp2
 vdpcp1:
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
-       movb *r1+,*r0
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
        dec  r3
        jne  vdpcp1
        andi r2,>0007                   ; Isolate number of remaining bytes
@@ -781,19 +816,18 @@ vdpwr:
        swpb r0
        ori  r0,>4000                   ; Set the two MSbits to 01 for write
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       li   r0,vdpwd
        mov  r2,r3
        srl  r3,3                       ; Number of groups of 8
        jeq  vdpwr2
 vdpwr1:
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
-       movb r1,*r0
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
+       movb r1,*r15
        dec  r3
        jne  vdpwr1
        andi r2,>0007                   ; Isolate number of remaining bytes
@@ -991,6 +1025,7 @@ byte_01:
        copy "rooms.a99"
        copy "room-object-slots.a99"
        copy "furniture.a99"
+       copy "scoreboard-item.a99"
        copy "bmp-tiles.a99"
        copy "bmp-milk.a99"
        copy "bmp-wally.a99"

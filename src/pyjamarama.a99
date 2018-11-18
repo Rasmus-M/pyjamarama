@@ -397,7 +397,7 @@ bitmap_16_draw:
        li   r15,vdpwd
 *      Setup shifts
        mov  r7,r0                      ; Bit offset
-       jeq  !
+       jeq  bitmap_16_draw_1
        mov  @opcode_srl,r8             ; Right shift by offset
        sla  r0,4
        soc  r0,r8
@@ -406,62 +406,73 @@ bitmap_16_draw:
        s    r7,r0
        sla  r0,4
        soc  r0,r9
-       jmp  !!
-!      mov  @opcode_nop,r8             ; No shift
-!      mov  r8,r9
+       jmp  bitmap_16_draw_2
+bitmap_16_draw_1:
+       mov  @opcode_nop,r8             ; No shift
+       mov  r8,r9
 *      1-8 lines of first character row
-!      mov  r6,r0
+bitmap_16_draw_2:
+       mov  r6,r0
        andi r0,7
        li   r3,8                       ; Line counter
        s    r0,r3
+       bl   @bitmap_16_draw_section
+*      Full character row
+       ai   r6,>0100                   ; Next character row
+       andi r6,>fff8                   ; Align to beginning of row
+       li   r3,8
+       bl   @bitmap_16_draw_section
+*      0-7 lines of last character row
+       mov  @bitmap_y,r3
+       andi r3,7
+       jeq  bitmap_16_draw_3
+       ai   r6,>0100                   ; Next character row
+       andi r6,>fff8                   ; Align to beginning of row
+       bl   @bitmap_16_draw_section
+bitmap_16_draw_3:
+       .endproc
+bitmap_16_draw_section:
+       mov  r6,r5
 *      First byte
-       movb @r6lb,@vdpwa               ; Setup VDP write address
-       movb r6,@vdpwa
+       movb @r5lb,@vdpwa               ; Setup VDP write address
+       movb r5,@vdpwa
        mov  r4,r0                      ; Source address
        mov  r3,r2
-bitmap_16_draw_1:
+bitmap_16_draw_section_1:
        mov  *r0+,r1                    ; Get source word
        x    r8                         ; Shift right
        movb r1,*r15                    ; Send MSB to VDP
        dec  r2
-       jne  bitmap_16_draw_1
+       jne  bitmap_16_draw_section_1
 *      Second byte
-       ai   r6,8
-       movb @r6lb,@vdpwa               ; Setup VDP write address
-       movb r6,@vdpwa
+       ai   r5,8
+       movb @r5lb,@vdpwa               ; Setup VDP write address
+       movb r5,@vdpwa
        mov  r4,r0                      ; Source address
        mov  r3,r2
-bitmap_16_draw_2:
+bitmap_16_draw_section_2:
        mov  *r0+,r1                    ; Get source word
        x    r8                         ; Shift right
        movb @r1lb,*r15                 ; Send LSB to VDP
        dec  r2
-       jne  bitmap_16_draw_2
+       jne  bitmap_16_draw_section_2
 *      Third byte
-       mov  r7,r0
-       jeq  bitmap_16_draw_4
-       ai   r6,8
-       movb @r6lb,@vdpwa               ; Setup VDP write address
-       movb r6,@vdpwa
+       abs  r7
+       jeq  bitmap_16_draw_section_4
+       ai   r5,8
+       movb @r5lb,@vdpwa               ; Setup VDP write address
+       movb r5,@vdpwa
        mov  r4,r0                      ; Source address
        mov  r3,r2
-bitmap_16_draw_3:
+bitmap_16_draw_section_3:
        mov  *r0+,r1                    ; Get source word
        x    r9                         ; Shift left
        movb @r1lb,*r15                 ; Send LSB to VDP
        dec  r2
-       jne  bitmap_16_draw_3
-*      8 middle lines
-bitmap_16_draw_4:
-
-*      0-7 lines of last character row
-
-
-
-
-
-
-       .endproc
+       jne  bitmap_16_draw_section_3
+bitmap_16_draw_section_4:
+       mov  r0,r4
+       rt
 opcode_srl:
        srl  r1,0
 opcode_sla:

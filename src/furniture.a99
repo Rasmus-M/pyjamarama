@@ -1,72 +1,72 @@
        even
 furniture_table:
        equ  $
-L8CAA  data LD2F8
-L8CAC  data LD64B
-L8CAE  data LD3B7
-L8CB0  data LD791
-L8CB2  data LDEE9
-L8CB4  data LD845
-L8CB6  data LDC31
-L8CB8  data LDFF2
-L8CBA  data LE0E2
-L8CBC  data LE16E
-L8CBE  data LDEBC
-L8CC0  data LE059
-L8CC2  data LE08A
-L8CC4  data LD5D2
-L8CC6  data LE111
-L8CC8  data LD5F8
-L8CCA  data LE0BB
-L8CCC  data LDCDD
-L8CCE  data LDD89
-L8CD0  data LD7C7
-L8CD2  data LD7D4
-L8CD4  data LDCB8
-L8CD6  data LD87B
-L8CD8  data LD8AA
-L8CDA  data LD8D0
-L8CDC  data LDD28
-L8CDE  data LDD5A
-L8CE0  data LD767
-L8CE2  data LD943
-L8CE4  data LD919
-L8CE6  data LD92E
-L8CE8  data LD9E5
-L8CEA  data LD9AF
-L8CEC  data LDA97
-L8CEE  data LD61E
-L8CF0  data LD6BE                      ; Door
-L8CF2  data LDDCE
-L8CF4  data LD80C
-L8CF6  data LD7E1
-L8CF8  data LD5A3
-L8CFA  data LD588
-L8CFC  data LD83B
-L8CFE  data LDE40
-L8D00  data LDAFA
-L8D02  data LDB60
-L8D04  data LE01F
-L8D06  data LD531
-L8D08  data LD497
-L8D0A  data LDA21
-L8D0C  data LDDFE
-L8D0E  data LDC93
-L8D10  data LD33F
-L8D12  data LDB8F
-L8D14  data LD4C4
-L8D16  data LDE67
-L8D18  data LD3F5
-L8D1A  data LD409
-L8D1C  data LD50D
-L8D1E  data LDBE8
-L8D20  data LD35D
-L8D22  data LD36A
-L8D24  data LD74D
-L8D26  data LD388
-L8D28  data LDC5E
-L8D2A  data LDC22
-L8D2C  data LD45D
+L8CAA  data LD2F8                      ; 0
+L8CAC  data LD64B                      ; 1
+L8CAE  data LD3B7                      ; 2
+L8CB0  data LD791                      ; 3
+L8CB2  data LDEE9                      ; 4
+L8CB4  data LD845                      ; 5
+L8CB6  data LDC31                      ; 6
+L8CB8  data LDFF2                      ; 7
+L8CBA  data LE0E2                      ; 8
+L8CBC  data LE16E                      ; 9
+L8CBE  data LDEBC                      ; 10
+L8CC0  data LE059                      ; 11
+L8CC2  data LE08A                      ; 12
+L8CC4  data LD5D2                      ; 13
+L8CC6  data LE111                      ; 14
+L8CC8  data LD5F8                      ; 15
+L8CCA  data LE0BB                      ; 16
+L8CCC  data LDCDD                      ; 17
+L8CCE  data LDD89                      ; 18
+L8CD0  data LD7C7                      ; 19
+L8CD2  data LD7D4                      ; 20
+L8CD4  data LDCB8                      ; 21
+L8CD6  data LD87B                      ; 22
+L8CD8  data LD8AA                      ; 23
+L8CDA  data LD8D0                      ; 24
+L8CDC  data LDD28                      ; 25
+L8CDE  data LDD5A                      ; 26
+L8CE0  data LD767                      ; 27
+L8CE2  data LD943                      ; 28
+L8CE4  data LD919                      ; 29
+L8CE6  data LD92E                      ; 30
+L8CE8  data LD9E5                      ; 31
+L8CEA  data LD9AF                      ; 32
+L8CEC  data LDA97                      ; 33
+L8CEE  data LD61E                      ; 34
+L8CF0  data LD6BE                      ; 35 Door
+L8CF2  data LDDCE                      ; 36
+L8CF4  data LD80C                      ; 37
+L8CF6  data LD7E1                      ; 38
+L8CF8  data LD5A3                      ; 39
+L8CFA  data LD588                      ; 40
+L8CFC  data LD83B                      ; 41
+L8CFE  data LDE40                      ; 42
+L8D00  data LDAFA                      ; 43
+L8D02  data LDB60                      ; 44
+L8D04  data LE01F                      ; 45
+L8D06  data LD531                      ; 46
+L8D08  data LD497                      ; 47
+L8D0A  data LDA21                      ; 48
+L8D0C  data LDDFE                      ; 49
+L8D0E  data LDC93                      ; 50
+L8D10  data LD33F                      ; 51
+L8D12  data LDB8F                      ; 52
+L8D14  data LD4C4                      ; 53
+L8D16  data LDE67                      ; 54
+L8D18  data LD3F5                      ; 55
+L8D1A  data LD409                      ; 56
+L8D1C  data LD50D                      ; 57
+L8D1E  data LDBE8                      ; 58
+L8D20  data LD35D                      ; 59
+L8D22  data LD36A                      ; 60
+L8D24  data LD74D                      ; 61
+L8D26  data LD388                      ; 62
+L8D28  data LDC5E                      ; 63
+L8D2A  data LDC22                      ; 64
+L8D2C  data LD45D                      ; 65
 
 furniture_items:
        equ  $

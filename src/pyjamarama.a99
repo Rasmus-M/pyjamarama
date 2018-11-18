@@ -211,8 +211,12 @@ furniture_draw_1:
        jne  furniture_draw_2
        movb *r5+,@r0lb                 ; Get next two bytes holding new tile start address.
        movb *r5+,r0
+       ci   r0,>c1a0
+       jl  !
        ai   r0,bmp_tiles->c1a0         ; Adjust address
-       mov  r0,@tile_start_ptr         ; Store for tile_draw to use
+       jmp  !!
+!      ai   r0,tile_ceiling->8c4d      ; Adjust address for ceiling/roof/floor tiles
+!      mov  r0,@tile_start_ptr         ; Store for tile_draw to use
        jmp  furniture_draw_6
 furniture_draw_2:
        clr  r8

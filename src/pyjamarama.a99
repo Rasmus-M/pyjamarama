@@ -98,7 +98,8 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @bitmap_mode
-       clr  @wally_room_no
+       li   r0,1
+       mov  r0,@wally_room_no
 loop:  bl   @clear_screen
        bl   @room_draw
        bl   @wait_key
@@ -386,8 +387,113 @@ tile_draw_2:
 *
 bitmap_16_draw:
        .proc
+       li   r4,bmp_wally
+       sla  r0,5
+       a    r0,r4                      ; Source address
+       mov  @bitmap_x,r0
+       mov  @bitmap_y,r1
+       bl   @screen_address            ; Result in r6,r7
+       ori  r6,>4000                   ; Setup as write address
+       li   r15,vdpwd
+*      Setup shifts
+       mov  r7,r0                      ; Bit offset
+       jeq  !
+       mov  @opcode_srl,r8             ; Right shift by offset
+       sla  r0,4
+       soc  r0,r8
+       mov  @opcode_sla,r9             ; Left shift by (8-offset)
+       li   r0,8
+       s    r7,r0
+       sla  r0,4
+       soc  r0,r9
+       jmp  !!
+!      mov  @opcode_nop,r8             ; No shift
+!      mov  r8,r9
+*      1-8 lines of first character row
+!      mov  r6,r0
+       andi r0,7
+       li   r3,8                       ; Line counter
+       s    r0,r3
+*      First byte
+       movb @r6lb,@vdpwa               ; Setup VDP write address
+       movb r6,@vdpwa
+       mov  r4,r0                      ; Source address
+       mov  r3,r2
+bitmap_16_draw_1:
+       mov  *r0+,r1                    ; Get source word
+       x    r8                         ; Shift right
+       movb r1,*r15                    ; Send MSB to VDP
+       dec  r2
+       jne  bitmap_16_draw_1
+*      Second byte
+       ai   r6,8
+       movb @r6lb,@vdpwa               ; Setup VDP write address
+       movb r6,@vdpwa
+       mov  r4,r0                      ; Source address
+       mov  r3,r2
+bitmap_16_draw_2:
+       mov  *r0+,r1                    ; Get source word
+       x    r8                         ; Shift right
+       movb @r1lb,*r15                 ; Send LSB to VDP
+       dec  r2
+       jne  bitmap_16_draw_2
+*      Third byte
+       mov  r7,r0
+       jeq  bitmap_16_draw_4
+       ai   r6,8
+       movb @r6lb,@vdpwa               ; Setup VDP write address
+       movb r6,@vdpwa
+       mov  r4,r0                      ; Source address
+       mov  r3,r2
+bitmap_16_draw_3:
+       mov  *r0+,r1                    ; Get source word
+       x    r9                         ; Shift left
+       movb @r1lb,*r15                 ; Send LSB to VDP
+       dec  r2
+       jne  bitmap_16_draw_3
+*      8 middle lines
+bitmap_16_draw_4:
+
+*      0-7 lines of last character row
+
+
+
+
+
+
        .endproc
+opcode_srl:
+       srl  r1,0
+opcode_sla:
+       sla  r1,0
+opcode_nop:
+       nop
 *// bitmap_16_draw
+
+*********************************************************************
+*
+* Calculate screen address and bit mask from coordinates
+* Based on E/A manual page 336       
+*
+* Input:
+* r0 x value
+* r1 y value
+*
+* On return:
+* r6  Set to byte offset
+* r7  Set to bit offset
+*
+screen_address:
+       mov  r1,r6                      ; 00000000yyyyyyyy
+       sla  r6,5                       ; 000yyyyyyyy00000
+       soc  r1,r6                      ; 000yyyyy???yyyyy
+       andi r6,>ff07                   ; 000yyyyy00000yyy
+       mov  r0,r7                      ; 00000000xxxxxxxx
+       andi r7,7                       ; 0000000000000xxx
+       a    r0,r6                      ; 000yyyyyxxxxx???
+       s    r7,r6                      ; 000yyyyyxxxxxyyy
+       rt
+*// screen_address
 
 *********************************************************************************
 *
@@ -460,7 +566,7 @@ clear_screen:
        bl   @vdpwr
 *      Colors
        li   r0,colrtb
-       li   r1,>1100
+       li   r1,>a100
        li   r2,>1800
        bl   @vdpwr
        .endproc
@@ -866,7 +972,6 @@ byte_de:
        byte >de
 byte_01:
        byte >01
-       even
 
        copy "rooms.a99"
        copy "room-object-slots.a99"

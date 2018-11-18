@@ -868,12 +868,12 @@ byte_01:
        byte >01
        even
 
-       copy "bmp-milk.a99"
-       copy "bmp-objects.a99"
-       copy "bmp-tiles.a99"
-       copy "bmp-wally.a99"
-       copy "furniture.a99"
        copy "rooms.a99"
        copy "room-object-slots.a99"
+       copy "furniture.a99"
+       copy "bmp-tiles.a99"
+       copy "bmp-milk.a99"
+       copy "bmp-wally.a99"
+       copy "bmp-objects.a99"
 
        end

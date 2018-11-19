@@ -18,7 +18,22 @@ immunity:
 
 **
 * Constants
-*
+attr_40:
+       equ  >1100
+attr_41:
+       equ  >5100
+attr_42:
+       equ  >8100
+attr_43:
+       equ  >d100
+attr_44:
+       equ  >2100
+attr_45:
+       equ  >7100
+attr_46:
+       equ  >b100
+attr_47:
+       equ  >f100
 
 **
 * Memory mapped addresses
@@ -86,6 +101,7 @@ food_active_ptr:
        equ  bitmap_y+2
 pad_max:
        equ  food_active_ptr+2
+
 **
 * Macros
 *
@@ -216,11 +232,6 @@ lives_reset_1:
 *
 * Redraw inventory area
 *
-pocket_1_color:
-       equ  >2100
-pocket_2_color:
-       equ  >7100
-*
 inv_redraw:
        .proc
        bl   @screen_clear
@@ -230,13 +241,13 @@ inv_redraw:
        sla  r1,1
        mov  @object_text_ptr_table(r1),r0
        li   r1,>0014
-       li   r2,pocket_1_color
+       li   r2,attr_44
        bl   @inventory_draw_text
        mov  @pocket_2,r1
        sla  r1,1
        mov  @object_text_ptr_table(r1),r0
        li   r1,>0214
-       li   r2,pocket_2_color
+       li   r2,attr_45
        bl   @inventory_draw_text
        mov  @pocket_1,r0
        ai   r0,>50
@@ -287,7 +298,7 @@ inventory_draw_text_1:
        movb *r4,r0
        cb   r0,@byte_fa
        jne  inventory_draw_text_8
-       ci   r2,pocket_1_color
+       ci   r2,attr_44
        jne  inventory_draw_text_2
        mov  @pocket_1,r3
        jmp  inventory_draw_text_3
@@ -462,34 +473,34 @@ draw_ceiling_wall_floor:
        li   r0,tile_ceiling
        mov  r0,@tile_start_ptr
 *      Ceiling
+       li   r2,attr_43
        li   r6,>0500
        li   r8,>20
 draw_ceiling_wall_floor_1:
        clr  r0
        mov  r6,r1
-       li   r2,>d100
        bl   @tile_draw
        inc  r6
        dec  r8
        jne  draw_ceiling_wall_floor_1
 *      Floor
+       li   r2,attr_45
        li   r6,>1700
        li   r8,>20
 draw_ceiling_wall_floor_2:
        li   r0,>0100
        mov  r6,r1
-       li   r2,>7100
        bl   @tile_draw
        inc  r6
        dec  r8
        jne  draw_ceiling_wall_floor_2
 *      Left wall
+       li   r2,attr_42
        li   r6,>0600
        li   r8,>11
 draw_ceiling_wall_floor_3:
        li   r0,>0200
        mov  r6,r1
-       li   r2,>8100
        bl   @tile_draw
        ab   @byte_01,r6
        dec  r8
@@ -500,7 +511,6 @@ draw_ceiling_wall_floor_3:
 draw_ceiling_wall_floor_4:
        li   r0,>0200
        mov  r6,r1
-       li   r2,>8100
        bl   @tile_draw
        ab   @byte_01,r6
        dec  r8
@@ -521,6 +531,13 @@ draw_ceiling_wall_floor_4:
 *
 tile_draw:
        .proc
+*      Update attribute table
+       mov  r1,r3
+       sla  r3,3
+       movb r1,r3
+       srl  r3,3
+       movb r2,@attr_table(r3)
+*      Bitmap screen position
        mov  r1,r3                      ; x and y positions
        andi r3,>001f                   ; x position
        sla  r3,3                       ; x8
@@ -855,9 +872,17 @@ screen_clear_simple:
        bl   @vdpwr
 *      Colors
        li   r0,colrtb
-       li   r1,>a100
+       li   r1,attr_46
        li   r2,>1800
        bl   @vdpwr
+*      Attributes
+       li   r0,attr_table
+       li   r1,attr_46
+       li   r2,>300
+screen_clear_simple_1:
+       movb r1,*r0+
+       dec  r2
+       jne  screen_clear_simple_1
        .endproc
 *// screen_clear_simple
 
@@ -1273,5 +1298,8 @@ byte_01:
        copy "object-flags.a99"
        copy "food-table.a99"
        copy "object-found-table.a99"
+
+attr_table:
+       bss  >300
 
        end  main

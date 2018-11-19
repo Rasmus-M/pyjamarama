@@ -216,26 +216,28 @@ lives_reset_1:
 *
 * Redraw inventory area
 *
+pocket_1_color:
+       equ  >2100
+pocket_2_color:
+       equ  >7100
+*
 inv_redraw:
        .proc
        bl   @screen_clear
-       mov  @pocket_1,r1
-       sla  r1,1
-       mov  @object_text_ptr_table(r1),r4
-       mov  @pocket_2,r1
-       sla  r1,1
-       mov  @object_text_ptr_table(r1),r5
        li   r0,bmp_tiles               ; Reset the start address of the tiles back to tile zero for true ZX ASCII letters within tiles.
        mov  r0,@tile_start_ptr
-;E51D	LD E,$14
-;E51F	LD D,$00
-;E521	LD C,$44
-;E523	CALL InventoryDrawText
-;E526	POP HL
-;E527	LD E,$14
-;E529	LD D,$02
-;E52B	LD C,$45
-;E52D	CALL InventoryDrawText
+       mov  @pocket_1,r1
+       sla  r1,1
+       mov  @object_text_ptr_table(r1),r0
+       li   r1,>0014
+       li   r2,pocket_1_color
+       bl   @inventory_draw_text
+       mov  @pocket_2,r1
+       sla  r1,1
+       mov  @object_text_ptr_table(r1),r0
+       li   r1,>0214
+       li   r2,pocket_2_color
+       bl   @inventory_draw_text
        mov  @pocket_1,r0
        ai   r0,>50
        li   r1,>0088
@@ -249,6 +251,78 @@ inv_redraw:
        bl   @bitmap_16_draw
        .endproc
 *// inv_redraw
+
+********************************************************************************
+*
+* Draws the text for an object in a pocket
+*
+* Input:
+*
+* r0: Address of text string
+* r1 MSB: y position
+* r1 LSB: x position
+* r2 MSB: color
+
+inventory_draw_text:
+       .proc
+       mov  r0,r4
+inventory_draw_text_7:
+       movb *r4+,r0
+       jgt  inventory_draw_text_0
+       cb   r0,@byte_ff
+       jeq  inventory_draw_text_1
+       cb   r0,@byte_fc
+       jne  inventory_draw_text_0
+       ab   *r4+,@r1lb
+       ab   *r4+,r1
+       jmp  inventory_draw_text_7
+inventory_draw_text_0:
+       mov  r1,*r10+
+       bl   @tile_draw
+       dect r10
+       mov  *r10,r1
+       inc  r1
+       jmp  inventory_draw_text_7
+inventory_draw_text_1:
+       movb *r4,r0
+       cb   r0,@byte_fa
+       jne  inventory_draw_text_8
+       ci   r2,pocket_1_color
+       jne  inventory_draw_text_2
+       mov  @pocket_1,r3
+       jmp  inventory_draw_text_3
+inventory_draw_text_2:
+       mov  @pocket_2,r3
+inventory_draw_text_3:
+       ci   r3,>0d
+       jne  inventory_draw_text_4
+       li   r3,flag_laser_gun
+       jmp  inventory_draw_text_6
+inventory_draw_text_4:
+       ci   r3,>08
+       jne  inventory_draw_text_5
+       li   r3,flag_fuel_can
+       jmp  inventory_draw_text_6
+inventory_draw_text_5:
+       li   r3,flag_water_bucket
+inventory_draw_text_6:
+       inc  r1
+       li   r4,txt_full
+       li   r2,>a100
+       movb *r3,r5
+       jne  inventory_draw_text_7
+       li   r4,txt_empty
+       jmp  inventory_draw_text_7
+inventory_draw_text_8:
+       .endproc
+txt_full:
+       text "FULL"
+       byte >ff
+txt_empty:
+       text "EMPTY"
+       byte >ff
+       even
+*// inventory_draw_text
 
 ********************************************************************************
 *
@@ -443,7 +517,7 @@ draw_ceiling_wall_floor_4:
 * r1 MSB: y position
 * r1 LSB: x position
 * r2 MSB: color
-* Modifies r3
+* Modifies r0,r1,r3
 *
 tile_draw:
        .proc
@@ -722,7 +796,7 @@ ti_color:
        swpb r2
        movb @tipal(r2),r3
        socb r3,r1
-*      Flash
+*      Flash                           ; Invert
        andi r0,>8000
        jeq  !
        srl  r1,4
@@ -1174,6 +1248,8 @@ byte_fc:
        byte >fc
 byte_fb:
        byte >fb
+byte_fa:
+       byte >fa
 byte_f5:
        byte >f5
 byte_f4:

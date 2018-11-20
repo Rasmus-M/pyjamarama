@@ -1,0 +1,671 @@
+       even
+table_roomdata_ptr:
+       equ  $
+L82C6  data logic_room_00
+L82C8  data logic_room_01
+L82CA  data logic_room_02
+L82CC  data logic_room_03
+L82CE  data logic_room_04
+L82D0  data logic_room_05
+L82D2  data logic_room_06
+L82D4  data logic_room_07
+L82D6  data logic_room_08
+L82D8  data logic_room_09
+L82DA  data logic_room_0A
+L82DC  data logic_room_0B
+L82DE  data logic_room_0C
+L82E0  data logic_room_0D
+L82E2  data logic_room_0E
+L82E4  data logic_room_0F
+L82E6  data logic_room_10
+L82E8  data logic_room_11
+L82EA  data logic_room_12
+L82EC  data logic_room_13
+L82EE  data logic_room_14
+L82F0  data logic_room_15
+L82F2  data logic_room_16
+L82F4  data logic_room_17
+L82F6  data logic_room_18
+L82F8  data logic_room_19
+L82FA  data logic_room_1A
+L82FC  data logic_room_1B
+L82FE  data logic_room_1C
+L8300  data logic_room_1D
+
+* Room >00
+logic_room_00:
+       equ  $
+L858F  byte >01,>3A,>88                [IF] (01) position (3a, 88)
+L8592  byte >FD	                       [THEN]
+L8593  byte >01	                       Pickup (01)
+L8594  byte >FE	                       [ENDIF]
+L8595  byte >00,>08,>A0	               [IF] (00) position (08, 0a)
+L8598  byte >FD	                       [THEN]
+L8599  byte >02,>11,>E8,>98	           Enter (02) room (11) at (e8, 98)
+L859D  byte >FE	                       [ENDIF]
+L859E  byte >FF	                       [END]
+* Room >01
+logic_room_01:
+       equ  $
+L859F  byte >01,>48,>98	               [IF] (01) position (48, 98)
+L85A2  byte >FD	                       [THEN]
+L85A3  byte >01	                       Picks up (01)
+L85A4  byte >FE	                       [ENDIF]
+L85A5  byte >00,>C8,>88	               [IF] (00) position (c8,88)
+L85A8  byte >FD	                       [THEN]
+L85A9  byte >02,>02,>08,>98	           Enter (02) new room(02) at (08, 98)
+L85AD  byte >FE	                       [ENDIF]
+L85AE  byte >00,>00,>48	               [IF] (00) position (00, 48)
+L85B1  byte >FD	                       [THEN]
+L85B2  byte >02,>05,>D8,>98	           Enter (02) room (05) at (D8, 98)
+L85B6  byte >FE	                       [ENDIF]
+L85B7  byte >00,>E8,>88	               [IF] (00) position (e8, 88)
+L85BA  byte >08	                       [AND] (08) boxing glove trap is safe
+L85BB  byte >FD	                       [THEN]
+L85BC  byte >02,>03,>2E,>98	           Enter (02) room (03) at (2e, 98)
+L85C0  byte >FE	                       [ENDIF]
+L85C1  byte >FF	                       [END]
+* Room >02
+logic_room_02:
+       equ  $
+L85C2  byte >01,>98,>98	               [IF] (01) position (98, 98)
+L85C5  byte >02,>0B	                   [AND] (02) carrying object (0B) 'The box key'
+L85C7  byte >FD	                       [THEN]
+L85C8  byte >01	                       Pickup (01)
+L85C9  byte >FE	                       [ENDIF]
+L85CA  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L85CD  byte >FD	                       [THEN]
+L85CE  byte >02,>01,>C8,>98	           Enter (02) room (01) at (c8, 98)
+L85D2  byte >FE	                       [ENDIF]
+L85D3  byte >00,>E8,>88	               [IF] (00) exit (e8, 88)
+L85D6  byte >FD	                       [THEN]
+L85D7  byte >02,>04,>08,>98	           Enter (02) room (04) at (08, 98)
+L85DB  byte >FE	                       [ENDIF]
+L85DC  byte >00,>38,>88	               [IF] (00) exit (38, 88)
+L85DF  byte >FD	                       [THEN]
+L85E0  byte >02,>03,>E8,>98	           Enter (02) room (03) at (e8, 98)
+L85E4  byte >FE	                       [ENDIF]
+L85E5  byte >FF	                       [END]
+* Room >03
+logic_room_03:
+       equ  $
+L85E6  byte >01,>CC,>70	               [IF] (00) position (cc, 70)
+L85E9  byte >FD	                       [THEN]
+L85EA  byte >01	                       (01) Pick up object
+L85EB  byte >FE	                       [ENDIF]
+L85EC  byte >00,>E8,>88	               [IF] (00) position (e8, 88)
+L85EF  byte >08	                       [AND] (08) Boxing glove trap is safe
+L85F0  byte >FD	                       [THEN]
+L85F1  byte >02,>02,>38,>98	           Enter (02) room (02) at position (38, 98)
+L85F5  byte >FE	                       [ENDIF]
+L85F6  byte >00,>30,>88	               [IF] (00) position (30, 88)
+L85F9  byte >FD	                       [THEN]
+L85FA  byte >02,>01,>E8,>98	           Enter (02) room (01) at position (e8, 98)
+L85FE  byte >FE	                       [ENDIF]
+L85FF  byte >00,>08,>88	               [IF] (00) position (08,88)
+L8602  byte >FD	                       [THEN]
+L8603  byte >02,>06,>08,>98	           Enter (02) room (06) at position (08, 98)
+L8607  byte >FE	                       [ENDIF]
+L8608  byte >FF	                       [END]
+* Room >04
+logic_room_04:
+       equ  $
+L8609  byte >01,>78,>98	               [IF] (01) position (78, 98)
+L860C  byte >FD	                       [THEN]
+L860D  byte >01                        pickup (01)
+L860E  byte >FE	                       [ENDIF]
+L860F  byte >00,>78,>88	               [IF] (00) position (78, 88)
+L8612  byte >06	                       [AND] (06) Lift is OFF
+L8613  byte >FD	                       [THEN]
+L8614  byte >09	                       Turn lift on (09)
+L8615  byte >FE	                       [ENDIF]
+L8616  byte >00,>E8,>98	               [IF] (00) position (E8, 98)
+L8619  byte >FD	                       [THEN]
+L861A  byte >02,>09,>E8,>98	           Enter (02) room (09) at (E8, 98)
+L861E  byte >FE	                       [ENDIF]
+L861F  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8622  byte >02,>03	                   [AND] carrying (02) object (03) 'Door Handle'
+L8624  byte >FD	                       [THEN]
+L8625  byte >02,>02,>E8,>98	           Enter (02) room (02) at (E8, 98)
+L8629  byte >FE	                       [ENDIF]
+L862A  byte >FF	                       [END]
+* Room >05
+logic_room_05:
+       equ  $
+L862B  byte >01,>68,>98	               [IF] (01) position (68, 98)
+L862E  byte >FD	                       [THEN]
+L862F  byte >01	                       Pickup (01)
+L8630  byte >FE	                       [ENDIF]
+L8631  byte >00,>E8,>98	               [IF] (00) position (E8, 98)
+L8634  byte >FD	                       [THEN]
+L8635  byte >02,>01,>10,>48	           Enter (02) room (01) at (10, 48)
+L8639  byte >FE	                       [ENDIF]
+L863A  byte >00,>28,>88	               [IF] (00) position (28, 88)
+L863D  byte >02,>14	                   [AND] carrying (02) object (14) 'The Penny'
+L863F  byte >FD	                       [THEN]
+L8640  byte >02,>0C,>20,>98	           Enter (02) room (0c) at (20, 98)
+L8644  byte >FE	                       [ENDIF]
+L8645  byte >00,>08,>88	               [IF] (01) position (78, 98)
+L8648  byte >FD	                       [THEN]
+L8649  byte >02,>0A,>E8,>98	           Enter (02) room (0A) at (E8, 98)
+L864D  byte >FE	                       [ENDIF]
+L864E  byte >FF	                       [END]
+* Room >06
+logic_room_06:
+       equ  $
+L864F  byte >01,>78,>98	               [IF] (01) position (78, 98)
+L8652  byte >FD	                       [THEN]
+L8653  byte >01	                       Pickup (01)
+L8654  byte >FE	                       [ENDIF]
+L8655  byte >00,>28,>98	               [IF] (00) position (28, 98)
+L8658  byte >02,>10	                   [AND] carrying (02) object (10) 'Bucket'
+L865A  byte >FD	                       [THEN]
+L865B  byte >06	                       Empty (06) bucket.
+L865C  byte >FE	                       [ENDIF]
+L865D  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8660  byte >02,>10	                   [AND] carrying (02) object (10) 'Bucket'
+L8662  byte >FD	                       [THEN]
+L8663  byte >06	                       Empty (06) bucket.
+L8664  byte >FE	                       [ENDIF]
+L8665  byte >00,>E8,>98	               [IF] (00) position (E8, 98)
+L8668  byte >02,>10	                   [AND] carrying (02) object (10) 'Bucket'
+L866A  byte >FD	                       [THEN]
+L866B  byte >06	                       Empty (06) bucket.
+L866C  byte >FE	                       [ENDIF]
+L866D  byte >00,>28,>98	               [IF] (00) position (28, 98)
+L8670  byte >FD	                       [THEN]
+L8671  byte >02,>09,>08,>98	           Enter (02) room (09) at (08, 98)
+L8675  byte >FE	                       [ENDIF]
+L8676  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8679  byte >FD	                       [THEN]
+L867A  byte >02,>03,>08,>98	           Enter (02) room (03) at (08, 98)
+L867E  byte >FE	                       [ENDIF]
+L867F  byte >00,>E8,>98	               [IF] (00) position (E8, 98)
+L8682  byte >FD	                       [THEN]
+L8683  byte >02,>07,>10,>48	           Enter (02) room (07) at (10, 48)
+L8687  byte >FE	                       [ENDIF]
+L8688  byte >FF	                       [END]
+* Rocket Room
+logic_room_07:
+       equ  $
+L8689  byte >01,>60,>98	               [IF] (01) position (06, 98)
+L868C  byte >FD	                       [THEN]
+L868D  byte >01	                       pickup (01)
+L868E  byte >FE	                       [ENDIF]
+L868F  byte >00,>00,>48	               [IF] (00) position (00, 48)
+L8692  byte >FD	                       [THEN]
+L8693  byte >02,>06,>DE,>98	           Enter (02) room (06) at (DE, 98)
+L8697  byte >FE	                       ENDIF
+L8698  byte >00,>E8,>88	               [IF] (00) position (E8, 08)
+L869B  byte >08	                       [AND] (08) Boxing glove trap is safe
+L869C  byte >04	                       [AND] (04) Lift is on
+L869D  byte >FD	                       [THEN]
+L869E  byte >02,>08,>E8,>98	           Enter (02) room (08) at (E8, 98)
+L86A2  byte >0C,>02	                   Set (02) lift light number (02)
+L86A4  byte >FE	                       [ENDIF]
+L86A5  byte >00,>C2,>98	               [IF] (00) position (C2, 98)
+L86A8  byte >02,>08	                   [AND] carrying (02) object (08) 'Fuel can'
+L86AA  byte >03	                       [AND] (03) fuel can is full.
+L86AB  byte >FD	                       [THEN]
+L86AC  byte >10	                       Liftoff (10) rocket
+L86AD  byte >02,>19,>30,>88	           Enter (02) room (19) at (30, 88)
+L86B1  byte >FE	                       [ENDIF]
+L86B2  byte >FF	                       [END]
+* Room 08 : Lift
+logic_room_08:
+       equ  $
+L86B3  byte >01,>08,>80	               [IF] (00) position (08, 80)
+L86B6  byte >02,>0E	                   [AND] (02) carrying (0E) 'Hammer'
+L86B8  byte >FD	                       [THEN]
+L86B9  byte >00,>0E	                   (00) Swap object (0e) with object in slot.
+L86BB  byte >FE	                       [ENDIF]
+L86BC  byte >00,>3D,>88	               [IF] (00) position (3D, 88)
+L86BF  byte >FD	                       [THEN]
+L86C0  byte >0A,>03	                   (0A) Move lift to floor (03)
+L86C2  byte >0C,>00	                   (0C) Set lift light to (00)
+L86C4  byte >FE	                       [ENDIF]
+L86C5  byte >00,>6D,>88	               [IF] (00) position (6D, 88)
+L86C8  byte >FD	                       [THEN]
+L86C9  byte >0A,>01	                   (0A) Move lift to floor (01)
+L86CB  byte >0C,>01	                   (0C) Set lift light to (01)
+L86CD  byte >FE	                       [ENDIF]
+L86CE  byte >00,>9D,>88	               [IF] (00) position (CD, 88)
+L86D1  byte >FD	                       [ENDIF]
+L86D2  byte >0A,>00	                   (0A) Move lift to floor (00)
+L86D4  byte >0C,>02	                   (0C) Set lift light to (02)
+L86D6  byte >FE	                       [ENDIF]
+L86D7  byte >00,>CD,>88	               [IF] (00) position (CD, 88)
+L86DA  byte >FD	                       [THEN]
+L86DB  byte >0A,>02	                   (0A) Move lift to floor (02)
+L86DD  byte >0C,>03	                   (0C) Set lift light to (03)
+L86DF  byte >FE	                       [ENDIF]
+L86E0  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L86E3  byte >08	                       [AND] (08) Boxing Glove trap is safe
+L86E4  byte >05,>03	                   [AND] (05) LiftFloorNo == (03)
+L86E6  byte >FD	                       [THEN]
+L86E7  byte >0B	                       (0B) Decrease lift count by 1
+L86E8  byte >02,>16,>08,>98	           (02) Enter room (16) at (08, 98)
+L86EC  byte >FE	                       [ENDIF]
+L86ED  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L86F0  byte >05,>02	                   [AND] (05) LiftFloorNo == (02)
+L86F2  byte >FD	                       [THEN]
+L86F3  byte >0B	                       Decrease lift count (0B)
+L86F4  byte >02,>10,>08,>98	           (02) Enter room (10) at (08, 98)
+L86F8  byte >FE	                       [ENDIF]
+L86F9  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L86FC  byte >05,>01	                   [AND] (05) LiftFloorNo == (01)
+L86FE  byte >FD	                       [THEN]
+L86FF  byte >0B	                       (0B) Decrease lift count by 1
+L8700  byte >02,>0F,>08,>98	           (02) Enter room (0F) at (08, 98)
+L8704  byte >FE	                       [ENDIF]
+L8705  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L8708  byte >05,>00	                   [AND] (05) LiftFloorNo == (00)
+L870A  byte >FD	                       [ENDIF]
+L870B  byte >0B	                       (0B) Decrease liftcount by 1
+L870C  byte >02,>07,>E8,>98	           (02) Enter room (07) at (E8, 98)
+L8710  byte >FE	                       [ENDIF]
+L8711  byte >FF	                       [END]
+* Room >09
+logic_room_09:
+       equ  $
+L8712  byte >01,>C8,>28	               [IF] (01) position (C8, 28)
+L8715  byte >FD	                       [THEN]
+L8716  byte >01	                       (01) pickup
+L8717  byte >FE	                       [ENDIF]
+L8718  byte >00,>70,>98	               [IF] (00) position (86, 68)
+L871B  byte >FD	                       [THEN]
+L871C  byte >0F	                       Help Off (0F)
+L871D  byte >02,>0E,>60,>98	           Enter (02) room (0E) at (60, 98)
+L8721  byte >FE	                       [ENDIF]
+L8722  byte >FF	                       [END]
+* Room >0A
+logic_room_0A:
+       equ  $
+L8723  byte >01,>86,>68	               [IF] (01) position (86, 68)
+L8726  byte >FD	                       [THEN]
+L8727  byte >01	                       (01) Pickup
+L8728  byte >FE	                       [ENDIF]
+L8729  byte >00,>50,>88	               [IF] (00) position (50, 88)
+L872C  byte >02,>02	                   [AND] (02) carrying object (02) 'Square Key'
+L872E  byte >FD	                       [THEN]
+L872F  byte >02,>0B,>08,>98	           Enter (02) room (0B) at (08,98)
+L8733  byte >FE	                       [ENDIF]
+L8734  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L8737  byte >08	                       [AND] (08) Boxing glove trap is safe
+L8738  byte >FD	                       [THEN]
+L8739  byte >02,>05,>08,>98	           Enter (02) room (05) at (08, 98)
+L873D  byte >FE	                       [ENDIF]
+L873E  byte >00,>08	                   [IF] (00) position (08, 88)
+L8740  byte >88	                       [THEN]
+L8741  byte >FD,>02,>0D,>E8	           Enter (02) room (0D) at (E9, 98)
+L8745  byte >98	                       [ENDIF]
+L8746  byte >FE,>FF	                   [END]
+* Room >0B
+logic_room_0B:
+       equ  $
+L8748  byte >01,>48,>98	               [IF] (01) position (48, 98)
+L874B  byte >FD	                       THEN
+L874C  byte >01	                       (01) pickup
+L874D  byte >FE	                       [ENDIF]
+L874E  byte >02,>0D	                   [IF] (02) carrying (0d) 'Laser Gun'
+L8750  byte >02,>1D	                   [AND] (02) carrying (1d) 'Battery'
+L8752  byte >FD	                       [THEN]
+L8753  byte >04	                       (04) Charge Laser
+L8754  byte >FE	                       [ENDIF]
+L8755  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8758  byte >FD	                       [THEN]
+L8759  byte >02,>0A,>50,>98	           Enter (02) room (0A) at (50, 98)
+L875D  byte >FE	                       [ENDIF]
+L875E  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L8761  byte >FD	                       [THEN]
+L8762  byte >02,>0C,>20,>98	           Enter (02) room (0C) at (20, 98)
+L8766  byte >FE	                       [ENDIF]
+L8767  byte >FF	                       [END]
+* Room >0C
+logic_room_0C:
+       equ  $
+L8768  byte >01,>B0,>98	               [IF] (01) position (B0, 98)
+L876B  byte >FD	                       [THEN]
+L876C  byte >01	                       (01) pickup
+L876D  byte >FE	                       [ENDIF]
+L876E  byte >00,>20,>88	               [IF] (00) position (20, 88)
+L8771  byte >FD	                       [THEN]
+L8772  byte >02,>05,>28,>98	           Enter (02) room (05) at (28, 98)
+L8776  byte >FE	                       [ENDIF]
+L8777  byte >FF	                       [END]
+* Room >0D
+logic_room_0D:
+       equ  $
+L8778  byte >01,>C0,>78	               [IF] (01) position (C0, 78)
+L877B  byte >02,>1A	                   [AND] (02) carrying (1A) 'Ignition Keys'
+L877D  byte >FD	                       [THEN]
+L877E  byte >00,>1A	                   Swap (00) object (1A)
+L8780  byte >FE	                       [ENDIF]
+L8781  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L8784  byte >FD	                       [THEN]
+L8785  byte >02,>0A,>08,>98	           Enter (02) room (0A) at (08, 98)
+L8789  byte >FE	                       [ENDIF]
+L878A  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L878D  byte >FD	                       [THEN]
+L878E  byte >02,>0E,>E8,>98	           Enter (02) room (0E) at (E8, 98)
+L8792  byte >FE	                       [ENDIF]
+L8793  byte >00,>00,>48	               [IF] (00) position (00, 48)
+L8796  byte >FD	                       [THEN]
+L8797  byte >02,>10,>D4,>98	           Enter (02) room (10) at (D4, 98)
+L879B  byte >FE	                       [ENDIF]
+L879C  byte >FF	                       [END]
+* Room >0E
+logic_room_0E:
+       equ  $
+L879D  byte >01,>8C,>68	               [IF] (01) position (8C, 68)
+L87A0  byte >FD	                       [THEN]
+L87A1  byte >01	                       (01) Pickup
+L87A2  byte >FE	                       [ENDIF]
+L87A3  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L87A6  byte >FD	                       [THEN]
+L87A7  byte >02,>0D,>08,>98	           Enter (02) room (0D) at (08, 98)
+L87AB  byte >FE	                       [ENDIF]
+L87AC  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L87AF  byte >FD	                       [THEN]
+L87B0  byte >02,>0F,>E8,>98	           Enter (02) room (0F) at (E8, 98)
+L87B4  byte >FE	                       [ENDIF]
+L87B5  byte >FF	                       [END]
+* Room >0F
+logic_room_0F:
+       equ  $
+L87B6  byte >01,>90,>70	               [IF] (01) position (90, 70)
+L87B9  byte >02,>13	                   [AND] (02) carrying (13) 'Library Book'
+L87BB  byte >FD	                       [THEN]
+L87BC  byte >00,>13	                   Swap (00) object (13)
+L87BE  byte >FE	                       [ENDIF]
+L87BF  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L87C2  byte >08	                       [AND] (08) Boxing glove trap is safe
+L87C3  byte >FD	                       [THEN]
+L87C4  byte >02,>0E,>08,>98	           Enter (02) room (0E) at (08, 98)
+L87C8  byte >FE	                       [ENDIF]
+L87C9  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L87CC  byte >04	                       [AND] (04) list is on
+L87CD  byte >FD	                       [THEN]
+L87CE  byte >02,>08,>E8,>98	           Enter (02) room (08) at (08, E8)
+L87D2  byte >0C,>01	                   Set lift lights (0c) to floor (01)
+L87D4  byte >FE	                       [ENDIF]
+L87D5  byte >FF	                       [END]
+* Room >10
+logic_room_10:
+       equ  $
+L87D6  byte >01,>32,>80	               [IF] (01) position (32, 80)
+L87D9  byte >FD	                       [THEN]
+L87DA  byte >01	                       Pickup (01) object.
+L87DB  byte >FE	                       [ENDIF]
+L87DC  byte >00,>E8,>98	               [IF] (00) position (E8, 98)
+L87DF  byte >FD	                       [THEN]
+L87E0  byte >02,>0D,>10,>48	           Enter (02) room (0D) at (10, 48)
+L87E4  byte >FE	                       [ENDIF]
+L87E5  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L87E8  byte >04	                       [AND] (04) list if on
+L87E9  byte >FD	                       [THEN]
+L87EA  byte >02,>08,>E8,>98	           Enter (02) room (08) at (E8, 98)
+L87EE  byte >0C,>03	                   Set (0C) lift lights to (03) floor
+L87F0  byte >FE	                       [ENDIF]
+L87F1  byte >00,>68,>88	               [IF] (00) position (68, 88)
+L87F4  byte >FD	                       [THEN]
+L87F5  byte >02,>11,>E8,>98	           Enter (02) room (11) at (E8, 98)
+L87F9  byte >FE	                       [ENDIF]
+L87FA  byte >01,>C0,>88	               [IF] (01) position (C0, 88)
+L87FD  byte >FD	                       [THEN]
+L87FE  byte >12	                       Grab rope (12) and slide.
+L87FF  byte >FE	                       [ENDIF]
+L8800  byte >FF	                       [END]
+* Room >11
+logic_room_11:
+       equ  $
+L8801  byte >01,>74,>70	               [IF] (01) position (74, 70)
+L8804  byte >02,>0C	                   [AND] carrying (02) object (0C) 'Library Ticket'
+L8806  byte >FD	                       [THEN]
+L8807  byte >00,>0C	                   (00) Swap object carried (0C)
+L8809  byte >FE	                       [ENDIF]
+L880A  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L880D  byte >08	                       [AND] (08) Boxing glove trap is safe
+L880E  byte >FD	                       [THEN]
+L880F  byte >02,>10,>68,>98	           Enter (02) room (10) at (68, 98)
+L8813  byte >FE	                       [ENDIF]
+L8814  byte >00,>B1,>88	               [IF] (00) position (B1, 88)
+L8817  byte >FD	                       [THEN]
+L8818  byte >02,>12,>08,>98	           Enter (02) room (12) at (08, 98)
+L881C  byte >FE	                       [ENDIF]
+L881D  byte >FF	                       [END]
+* Room >12
+logic_room_12:
+       equ  $
+L881E  byte >01,>C0,>80	               [IF] (01) position (C0, 80)
+L8821  byte >02,>05	                   [AND] carrying (02) object (05) 'Pound Coin'
+L8823  byte >FD	                       [THEN]
+L8824  byte >00,>05	                   Swap (00) object (05)
+L8826  byte >FE	                       [ENDIF]
+L8827  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L882A  byte >FD	                       [THEN]
+L882B  byte >02,>11,>B1,>98	           Enter (02) room (11) at (B1, 98)
+L882F  byte >FE	                       [ENDIF]
+L8830  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L8833  byte >FD	                       [THEN]
+L8834  byte >02,>13,>08,>98	           Enter (02) room (13) at (08, 98)
+L8838  byte >FE	                       [ENDIF]
+L8839  byte >00,>78,>60	               [IF] (00) position (78, 60)
+L883C  byte >07	                       [AND] (07) Help is off
+L883D  byte >FD	                       [THEN]
+L883E  byte >0E	                       Switch (0E) Help on.
+L883F  byte >FE	                       [ENDIF]
+L8840  byte >FF	                       [END]
+* Room >13
+logic_room_13:
+       equ  $
+L8841  byte >01,>78,>98	               [IF] (01) position (78, 98)
+L8844  byte >FD	                       [THEN]
+L8845  byte >01	                       (01) pickup
+L8846  byte >FE	                       [ENDIF]
+L8847  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L884A  byte >FD	                       [THEN]
+L884B  byte >02,>12,>E8,>98	           Enter (02) room (12) at (e8, 98)
+L884F  byte >FE	                       [ENDIF]
+L8850  byte >00,>E8,>88	               [IF] (00) position (e8, 88)
+L8853  byte >FD	                       [THEN]
+L8854  byte >02,>14,>B9,>98	           Enter (02) room (14) at (b9, 98)
+L8858  byte >FE	                       [ENDIF]
+L8859  byte >02,>10	                   [IF] (02) carrying object (10) 'The Bucket'
+L885B  byte >01,>58,>98	               [AND] (01) position (58, 98)
+L885E  byte >FD	                       [THEN]
+L885F  byte >03	                       (03) Fill Bucket Action.
+L8860  byte >FE	                       [ENDIF]
+L8861  byte >FF	                       [END]
+* Room >14 : Bedroom with Clock.
+logic_room_14:
+       equ  $
+L8862  byte >01,>38,>98	               [IF] (01) position (38, 98)
+L8865  byte >FD	                       [THEN]
+L8866  byte >01	                       (01) pickup
+L8867  byte >FE	                       [ENDIF]
+L8868  byte >01,>8A,>98	               [IF] (01) position (8A, 98)
+L886B  byte >02,>1F	                   [AND] (02) carrying (1F) 'Clock Key'
+L886D  byte >FD	                       [THEN]
+L886E  byte >14	                       (14) Win the game!
+L886F  byte >FE	                       [ENDIF]
+L8870  byte >00,>B9,>88	               [IF] (00) position (B9, 88)
+L8873  byte >FD	                       [THEN]
+L8874  byte >02,>13,>E8,>98	           Enter (02) room (13) at (E8, 98)
+L8878  byte >FE	                       [ENDIF]
+L8879  byte >00,>E8,>88,>08,>FD,>02,>15,>08	[IF] (00) position (E8, 88)
+L8881  byte >98
+L8882  byte >FE	                       [THEN]
+L8883  byte >FF	                       Enter (02) room (15) at (08, 98)
+* Room >15
+logic_room_15:
+       equ  $
+L8884  byte >01	                       [IF] (01) position (38, 98)
+L8885  byte >60,>98	                   [END]
+L8887  byte >FD	                       [THEN]
+L8888  byte >01	                       (01) Pickup.
+L8889  byte >FE	                       [ENDIF]
+L888A  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L888D  byte >FD	                       [THEN]
+L888E  byte >02,>14,>E8,>98	           Enter (02) room (14) at (E8, 98)
+L8892  byte >FE	                       [ENDIF]
+L8893  byte >00,>D4,>88	               [IF] (00) position (D4, 88)
+L8896  byte >FD	                       [THEN]
+L8897  byte >13	                       Enter (13) Arcade Room.
+L8898  byte >FE	                       [ENDIF]
+L8899  byte >FF	                       [END]
+* Room >16
+logic_room_16:
+       equ  $
+L889A  byte >01,>DE,>98	               [IF] (01) position (DE, 98)
+L889D  byte >FD	                       [THEN]
+L889E  byte >01	                       (01) pickup
+L889F  byte >FE	                       [ENDIF]
+L88A0  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L88A3  byte >04	                       [AND] (04) lift is on
+L88A4  byte >FD	                       [THEN]
+L88A5  byte >02,>08,>E8,>98	           Enter (02) room (08) at (E8, 98)
+L88A9  byte >0C,>00	                   Set (0C) lift light to floor (00)
+L88AB  byte >FE	                       [ENDIF]
+L88AC  byte >00,>E8,>88	               [IF] (00) position (E8, 99)
+L88AF  byte >FD	                       [THEN]
+L88B0  byte >02,>17,>18,>98	           Enter (02) room (17) at (18, 98)
+L88B4  byte >FE	                       [ENDIF]
+L88B5  byte >00,>B8,>88	               [IF] (00) position (B8, 88)
+L88B8  byte >FD	                       [THEN]
+L88B9  byte >02,>1A,>08,>98	           Enter (02) room (1A) at (08, 98)
+L88BD  byte >FE	                       [ENDIF]
+L88BE  byte >FF	                       [END]
+* Room >17
+logic_room_17:
+       equ  $
+L88BF  byte >01,>78,>68	               [IF] (01) position (78, 68)
+L88C2  byte >FD	                       [THEN]
+L88C3  byte >01	                       pickup (01)
+L88C4  byte >FE	                       [ENDIF]
+L88C5  byte >00,>18,>88	               [IF] (00) position (18, 88)
+L88C8  byte >FD	                       [THEN]
+L88C9  byte >02,>16,>E8,>98	           Enter (02) room (16) at (e8, 98)
+L88CD  byte >FE	                       [ENDIF]
+L88CE  byte >00,>B4,>40	               [IF] (00) position (B4, 40)
+L88D1  byte >FD	                       [THEN]
+L88D2  byte >02,>18,>30,>68	           Enter (02) room (18) at (30, 68)
+L88D6  byte >FE	                       [ENDIF]
+L88D7  byte >FF	                       [END]
+* Room >18
+logic_room_18:
+       equ  $
+L88D8  byte >01,>64,>68	               [IF] (01) position (64, 68)
+L88DB  byte >02,>18	                   [AND] carrying (02) object (18) 'Drivers License'
+L88DD  byte >FD,>00,>18	                       [THEN] swap (00) object (18)
+L88E0  byte >FE	                       [ENDIF]
+L88E1  byte >00,>10,>68	               [IF] (00) position (10, 68)
+L88E4  byte >FD	                       [THEN]
+L88E5  byte >02,>17,>98,>50	           Enter (02) room (17) at (98, 50)
+L88E9  byte >FE	                       [ENDIF]
+L88EA  byte >00,>E1,>60	               [IF] (00) position (E1, 60)
+L88ED  byte >FD	                       [THEN]
+L88EE  byte >02,>1C,>80,>28	           Enter (02) room (1C) at (80, 28)
+L88F2  byte >FE	                       [ENDIF]
+L88F3  byte >FF	                       [END]
+* Room >19
+logic_room_19:
+       equ  $
+L88F4  byte >01,>46,>88	               [IF] (01) positon (46, 88)
+L88F7  byte >FD	                       [THEN]
+L88F8  byte >01	                       Pickup (01)
+L88F9  byte >FE	                       [ENDIF]
+L88FA  byte >00,>E8,>78	               [IF] (01) position (E8, 78)
+L88FD  byte >FD	                       [THEN]
+L88FE  byte >02,>1D,>10,>98	           Enter (02) room (1D) at (10, 98)
+L8902  byte >FE	                       [ENDIF]
+L8903  byte >00,>12,>88	               [IF] (00) position (12, 88)
+L8906  byte >02,>08	                   [AND] Carrying (02) object (08) 'Fuel Can'
+L8908  byte >02,>0D	                   [AND] Carrying (02) object (0D) 'Laser Gun'
+L890A  byte >FD	                       [THEN]
+L890B  byte >05	                       Empty (05) laser gun.
+L890C  byte >FE	                       [ENDIF]
+L890D  byte >00,>12,>88	               [IF] (00) position (12, 88)
+L8910  byte >02,>08	                   [AND] Carrying (02) object (08) 'Fuel Can'
+L8912  byte >FD	                       [THEN]
+L8913  byte >11                        Lift off (11) in rocket back to home.
+L8914  byte >08	                       Empty (08) fuel can.
+L8915  byte >02,>07,>B0,>98	           Enter (02) room (07) at (B0, 98)
+L8919  byte >FE	                       [ENDIF]
+L891A  byte >FF	                       [END]
+* Room >1A
+logic_room_1A:
+       equ  $
+L891B  byte >01,>68,>70	               [IF] (01) position (68, 70)
+L891E  byte >FD	                       [THEN]
+L891F  byte >01	                       Pickup (01)
+L8920  byte >FE	                       [ENDIF]
+L8921  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8924  byte >FD	                       [THEN]
+L8925  byte >02,>16,>B8,>98	           Enter (02) room (16) at (B8, 98)
+L8929  byte >FE	                       [ENDIF]
+L892A  byte >00,>E8,>88	               [IF] (00) position (E8, 88)
+L892D  byte >02,>09	                   [AND] Carrying (02) object (09) 'Triangle Key'
+L892F  byte >FD	                       [THEN]
+L8930  byte >02,>1B,>08,>98	           Enter (02) room (1b) at (08, 98)
+L8934  byte >FE	                       [ENDIF]
+L8935  byte >02,>08	                   [IF] Carrying (02) object (08) 'Fuel Can'
+L8937  byte >01,>36,>98	               [AND] (01) position (36, 98)
+L893A  byte >FD	                       [THEN]
+L893B  byte >07	                       Fill (07) fuel can.
+L893C  byte >FE	                       [ENDIF]
+L893D  byte >FF	                       [END]
+* Room >1B
+logic_room_1B:
+       equ  $
+L893E  byte >01,>B0,>70	               [IF] (01) position (B0, 70)
+L8941  byte >FD	                       [THEN]
+L8942  byte >01	                       Pickup (01)
+L8943  byte >FE	                       [ENDIF]
+L8944  byte >02,>0D	                   [IF] Carrying (02) object (0D) 'Laser Gun'
+L8946  byte >02,>1D	                   [AND] Carrying (02) object (1D) 'Battery'
+L8948  byte >FD	                       [THEN]
+L8949  byte >04	                       Charge (04) laser gun.
+L894A  byte >FE	                       [ENDIF]
+L894B  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L894E  byte >FD	                       [THEN]
+L894F  byte >02,>1A,>E8,>98	           Enter (02) room (1A) at (E8, 98)
+L8953  byte >FE	                       [ENDIF]
+L8954  byte >00,>98,>98	               [IF] (00) position (09, 98)
+L8957  byte >FD	                       [THEN]
+L8958  byte >02,>04,>32,>98	           Enter (02) room (04) at (32, 98)
+L895C  byte >FE	                       [ENDIF]
+L895D  byte >FF	                       [END]
+* Room >1C
+logic_room_1C:
+       equ  $
+L895E  byte >01,>32,>88	               [IF] (01) position (32, 88)
+L8961  byte >FD	                       [THEN]
+L8962  byte >01	                       Pickup (01)
+L8963  byte >FE	                       [ENDIF]
+L8964  byte >00,>E8,>A0	               [IF] (00) position (E8, A0)
+L8967  byte >FD	                       [THEN]
+L8968  byte >02,>00,>F0,>28	           Enter (02) room (00) at (F0, 28)
+L896C  byte >FE	                       [ENDIF]
+L896D  byte >00,>00,>88	               [IF] (00) position (88, FD)
+L8970  byte >FD	                       [THEN]
+L8971  byte >02,>15,>D0,>98	           Enter (02) room (15) at (D0, 98)
+L8975  byte >FE	                       [ENDIF]
+L8976  byte >FF	                       [END]
+* Room >1D
+logic_room_1D:
+       equ  $
+L8977  byte >01,>A8,>60	               [IF] (01) position (A8, 60)
+L897A  byte >FD	                       [THEN]
+L897B  byte >01	                       Pickup object.
+L897C  byte >FE	                       [ENDIF]
+L897D  byte >00,>08,>88	               [IF] (00) position (08, 88)
+L8980  byte >FD	                       [THEN]
+L8981  byte >02,>19,>E8,>88	           Exit (02) to room (19) at (E8, 88)
+L8985  byte >FE	                       [ENDIF]
+L8986  byte >00,>40,>88	               [IF] (00) position (40, 88)
+L8989  byte >02,>04	                   [AND] pockets hold object (04) Magnet
+L898B  byte >FD	                       [THEN]
+L898C  byte >0D	                       Unlock magnetic lock.
+L898D  byte >FE	                       [ENDIF]
+L898E  byte >FF	                       [END]

@@ -1,0 +1,368 @@
+room_update_vectors:
+       equ  $
+LE62B  data update_room_00  
+LE62D  data update_room_01  
+LE62F  data update_room_02  
+LE631  data update_room_03  
+LE633  data update_room_04  
+LE635  data update_room_05  
+LE637  data update_room_06  
+LE639  data update_room_07  
+LE63B  data update_room_08  
+LE63D  data update_room_09  
+LE63F  data update_room_0A  
+LE641  data update_room_0B  
+LE643  data update_room_0C  
+LE645  data update_room_0D  
+LE647  data update_room_0E  
+LE649  data update_room_0F  
+LE64B  data update_room_10  
+LE64D  data update_room_11  
+LE64F  data update_room_12  
+LE651  data update_room_13  
+LE653  data update_room_14  
+LE655  data update_room_15  
+LE657  data update_room_16  
+LE659  data update_room_17  
+LE65B  data update_room_18  
+LE65D  data update_room_19  
+LE65F  data update_room_1a  
+LE661  data update_room_1b  
+LE663  data update_room_1c  
+LE665  data update_room_1d  
+LE667  data update_room_1e  
+LE669  data update_room_1e  
+LE66B  data update_room_1e  
+LE66D  data update_room_1e  
+LE66F  data update_room_1e  
+LE671  data update_room_1e  
+LE673  data update_room_1e  
+LE675  data update_room_1e
+
+update_room_00:
+       .proc
+LE677	bl @Update_RollRock	
+LE67A	.endproc	
+
+update_room_01:
+       .proc
+LE67B	bl @Update_RollBall
+LE67E	.endproc	
+
+update_room_02:
+       .proc
+LE67F	bl @Handler_Angels
+LE682	bl @Handler_Food	
+LE685	bl @Handler_SpookyHand	
+LE688	.endproc	
+
+update_room_03:
+       .proc
+LE689	bl @Handler_Chickens
+LE68C	.endproc	
+
+update_room_04:
+       .proc
+LE68D	bl @Handler_Darts
+LE690	.endproc	
+
+update_room_05:
+       .proc
+LE691	bl @Handler_BouncingAxe
+LE694	.endproc	
+
+update_room_06:
+       .proc
+LE695	bl @Handler_SavagePlant
+LE698	.endproc	
+
+update_room_07:
+       .proc
+LE699	bl @Update_RollBall
+LE69C	.endproc	
+
+update_room_08:
+       .proc
+LE69D	bl @Handler_Darts
+LE6A0	.endproc	
+
+update_room_09:
+       .proc
+LE6A1	bl @Handler_Food
+LE6A4	bl @Handler_BalloonHelp	
+LE6A7	bl @Handler_SpookyHand	
+LE6AA	.endproc	
+
+update_room_0A:
+       .proc
+LE6AB	bl @Handler_BouncingAxe
+LE6AE	.endproc	
+
+update_room_0B:
+       .proc
+LE6AF	bl @Handler_Angels
+LE6B2	.endproc	
+
+update_room_0C:
+       .proc
+LE6B3	bl @Handler_Angels
+LE6B6	bl @Handler_SpookyHand	
+LE6B9	.endproc	
+
+update_room_0D:
+       .proc
+LE6BA	bl @Handler_SpookyHand
+LE6BD	.endproc	
+
+update_room_0E:
+       .proc
+LE6BE	bl @Handler_Angels
+LE6C1	.endproc	
+
+update_room_0F:
+       .proc
+LE6C2	bl @Handler_Food
+LE6C5	bl @Handler_Books	
+LE6C8	.endproc	
+
+update_room_10:
+       .proc
+LE6C9	bl @Handler_MovingFloor
+LE6CC	bl @Animate_MovingFloor	
+LE6CF	bl @Handler_SpookyHand	
+LE6D2	.endproc	
+
+update_room_11:
+       .proc
+LE6D3	bl @Handler_Food
+LE6D6	bl @Handler_Angels	
+LE6D9	.endproc	
+
+update_room_12:
+       .proc
+LE6DA	bl @Handler_BouncingAxe
+LE6DD	.endproc	
+
+update_room_13:
+       .proc
+LE6DE	bl @Handler_Darts
+LE6E1	.endproc	
+
+update_room_14:
+       .proc
+LE6E2	bl @Handler_SpookyHand
+LE6E5	.endproc	
+
+update_room_15:
+       .proc
+LE6E6	bl @Handler_Food
+LE6E9	bl @Handler_BouncingAxe	
+LE6EC	.endproc	
+
+update_room_16:
+       .proc
+LE6ED	bl @Handler_Ghosts
+LE6F0	.endproc	
+
+update_room_17:
+       .proc
+LE6F1	bl @Handler_Ghosts
+LE6F4	bl @Handler_Food	
+LE6F7	.endproc	
+
+update_room_18:
+       .proc
+LE6F8	bl @Handler_SpookyHand
+LE6FB	.endproc	
+
+update_room_19:
+       .proc
+LE6FC	bl @Handler_Invaders
+LE6FF	bl @Pause_Short	
+LE702	bl @Pause_Short	
+LE705	.endproc	
+
+update_room_1a:
+       .proc
+LE706	bl @Handler_Food
+LE709	bl @Handler_ThreeTon	
+LE70C	.endproc	
+
+update_room_1b:
+       .proc
+LE70D	bl @Handler_ThreeTon
+LE710	bl @Handler_SpookyHand	
+LE713	.endproc	
+
+update_room_1c:
+       .proc
+LE714	bl @Handler_FallingBlocks
+LE717	bl @Handler_Fire	
+LE71A	.endproc	
+
+update_room_1d:
+       .proc
+LE71B	bl @Handler_BouncingAxe
+LE71E	bl @Handler_MagLock	
+LE721	bl @Handler_MagLock	
+LE724	bl @Handler_MagLock	
+LE727	bl @Handler_MagLock	
+LE72A	bl @Handler_MagLock	
+LE72D	.endproc	
+
+update_room_1e:
+       .proc
+LE72E	bl @Inv_Update
+LE731	bl @Inv_Update	
+LE734	bl @Inv_Update	
+LE737	bl @Inv_Update	
+LE73A	bl @Inv_Update	
+LE73D	bl @Inv_Update	
+LE740	bl @Arcade_UpdateExplosions	
+LE743	bl @Inv_BulletUpdate	
+LE746	bl @Arcade_UpdateBombs	
+LE749	.endproc	
+
+*********************************************************************
+*
+Update_RollRock:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Update_RollBall:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Angels:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Food:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_SpookyHand:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Chickens:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Darts:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_BouncingAxe:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_SavagePlant:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_BalloonHelp:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Books:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_MovingFloor:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Animate_MovingFloor:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Ghosts:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Invaders:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Pause_Short:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_ThreeTon:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_FallingBlocks:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_Fire:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Handler_MagLock:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Inv_Update:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Arcade_UpdateExplosions:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Inv_BulletUpdate:
+       .proc
+       .endproc
+
+*********************************************************************
+*
+Arcade_UpdateBombs:
+       .proc
+       .endproc

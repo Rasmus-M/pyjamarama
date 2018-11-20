@@ -18,6 +18,7 @@ immunity:
 
 **
 * Constants
+*
 attr_40:
        equ  >1100
 attr_41:
@@ -34,6 +35,10 @@ attr_46:
        equ  >b100
 attr_47:
        equ  >f100
+sprite_pattern_map_size:
+       equ  200
+sprite_bitmap_map_size:
+       equ  64
 
 **
 * Memory mapped addresses
@@ -84,9 +89,9 @@ wally_lives:
 wally_x:
        equ  wally_lives+2
 wally_y:
-       equ  wally_x+2
+       equ  wally_x+1
 pocket_1:
-       equ  wally_y+2
+       equ  wally_y+1
 pocket_2:
        equ  pocket_1+2
 tile_flip_vertical:
@@ -115,7 +120,7 @@ pad_max:
        b    *r11
        .endm
 
-********************************************************************************
+*********************************************************************
 *
 * Main program
 *
@@ -124,14 +129,7 @@ main:
        limi 0                          ; Interrupts off
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
-       li   r15,vdpwd                  ; Do not change
-       li   r0,padvar
-       li   r2,pad_max-padvar
-init_pad:
-       clr  *r0+
-       dect r2
-       jne  init_pad
-       bl   @bitmap_mode
+       bl   @one_time_init
        li   r0,1
        mov  r0,@wally_room_no
 loop:  bl   @game_start
@@ -144,27 +142,56 @@ loop:  bl   @game_start
 !      mov  r0,@wally_room_no
        jmp  loop
 
-********************************************************************************
+*********************************************************************
+*
+* One time initializations
+*
+one_time_init:
+       .proc
+       li   r15,vdpwd                  ; Do not change
+*      Graphics mode
+       bl   @bitmap_mode
+*      Scratch pad variable
+       li   r0,padvar
+       li   r2,pad_max-padvar
+one_time_init_1:
+       clr  *r0+
+       dect r2
+       jne  one_time_init_1
+*      Sprite pattern map
+       li   r0,sprite_pattern_map
+       li   r2,sprite_pattern_map_size+sprite_bitmap_map_size
+one_time_init_2:
+       seto *r0+
+       dect r2
+       jne  one_time_init_2
+       .endproc
+*// one_time_init
+
+*********************************************************************
 *
 * Start a new game
 *
 game_start:
        .proc
-       bl   @screen_clear_simple
+       bl   @screen_clear
        bl   @game_init_stats
        bl   @room_draw
        li   r0,>0001
        li   r1,scoreboard_item
        bl   @furniture_draw
-       bl   @inv_redraw
+       bl   @inventory_redraw
        bl   @lives_reset
        bl   @milk_draw_full
+       li   r0,>5898
+       mov  r0,@wally_x
+       bl   @wally_draw
        .endproc
 *// game_start
 
-********************************************************************************
+*********************************************************************
 *
-* Start a new game
+* Initialize game data
 *
 game_init_stats:
        .proc
@@ -209,7 +236,7 @@ game_init_stats_3:
        .endproc
 *// game_init_stats
 
-********************************************************************************
+*********************************************************************
 *
 * Reset lives
 *
@@ -228,14 +255,14 @@ lives_reset_1:
        .endproc
 *// lives_reset
 
-********************************************************************************
+*********************************************************************
 *
 * Redraw inventory area
 *
-inv_redraw:
+inventory_redraw:
        .proc
-       bl   @screen_clear
-       li   r0,bmp_tiles               ; Reset the start address of the tiles back to tile zero for true ZX ASCII letters within tiles.
+       bl   @inventory_clear
+       li   r0,bmp_tiles               ; Reset the start address of the tiles back to tile zero
        mov  r0,@tile_start_ptr
        mov  @pocket_1,r1
        sla  r1,1
@@ -261,9 +288,30 @@ inv_redraw:
        mov  r1,@bitmap_y
        bl   @bitmap_16_draw
        .endproc
-*// inv_redraw
+*// inventory_redraw
 
-********************************************************************************
+*********************************************************************
+*
+* Clear inventory area
+*
+inventory_clear:
+       .proc
+       li   r0,17*8
+       li   r2,4
+inventory_clear_1:
+       bl   @vwad
+       li   r3,15*8
+inventory_clear_2:
+       clr  *r15
+       dec  r3
+       jne  inventory_clear_2
+       ai   r0,256
+       dec  r2
+       jne  inventory_clear_1
+       .endproc
+*// inventory_clear
+
+*********************************************************************
 *
 * Draws the text for an object in a pocket
 *
@@ -273,7 +321,7 @@ inv_redraw:
 * r1 MSB: y position
 * r1 LSB: x position
 * r2 MSB: color
-
+*
 inventory_draw_text:
        .proc
        mov  r0,r4
@@ -335,7 +383,65 @@ txt_empty:
        even
 *// inventory_draw_text
 
-********************************************************************************
+*********************************************************************
+*
+* Draw Wally
+*
+wally_draw:
+       .proc
+       clr  r0
+       movb @wally_frame,r0
+       bl   @get_sprite_pattern
+       mov  r1,r4
+       clr  r0
+       movb @wally_frame,r0
+       ai   r0,1
+       bl   @get_sprite_pattern
+       mov  r1,r5
+
+       li   r0,spratb
+       bl   @vwad
+
+       movb @wally_y,*r15
+       movb @wally_x,*r15
+       movb r4,*r15
+       li   r1,>0f00
+       movb r1,*r15
+
+       movb @wally_y,r0
+       ai   r0,>1000
+       movb r0,*r15
+       movb @wally_x,*r15
+       movb r5,*r15
+       li   r1,>0f00
+       movb r1,*r15
+
+       li   r1,>d000
+       movb r1,*r15
+
+;LD HL,(Wally_X)
+;AF06	LD (BitmapX),HL
+;AF09	LD A,($F188)
+;AF0C	OR A
+;AF0D	JR Z,Wally_Draw_1
+;AF0F	LD A,(Wally_Frame)
+;AF12	LD C,A
+;AF13	CP $10
+;AF15	JR NC,Wally_Draw_0
+;AF17	ADD A,$3E
+;AF19	JR Wally_Draw_2
+;Wally_Draw_0	AF1B	ADD A,$2F
+;AF1D	JR Wally_Draw_2
+;Wally_Draw_1	AF1F	LD A,(Wally_Frame)
+;AF22	LD C,A
+;Wally_Draw_2	AF23	CALL Bitmap16Draw
+;AF26	LD A,H
+;AF27	ADD A,$10
+;AF29	LD (BitmapY),
+       .endproc
+*// wally_draw
+
+*********************************************************************
 *
 * Room draw
 *
@@ -398,7 +504,7 @@ room_draw_5:
        .endproc
 *// room_draw
 
-*********************************************************************************
+*********************************************************************
 *
 * Draw furniture
 *
@@ -464,7 +570,7 @@ furniture_draw_5:
        .endproc
 *// furniture_draw
 
-*********************************************************************************
+*********************************************************************
 *
 * Draw ceiling, wall and floor
 *
@@ -518,7 +624,55 @@ draw_ceiling_wall_floor_4:
        .endproc
 *// draw_ceiling_wall_floor
 
-*********************************************************************************
+*********************************************************************
+*
+* Draw full milk glass
+*
+milk_draw_full:
+       .proc
+       li   r0,13*8                    ; Destination
+       li   r1,bmp_milk_full
+       li   r2,4                       ; 4 rows
+milk_draw_full_1:
+       bl   @vwad
+       li   r3,3                       ; 3 columns
+milk_draw_full_2:
+       li   r4,8                       ; 8 lines
+milk_draw_full_3:
+       movb *r1+,*r15
+       inct r1
+       dec  r4
+       jne  milk_draw_full_3
+       ai   r1,-23
+       dec  r3
+       jne  milk_draw_full_2
+       ai   r0,256
+       ai   r1,21
+       dec  r2
+       jne  milk_draw_full_1
+       .endproc
+*// milk_draw_full
+
+*********************************************************************
+*
+* Draw life
+*
+* Input:
+* r0: life number 0-
+*
+life_draw_blit:
+       .proc
+       dec  r0
+       sla  r0,4                       ; x16
+       mov  r0,@bitmap_x
+       li   r0,16
+       mov  r0,@bitmap_y
+       li   r0,>4c                     ; Index for Life Bitmap
+       bl   @bitmap_16_draw
+       .endproc
+*// life_draw_blit
+
+*********************************************************************
 *
 * Draw tile
 *
@@ -603,36 +757,7 @@ tile_draw_2:
        .endproc
 *// tile_draw
 
-*********************************************************************************
-*
-* Draw full milk glass
-*
-milk_draw_full:
-       .proc
-       li   r0,13*8                    ; Destination
-       li   r1,bmp_milk_full
-       li   r2,4                       ; 4 rows
-milk_draw_full_1:
-       bl   @vwad
-       li   r3,3                       ; 3 columns
-milk_draw_full_2:
-       li   r4,8                       ; 8 lines
-milk_draw_full_3:
-       movb *r1+,*r15
-       inct r1
-       dec  r4
-       jne  milk_draw_full_3
-       ai   r1,-23
-       dec  r3
-       jne  milk_draw_full_2
-       ai   r0,256
-       ai   r1,21
-       dec  r2
-       jne  milk_draw_full_1
-       .endproc
-*// milk_draw_full
-
-*********************************************************************************
+*********************************************************************
 *
 * Draw 16x16 bitmap
 *
@@ -736,24 +861,59 @@ opcode_nop:
        nop
 *// bitmap_16_draw
 
-********************************************************************************
+*********************************************************************
 *
-* Draw life
+* Get sprite pattern no corresponding to the given bitmap no.
+* Upload sprite pattern if not already present.
 *
 * Input:
-* r0: life number 0-
+* r0: Index of bitmap
 *
-life_draw_blit:
+* On return r1 MSB contains the pattern no, or >ff if no room.
+*
+get_sprite_pattern:
        .proc
-       dec  r0
-       sla  r0,4                       ; x16
-       mov  r0,@bitmap_x
-       li   r0,16
-       mov  r0,@bitmap_y
-       li   r0,>4c                     ; Index for Life Bitmap
-       bl   @bitmap_16_draw
+       mov  r0,r3
+       movb @sprite_pattern_map(r3),r1
+       cb   r1,@byte_ff
+       jne  get_sprite_pattern_5
+       li   r0,sprite_bitmap_map
+       li   r2,sprite_bitmap_map_size
+get_sprite_pattern_1:
+       cb   *r0+,r1
+       jeq  get_sprite_pattern_2
+       dec  r2
+       jne  get_sprite_pattern_1
+       jmp  get_sprite_pattern_5
+get_sprite_pattern_2:
+       dec  r0                         ; Backtrack
+       movb  @r3lb,*r0                 ; Update sprite_bitmap_map
+       ai   r0,-sprite_bitmap_map      ; To index
+       movb @r0lb,r1
+       sla  r1,2                       ; Return value
+       movb r1,@sprite_pattern_map(r3) ; Update sprite_pattern_map
+       sla  r0,5                       ; x32
+       ai   r0,sprptb
+       bl   @vwad
+       sla  r3,5
+       ai   r3,bmp_wally               ; Source
+*      Upload column 1
+       li   r2,16
+get_sprite_pattern_3:
+       mov  *r3+,*r15
+       dec  r2
+       jne get_sprite_pattern_3
+*      Upload column 2
+       ai   r3,-31
+       li   r2,16
+get_sprite_pattern_4:
+       movb *r3,*r15
+       inct r3
+       dec  r2
+       jne get_sprite_pattern_4
+get_sprite_pattern_5:
        .endproc
-*// life_draw_blit
+*// get_sprite_pattern
 
 *********************************************************************
 *
@@ -780,7 +940,7 @@ screen_address:
        rt
 *// screen_address
 
-*********************************************************************************
+*********************************************************************
 *
 * Get TI-99 color from ZX Spectrum color
 *
@@ -838,32 +998,11 @@ tipal  byte 1,4,6,13,12,7,10,14,1,5,8,13,2,7,11,15
 * Not available: D Cyan, D Magenta
 *// ti_color
 
-*********************************************************************************
-*
-* Clear inventory area
-*
-screen_clear:
-       .proc
-       li   r0,17*8
-       li   r2,4
-screen_clear_1:
-       bl   @vwad
-       li   r3,15*8
-screen_clear_2:
-       clr  *r15
-       dec  r3
-       jne  screen_clear_2
-       ai   r0,256
-       dec  r2
-       jne  screen_clear_1
-       .endproc
-*// screen_clear
-
-*********************************************************************************
+*********************************************************************
 *
 * Clear whole screen
 *
-screen_clear_simple:
+screen_clear:
        .proc
 *      Patterns
        li   r0,ptrntb
@@ -879,14 +1018,14 @@ screen_clear_simple:
        li   r0,attr_table
        li   r1,attr_46
        li   r2,>300
-screen_clear_simple_1:
+screen_clear_1:
        movb r1,*r0+
        dec  r2
-       jne  screen_clear_simple_1
+       jne  screen_clear_1
        .endproc
-*// screen_clear_simple
+*// screen_clear
 
-*********************************************************************************
+*********************************************************************
 *
 * Set full bitmap mode
 *
@@ -997,7 +1136,7 @@ vsbw:
        b    *r11
 *// vsbw
 
-***************************************************************************
+*********************************************************************
 *
 * VDP Multiple Byte Read
 *
@@ -1102,7 +1241,7 @@ vdpwr3:
        rt
 *// vdpwr
 
-***************************************************************************
+*********************************************************************
 *
 * Wait for key press
 *
@@ -1120,7 +1259,7 @@ wait_key_2:
        .endproc
 *// wait_key
 
-***************************************************************************
+*********************************************************************
 *
 * Check quit
 *
@@ -1139,7 +1278,7 @@ quit   clr  @>83c4                     ; Reset user ISR address
        blwp @>0000
 *// check_quit
 
-***************************************************************************
+*********************************************************************
 *
 * Check key
 *
@@ -1301,5 +1440,14 @@ byte_01:
 
 attr_table:
        bss  >300
+
+sprite_pattern_map:
+* One entry for each bitmap.
+* Value is the VDP pattern no, or >ff if pattern not uploaded.
+       bss  sprite_pattern_map_size
+sprite_bitmap_map:
+* One entry for each of the 64 VDP pattern slots.
+* Value is the bitmap no, or >ff if unoccupied.
+       bss  sprite_bitmap_map_size
 
        end  main

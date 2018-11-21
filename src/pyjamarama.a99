@@ -102,16 +102,26 @@ wally_room_no:
        equ  start_room_no+2
 wally_lives:
        equ  wally_room_no+2
-wally_x:
-       equ  wally_lives+2
 wally_y:
-       equ  wally_x+1
-wally_sprite_1:
+       equ  wally_lives+2
+wally_x:
        equ  wally_y+1
+wally_attr:
+       equ  wally_x+1
+wally_attr_alt:
+       equ  wally_attr+1
+wally_sprite_1:
+       equ  wally_attr_alt+1
 wally_sprite_2:
        equ  wally_sprite_1+2
-pocket_1:
+wally_shift_value:
        equ  wally_sprite_2+2
+wally_char_aligned:
+       equ  wally_shift_value+2
+input_flag:
+       equ  wally_char_aligned+2
+pocket_1:
+       equ  input_flag+2
 pocket_2:
        equ  pocket_1+2
 tile_flip_vertical:
@@ -179,6 +189,7 @@ one_time_init_1:
        jne  one_time_init_1
        li   r0,start_room
        mov  r0,@start_room_no
+       seto @input_flag
        .endproc
 *// one_time_init
 
@@ -199,8 +210,8 @@ game_start:
        bl   @inventory_redraw
        bl   @lives_reset
        bl   @milk_draw_full
-       li   r0,>5898
-       mov  r0,@wally_x
+       li   r0,>9858
+       mov  r0,@wally_y
        bl   @wally_draw
 game_loop:
        bl   @vsync
@@ -209,7 +220,7 @@ game_loop:
        bl   @room_event_handler
        bl   @upload_sprites
        bl   @check_quit
-       li   r0,KEY_SP
+       li   r0,KEY_SH
        bl   @check_key
        jeq  game_loop
 game_end:
@@ -235,6 +246,95 @@ vsync_1:
 *
 wally_handler:
        .proc
+       mov  @wally_y,r0                ; Get current position, shift to 1 cell across and 4 rows down. Under the feet of Wally.
+       ab   @byte_08,@r0lb
+       ab   @byte_20,r0
+       bl   @get_attribute             ; Get the background colour at that point and store.
+       movb r0,@wally_attr
+       abs  @wally_char_aligned        ; See if Wally is aligned with the character cell row at current position.
+       jne  wally_handler_0
+       ai   r1,-32                     ; One row up
+       movb *r1,@wally_attr_alt
+       jmp  wally_handler_1
+wally_handler_0:
+       movb r0,@wally_attr_alt         ; Store this for both flags.
+*      Check Wally's state
+wally_handler_1:
+       movb @is_arcade_mode,r0         ; See if game is in Arcade mode, which means no jumping or falling.
+       jne  wally_handler_2
+       movb @wally_jump_dir,r0         ; See if Wally is currently in a jump.
+       jne  wally_jump_handler_entry
+wally_handler_2:
+       movb @wally_falling,r0	       ; See if Wally is falling.
+       jne  wally_check_fall
+       movb @wally_attr,r0             ; See if Wally is not on a platform and needs to start falling.
+       cb   r0,@attr_45                ; Cyan
+       jeq  wally_handler_3
+       cb   r0,@attr_42                ; Red
+       jeq  wally_handler_3
+       movb @byte_01,@wally_falling
+       jmp  wally_check_fall
+*      Check user's input
+wally_handler_3:
+*      Jump
+       abs @input_flag
+       jeq  wally_handler_4
+*      Joystick
+       li   r0,JOY_FI
+       bl   @check_key
+       jne  wally_jump
+       jmp  wally_handler_5
+wally_handler_4:
+*      Keyboard
+       li   r0,KEY_SP
+       bl   @check_key
+       jne  wally_jump
+wally_handler_5:
+       movb @byte_00,@wally_dir
+       abs  @input_flag
+       jeq  wally_handler_6
+       li   r0,JOY_RT
+       bl   @check_key
+       jne  wally_handler_7
+       jmp  wally_handler_8
+Wally_Handler_6:
+       li   r0,KEY_D
+       bl   @check_key
+       jeq  wally_handler_8
+Wally_Handler_7:
+       li   r0,>0100
+       movb r0,@wally_dir
+       movb r0,@wally_last_dir
+       b    @wally_move
+Wally_Handler_8:
+       abs  @input_flag
+       jeq  wally_handler_9
+       li   r0,JOY_LT
+       bl   @check_key
+       jne  wally_handler_10
+       jmp  wally_handler_end
+Wally_Handler_9:
+       li   r0,KEY_S
+       bl   @check_key
+       jeq  wally_handler_end
+Wally_Handler_10:
+       li   r0,->0100
+       movb r0,@wally_dir
+       movb r0,@wally_last_dir
+       b    @wally_move
+
+wally_check_fall:
+       nop
+
+wally_jump:
+       nop
+wally_jump_handler_entry:
+       nop
+
+wally_move:
+       nop
+
+wally_handler_end:
        .endproc
 *// wally_handler
 
@@ -479,6 +579,15 @@ wally_draw:
        inc  r0
        bl   @get_sprite_pattern
        movb r1,*r4+
+*      Update background color map
+       mov  @wally_y,r0                ; Get y and x
+       andi r0,7
+       mov  r0,@wally_shift_value      ; x shift
+       mov  @wally_y,r1
+       swpb r1
+       andi r1,7
+       mov  r1,@wally_char_aligned     ; y shift
+*      TODO: copy attributes behind Wally to map?
        .endproc
 *// wally_draw
 
@@ -1089,6 +1198,29 @@ screen_address:
 
 *********************************************************************
 *
+* Get color attribute at pixel position
+*
+* Input:
+* r0 MSB: y position
+* r0 LSB: x position
+*
+* On return:
+* r0 MSB: attribute value
+* r1: attribute table address
+*
+get_attribute:
+       andi r0,>f8f8
+       mov  r0,r1
+       srl  r0,3
+       srl  r1,6
+       soc  r0,r1
+       ai   r1,attr_table
+       movb *r1,r0
+       rt
+*// get_attribute
+
+*********************************************************************
+*
 * Get TI-99 color from ZX Spectrum color
 *
 * r0 MSB: Colour-byte FBPPPIII
@@ -1492,6 +1624,11 @@ KEY_EN EQU  >000A
 KEY_FN EQU  >000E
 KEY_SH EQU  >0010
 KEY_CT EQU  >0012
+JOY_FI EQU  >0606
+JOY_LT EQU  >0608
+JOY_RT EQU  >060A
+JOY_DN EQU  >060C
+JOY_UP EQU  >060E
 *
 check_key:
        li   r12,>0024                  ; CRU address of the column decoder
@@ -1579,12 +1716,16 @@ byte_b0:
        byte >b0
 byte_aa:
        byte >aa
+byte_20:
+       byte >20
 byte_1a:
        byte >1a
 byte_0d:
        byte >0d
 byte_0b:
        byte >0b
+byte_08:
+       byte >08
 byte_02:
        byte >02
 byte_01:

@@ -46,7 +46,7 @@ LE67A	.endproc
 
 update_room_01:
        .proc
-LE67B	bl @Update_RollBall
+LE67B	bl @update_roll_ball
 LE67E	.endproc	
 
 update_room_02:
@@ -78,7 +78,7 @@ LE698	.endproc
 
 update_room_07:
        .proc
-LE699	bl @Update_RollBall
+LE699	bl @update_roll_ball
 LE69C	.endproc	
 
 update_room_08:
@@ -231,9 +231,62 @@ Update_RollRock:
 
 *********************************************************************
 *
-Update_RollBall:
+update_roll_ball:
        .proc
+       movb @flag_baddy_init,r0
+       jne  update_roll_ball_0
+       movb @byte_01,@flag_baddy_init
+       bl   @allocate_sprite
+       mov  r0,@roll_ball_sprite
+       mov  r0,r4
+       li   r1,>3008
+       mov  r1,*r4+                    ; Set position
+       li   r0,>008d                   ; Pattern
+       mov  r0,@roll_ball_bmp
+       bl   @get_sprite_pattern
+       movb r1,*r4+
+       movb @byte_0b,*r4               ; Color
+       jmp  update_roll_ball_4
+update_roll_ball_0:
+       mov  @roll_ball_sprite,r4
+       mov  *r4,r0                     ; Get position
+       mov  @roll_ball_bmp,r1
+       cb   @r0lb,@byte_b0             ; At end of railing?
+       jne  update_roll_ball_3         ; Jump if not
+       ab   @byte_02,r0                ; Move down
+       cb   r0,@byte_aa
+       jl   update_roll_ball_1
+       li   r0,>3008
+update_roll_ball_1:
+       mov  r0,*r4                     ; Store position
+       andi r0,>0003                   ; Animate
+       jne  update_roll_ball_2
+       inc  r1
+       ci   r1,>0090
+       jne  update_roll_ball_2
+       li   r1,>008d
+update_roll_ball_2:
+       mov  r1,@roll_ball_bmp
+       mov  r1,r0
+       bl   @get_sprite_pattern
+       movb r1,@2(r4)                  ; Store pattern
+;EF57	LD B,$0A
+;EF59	CALL Wally_HitTest
+       jmp  update_roll_ball_4
+update_roll_ball_3:
+       mov  r0,r2
+       ab   @byte_02,@r0lb             ; Move right
+       cb   @r2lb,@byte_1a
+       jl   update_roll_ball_1
+       ab   @byte_01,r0                ; Move slanted
+       jmp  update_roll_ball_1
+update_roll_ball_4:
        .endproc
+roll_ball_sprite
+       data 0
+roll_ball_bmp:
+       data 0
+*// update_roll_ball
 
 *********************************************************************
 *

@@ -21,21 +21,21 @@ immunity:
 *
 start_room:
        equ  1
-attr_40:
+attr_40:                               ; Black
        equ  >1100
-attr_41:
+attr_41:                               ; Blue
        equ  >5100
-attr_42:
+attr_42:                               ; Red
        equ  >8100
-attr_43:
+attr_43:                               ; Magenta
        equ  >d100
-attr_44:
+attr_44:                               ; Green
        equ  >2100
-attr_45:
+attr_45:                               ; Cyan
        equ  >7100
-attr_46:
+attr_46:                               ; Yellow
        equ  >b100
-attr_47:
+attr_47:                               ; White
        equ  >f100
 sprite_table_size:
        equ  32
@@ -203,16 +203,31 @@ game_start:
        mov  r0,@wally_x
        bl   @wally_draw
 game_loop:
+       bl   @vsync
+       bl   @vsync
        bl   @wally_handler
        bl   @room_event_handler
-       bl   @check_quit
        bl   @upload_sprites
+       bl   @check_quit
        li   r0,KEY_SP
        bl   @check_key
        jeq  game_loop
 game_end:
        .endproc
 *// game_start
+
+*********************************************************************
+*
+* Wait for vertical retrace
+*
+vsync:
+       movb @vdpsta,r12
+vsync_1:
+       movb @vdpsta,r12
+       jgt  vsync_1
+       jeq  vsync_1
+       b    *r11
+*// vsync
 
 *********************************************************************
 *
@@ -230,6 +245,7 @@ wally_handler:
 room_event_handler:
        .proc
        mov  @wally_room_no,r1          ; Calculate address of jump vector (room*2) + vectors.
+       sla  r1,1
        mov  @room_update_vectors(r1),r1
        bl   *r1
        .endproc
@@ -999,6 +1015,7 @@ upload_sprites_2:
 * r0: Index of bitmap
 *
 * On return r1 MSB contains the pattern no, or >ff if no room.
+* Modifies r0-r3
 *
 get_sprite_pattern:
        .proc
@@ -1324,7 +1341,7 @@ vdpcp1:
        andi r2,>0007                   ; Isolate number of remaining bytes
        jeq  vdpcp3
 vdpcp2:
-       movb *r1+,*r0
+       movb *r1+,*r15
        dec  r2
        jne  vdpcp2
 vdpcp3:
@@ -1364,7 +1381,7 @@ vdpwr1:
        andi r2,>0007                   ; Isolate number of remaining bytes
        jeq  vdpwr3
 vdpwr2:
-       movb r1, *r0
+       movb r1, *r15
        dec  r2
        jne  vdpwr2
 vdpwr3:
@@ -1558,8 +1575,18 @@ byte_c0:
        byte >c0
 byte_bf:
        byte >bf
+byte_b0:
+       byte >b0
+byte_aa:
+       byte >aa
+byte_1a:
+       byte >1a
+byte_0d:
+       byte >0d
 byte_0b:
        byte >0b
+byte_02:
+       byte >02
 byte_01:
        byte >01
 byte_00:

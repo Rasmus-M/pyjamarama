@@ -341,7 +341,7 @@ wally_check_fall:
 wally_check_attr_solid:
 ;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
 ;      andi r0,>0700
-       mov  @wally_char_aligned,r0
+       mov  @wally_char_aligned,r0     ; TODO
        jne  wally_check_fall_0         ; If not then let him fall regardless of colour.
        movb @byte_00,@wally_falling
        jmp  wally_handler_end
@@ -349,15 +349,129 @@ wally_check_fall_0:
        ab   @byte_04,@wally_y
 wally_handler_end:
        .endproc
-
+**
+* Subroutine: Wally Jump
+*
 wally_jump:
-       nop
+       mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
+;      jne  wally_shoot_create         ; TODO
+* This entry point is used by the routine at Demo.
+wally_jump_demo_entry:
+;      bl   @energy_countdown          ; TODO
+       movb @wally_dir,r0              ; Either use the current direction if moving...
+       jne  wally_jump_0
+       movb @wally_last_dir,r0         ; Or use the last direction if standing still...
+       movb r0,@wally_dir
+wally_jump_0:
+       movb r0,@wally_jump_dir
+       movb @byte_00,@wally_jump_count
+* This entry point is used by the routines at Wally_Handler and Demo.
 wally_jump_handler_entry:
-       nop
+       movb @wally_dir,r0              ; Check for jumping to the right.
+       cb   r0,@byte_01
+       jeq  wally_jump_5
+* Jumping Left.
+       movb @byte_00,@wally_head_turned
+       clr  r0
+       movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
+       mov  r0,r3
+       sla  r3,1
+       a    r0,r3
+       ai   r3,wally_jump_table
+       movb *r3+,@r1lb                 ; X offset.
+       movb *r3+,r1                    ; Y offset.
+       movb *r3,r2                     ; Sprite frame index.
+       sb   @byte_01,r1
+       jlt  wally_jump_2               ; See if jump direction is up or falling.
+       movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
+       cb   r0,@byte_attr_42
+       jeq  wally_jump_1
+       cb   r0,@byte_attr_45
+       jne  wally_jump_2
+wally_jump_1:
+       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
+;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
+;      andi r0,>0700
+       mov  @wally_char_aligned,r0     ; TODO
+       jne  wally_jump_2
+;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
+       jmp  wally_jump_4
+wally_jump_2:
+;	   CALL Wally_Erase                ; Returns position
+       mov  @wally_y,r0	               ; Translate X and Y for jump.
+       ab   r1,r0
+       sb   @r1lb,@r0lb
+       cb   @r0lb,@byte_07
+       jhe  wally_jump_3
+       movb @byte_07,@r0lb             ; Stop Wally from going of edge of screen.
+wally_jump_3:
+       mov  r0,@wally_y                ; Update position.
+wally_jump_4:
+       ab   @byte_20,r2                ; Update sprite.
+       movb r2,@wally_frame
+       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       movb @wally_jump_count,r0
+       cb   r0,@byte_0c
+       jne  wally_jump_left_end
+       mov  @byte_00,@wally_dir        ; Jump has ended, reset the flags.
+       mov  @byte_00,@wally_jump_dir
+;      CALL Wally_StepsIncr            ; TODO
+wally_jump_left_end:
        .endproc
-
+* Jumping right.
+wally_jump_5:
+       movb @byte_00,@wally_head_turned
+       clr  r0
+       movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
+       mov  r0,r3
+       sla  r3,1
+       a    r0,r3
+       ai   r3,wally_jump_table
+       movb *r3+,@r1lb                 ; X offset.
+       movb *r3+,r1                    ; Y offset.
+       movb *r3,r2                     ; Sprite frame index.
+       sb   @byte_01,r1
+       jlt  wally_jump_7               ; See if jump direction is up or falling.
+       movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
+       cb   r0,@byte_attr_42
+       jeq  wally_jump_6
+       cb   r0,@byte_attr_45
+       jne  wally_jump_7
+wally_jump_6:
+       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
+;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
+;      andi r0,>0700
+       mov  @wally_char_aligned,r0     ; TODO
+       jne  wally_jump_7
+;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
+       jmp  wally_jump_9
+wally_jump_7:
+;	   CALL Wally_Erase                ; Returns position
+       mov  @wally_y,r0	               ; Translate X and Y for jump.
+       ab   r1,r0
+       ab   @r1lb,@r0lb
+       cb   @r0lb,@byte_e9
+       jl   wally_jump_8
+       movb @byte_e9,@r0lb             ; Stop Wally from going of edge of screen.
+wally_jump_8:
+       mov  r0,@wally_y                ; Update position.
+wally_jump_9:
+       ab   @byte_30,r2                ; Update sprite.
+       movb r2,@wally_frame
+       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       movb @wally_jump_count,r0
+       cb   r0,@byte_0c
+       jne  wally_jump_right_end
+       mov  @byte_00,@wally_dir        ; Jump has ended, reset the flags.
+       mov  @byte_00,@wally_jump_dir
+;      CALL Wally_StepsIncr            ; TODO
+wally_jump_right_end:
+       .endproc
+**
+* Subroutine: Wally Move
+*
 wally_move:
-;      bl   @enegy_countdown           ; TODO
+;      bl   @energy_countdown          ; TODO
        movb @wally_dir,r0
        cb   r0,@byte_01
        jeq  wally_move_right
@@ -507,6 +621,7 @@ game_init_stats_2:
        dec  r2
        jne  game_init_stats_2
 *      Clear all rooms visited
+       li   r0,rooms_visited_table
        li   r2,>23
 game_init_stats_3:
        movb r1,*r0+
@@ -1858,6 +1973,8 @@ byte_b0:
        byte >b0
 byte_aa:
        byte >aa
+byte_30:
+       byte >30
 byte_20:
        byte >20
 byte_1c:
@@ -1929,6 +2046,11 @@ sprite_bitmap_map:
 attr_table:
        bss  >300
 
+rooms_visited_table:
+       bss  30
+
+       data -1
+
        aorg >2000
 
        copy "bmp-milk.a99"
@@ -1936,5 +2058,6 @@ attr_table:
        copy "bmp-objects.a99"
        copy "object-text.a99"
        copy "room-data.a99"
+       copy "wally-jump-table.a99"
 
        end  main

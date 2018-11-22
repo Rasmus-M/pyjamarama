@@ -1,0 +1,14 @@
+wally_jump_table:
+       equ  $
+LAF84  byte >02,>FC,>00                 [X vector, Y vector, Sprite Frame].
+LAF87  byte >02,>FC,>02
+LAF8A  byte >02,>FC,>04
+LAF8D  byte >02,>FC,>04
+LAF90  byte >02,>FC,>06
+LAF93  byte >02,>FC,>06
+LAF96  byte >02,>04,>08
+LAF99  byte >02,>04,>08
+LAF9C  byte >02,>04,>0A
+LAF9F  byte >02,>04,>0A
+LAFA2  byte >02,>04,>0C
+LAFA5  byte >02,>04,>0E

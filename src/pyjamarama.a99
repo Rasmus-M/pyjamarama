@@ -79,6 +79,7 @@ sprite_size:
 **
 * Scratch pad
 *
+rndsd  equ  >83c0                      ; Random number seed
 pad    equ  >8300
 wrksp  equ  pad                        ; Workspace
 r0lb   equ  wrksp+1                    ; r0 low byte required for VDP routines
@@ -140,8 +141,10 @@ food_active_ptr:
        equ  bitmap_y+2
 max_sprite:
        equ  food_active_ptr+2
-pad_max:
+rand_no:
        equ  max_sprite+2
+pad_max:
+       equ  rand_no+2
 
 **
 * Macros
@@ -181,6 +184,7 @@ loop:  bl   @game_start
 *
 one_time_init:
        .proc
+       mov  @rndsd,@rand_no            ; Save random number seed
        li   r15,vdpwd                  ; Do not change
 *      Graphics mode
        bl   @bitmap_mode
@@ -433,7 +437,8 @@ wally_turn_head_1:
        movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
        jne  wally_turn_head_3
        movb r0,@wally_head_turned      ; Clear Wally's head turn flag(2).
-       movb @byte_10,r0                ; TODO: Set a random value (0 ~ 1F) into countdown.
+       bl   @rand                      ; Set a random value (0 ~ 1F) into countdown.
+       andi r0,>1f00
        movb r0,@wally_head_countdown
        jmp  wally_turn_head_4
 wally_turn_head_2
@@ -678,6 +683,15 @@ wally_draw:
        movb @wally_x,*r4+
        clr  r0
        movb @wally_frame,@r0lb
+       movb @wally_head_turned,r1
+       jeq  wally_draw_1
+       ci   r0,>0010
+       jhe  wally_draw_0
+       ai   r0,>003e
+       jmp  wally_draw_1
+wally_draw_0:
+       ai   r0,>002f
+wally_draw_1:
        bl   @get_sprite_pattern
        movb r1,*r4+
 *      Feet
@@ -1796,6 +1810,19 @@ any_key_3:
 any_key_4:
        rt
 *// any_key
+
+*********************************************************************
+*
+* Random number generator
+*
+rand:
+       li   r0,28643                   ; A prime number to multiply by
+       mpy  @rand_no,r0
+       ai   r0,31873                   ; Add a prime number
+       src  r0,7                       ; Shift to break odd/even pattern
+       mov  r0,@rand_no
+       b    *r11
+*// rand
 
 *********************************************************************
 *

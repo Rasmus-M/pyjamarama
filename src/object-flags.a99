@@ -50,7 +50,9 @@ LF186  byte >00                        ; Counter for jumping. (0x0C means end of
 is_arcade_mode:
        equ  $
 LF187  byte >00                        ; Set to 1 when game is in arcade mode for the Space Invaders room.
-LF188  byte >00  
+byte_at_f188:
+       equ  $
+LF188  byte >00                        ; Copy of wally_head_turned?
 wally_head_turned:
        equ  $
 LF189  byte >00                        ; Wally turns head when set.

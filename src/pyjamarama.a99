@@ -413,8 +413,8 @@ wally_jump_4:
        movb @wally_jump_count,r0
        cb   r0,@byte_0c
        jne  wally_jump_left_end
-       mov  @byte_00,@wally_dir        ; Jump has ended, reset the flags.
-       mov  @byte_00,@wally_jump_dir
+       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
+       movb  @byte_00,@wally_jump_dir
 ;      CALL Wally_StepsIncr            ; TODO
 wally_jump_left_end:
        .endproc
@@ -462,8 +462,8 @@ wally_jump_9:
        movb @wally_jump_count,r0
        cb   r0,@byte_0c
        jne  wally_jump_right_end
-       mov  @byte_00,@wally_dir        ; Jump has ended, reset the flags.
-       mov  @byte_00,@wally_jump_dir
+       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
+       movb  @byte_00,@wally_jump_dir
 ;      CALL Wally_StepsIncr            ; TODO
 wally_jump_right_end:
        .endproc

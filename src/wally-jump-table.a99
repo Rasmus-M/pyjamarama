@@ -1,3 +1,4 @@
+       even
 wally_jump_table:
        equ  $
 LAF84  byte >02,>FC,>00                 [X vector, Y vector, Sprite Frame].

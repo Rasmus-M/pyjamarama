@@ -1,0 +1,449 @@
+*********************************************************************
+*
+* Draw Wally
+*
+wally_draw:
+       .proc
+*      Head
+       mov  @wally_sprite_1,r4
+       movb @wally_y,*r4+
+       movb @wally_x,*r4+
+       clr  r0
+       movb @wally_frame,@r0lb
+       movb @wally_head_turned,r1
+       jeq  wally_draw_1
+       ci   r0,>0010
+       jhe  wally_draw_0
+       ai   r0,>003e
+       jmp  wally_draw_1
+wally_draw_0:
+       ai   r0,>002f
+wally_draw_1:
+       bl   @get_sprite_pattern
+       movb r1,*r4+
+*      Feet
+       mov  @wally_sprite_2,r4
+       movb @wally_y,r0
+       ai   r0,>1000
+       movb r0,*r4+
+       movb @wally_x,*r4+
+       clr  r0
+       movb @wally_frame,@r0lb
+       inc  r0
+       bl   @get_sprite_pattern
+       movb r1,*r4+
+*      Update background color map
+       mov  @wally_y,r0                ; Get y and x
+       andi r0,7
+       mov  r0,@wally_shift_value      ; x shift
+       mov  @wally_y,r1
+       swpb r1
+       andi r1,7
+       mov  r1,@wally_char_aligned     ; y shift
+*      TODO: copy attributes behind Wally to map?
+       .endproc
+*// wally_draw
+
+*********************************************************************
+*
+* Main handler for moving Wally around
+*
+wally_handler:
+       .proc
+       mov  @wally_y,r0                ; Get current position, shift to 1 cell across and 4 rows down. Under the feet of Wally.
+       ab   @byte_08,@r0lb
+       ab   @byte_20,r0
+       bl   @get_attribute             ; Get the background colour at that point and store.
+       movb r0,@wally_attr
+       abs  @wally_char_aligned        ; See if Wally is aligned with the character cell row at current position.
+       jne  wally_handler_0
+       ai   r1,-32                     ; One row up
+       movb *r1,@wally_attr_alt
+       jmp  wally_handler_1
+wally_handler_0:
+       movb r0,@wally_attr_alt         ; Store this for both flags.
+*      Check Wally's state
+wally_handler_1:
+       movb @is_arcade_mode,r0         ; See if game is in Arcade mode, which means no jumping or falling.
+       jne  wally_handler_2
+       movb @wally_jump_dir,r0         ; See if Wally is currently in a jump.
+       jne  wally_jump_handler_entry
+wally_handler_2:
+       movb @wally_falling,r0	       ; See if Wally is falling.
+       jne  wally_check_fall
+       movb @wally_attr,r0             ; See if Wally is not on a platform and needs to start falling.
+       cb   r0,@byte_attr_45           ; Cyan
+       jeq  wally_handler_3
+       cb   r0,@byte_attr_42           ; Red
+       jeq  wally_handler_3
+       movb @byte_01,@wally_falling
+       jmp  wally_check_fall
+*      Check user's input
+wally_handler_3:
+*      Jump
+       abs @input_flag
+       jeq  wally_handler_4
+*      Joystick
+       li   r0,JOY_FI
+       bl   @check_key
+       jne  wally_jump
+       jmp  wally_handler_5
+wally_handler_4:
+*      Keyboard
+       li   r0,KEY_SP
+       bl   @check_key
+       jne  wally_jump
+wally_handler_5:
+       movb @byte_00,@wally_dir
+       abs  @input_flag
+       jeq  wally_handler_6
+       li   r0,JOY_RT
+       bl   @check_key
+       jne  wally_handler_7
+       jmp  wally_handler_8
+Wally_Handler_6:
+       li   r0,KEY_D
+       bl   @check_key
+       jeq  wally_handler_8
+Wally_Handler_7:
+       li   r0,>0100
+       movb r0,@wally_dir
+       movb r0,@wally_last_dir
+       b    @wally_move
+Wally_Handler_8:
+       abs  @input_flag
+       jeq  wally_handler_9
+       li   r0,JOY_LT
+       bl   @check_key
+       jne  wally_handler_10
+       jmp  wally_handler_end
+Wally_Handler_9:
+       li   r0,KEY_S
+       bl   @check_key
+       jeq  wally_handler_end
+Wally_Handler_10:
+       li   r0,->0100
+       movb r0,@wally_dir
+       movb r0,@wally_last_dir
+       b    @wally_move
+
+*      Check to see if Wally is standing on solid ground
+wally_check_fall:
+       movb @wally_attr,r0
+       cb   r0,@byte_attr_42           ; Red
+       jeq  wally_check_attr_solid
+       cb   r0,@byte_attr_45           ; Cyan
+       jne  wally_check_fall_0
+wally_check_attr_solid:
+;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
+;      andi r0,>0700
+       mov  @wally_char_aligned,r0     ; TODO
+       jne  wally_check_fall_0         ; If not then let him fall regardless of colour.
+       movb @byte_00,@wally_falling
+       jmp  wally_handler_end
+wally_check_fall_0:
+       ab   @byte_04,@wally_y
+wally_handler_end:
+       .endproc
+**
+* Subroutine: Wally Jump
+*
+wally_jump:
+       mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
+;      jne  wally_shoot_create         ; TODO
+* This entry point is used by the routine at Demo.
+wally_jump_demo_entry:
+;      bl   @energy_countdown          ; TODO
+       movb @wally_dir,r0              ; Either use the current direction if moving...
+       jne  wally_jump_0
+       movb @wally_last_dir,r0         ; Or use the last direction if standing still...
+       movb r0,@wally_dir
+wally_jump_0:
+       movb r0,@wally_jump_dir
+       movb @byte_00,@wally_jump_count
+* This entry point is used by the routines at Wally_Handler and Demo.
+wally_jump_handler_entry:
+       movb @wally_dir,r0              ; Check for jumping to the right.
+       cb   r0,@byte_01
+       jeq  wally_jump_5
+* Jumping Left.
+       movb @byte_00,@wally_head_turned
+       clr  r0
+       movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
+       mov  r0,r3
+       sla  r3,1
+       a    r0,r3
+       ai   r3,wally_jump_table
+       movb *r3+,@r1lb                 ; X offset.
+       movb *r3+,r1                    ; Y offset.
+       movb *r3,r2                     ; Sprite frame index.
+       sb   @byte_01,r1
+       jlt  wally_jump_2               ; See if jump direction is up or falling.
+       movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
+       cb   r0,@byte_attr_42
+       jeq  wally_jump_1
+       cb   r0,@byte_attr_45
+       jne  wally_jump_2
+wally_jump_1:
+       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
+;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
+;      andi r0,>0700
+       mov  @wally_char_aligned,r0     ; TODO
+       jne  wally_jump_2
+;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
+       jmp  wally_jump_4
+wally_jump_2:
+;	   CALL Wally_Erase                ; Returns position
+       mov  @wally_y,r0	               ; Translate X and Y for jump.
+       ab   r1,r0
+       sb   @r1lb,@r0lb
+       cb   @r0lb,@byte_07
+       jhe  wally_jump_3
+       movb @byte_07,@r0lb             ; Stop Wally from going of edge of screen.
+wally_jump_3:
+       mov  r0,@wally_y                ; Update position.
+wally_jump_4:
+       ab   @byte_20,r2                ; Update sprite.
+       movb r2,@wally_frame
+       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       movb @wally_jump_count,r0
+       cb   r0,@byte_0c
+       jne  wally_jump_left_end
+       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
+       movb  @byte_00,@wally_jump_dir
+;      CALL Wally_StepsIncr            ; TODO
+wally_jump_left_end:
+       .endproc
+* Jumping right.
+wally_jump_5:
+       movb @byte_00,@wally_head_turned
+       clr  r0
+       movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
+       mov  r0,r3
+       sla  r3,1
+       a    r0,r3
+       ai   r3,wally_jump_table
+       movb *r3+,@r1lb                 ; X offset.
+       movb *r3+,r1                    ; Y offset.
+       movb *r3,r2                     ; Sprite frame index.
+       sb   @byte_01,r1
+       jlt  wally_jump_7               ; See if jump direction is up or falling.
+       movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
+       cb   r0,@byte_attr_42
+       jeq  wally_jump_6
+       cb   r0,@byte_attr_45
+       jne  wally_jump_7
+wally_jump_6:
+       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
+;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
+;      andi r0,>0700
+       mov  @wally_char_aligned,r0     ; TODO
+       jne  wally_jump_7
+;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
+       jmp  wally_jump_9
+wally_jump_7:
+;	   CALL Wally_Erase                ; Returns position
+       mov  @wally_y,r0	               ; Translate X and Y for jump.
+       ab   r1,r0
+       ab   @r1lb,@r0lb
+       cb   @r0lb,@byte_e9
+       jl   wally_jump_8
+       movb @byte_e9,@r0lb             ; Stop Wally from going of edge of screen.
+wally_jump_8:
+       mov  r0,@wally_y                ; Update position.
+wally_jump_9:
+       ab   @byte_30,r2                ; Update sprite.
+       movb r2,@wally_frame
+       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       movb @wally_jump_count,r0
+       cb   r0,@byte_0c
+       jne  wally_jump_right_end
+       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
+       movb  @byte_00,@wally_jump_dir
+;      CALL Wally_StepsIncr            ; TODO
+wally_jump_right_end:
+       .endproc
+**
+* Subroutine: Wally Move
+*
+wally_move:
+;      bl   @energy_countdown          ; TODO
+       movb @wally_dir,r0
+       cb   r0,@byte_01
+       jeq  wally_move_right
+*      Wally Move Left
+wally_move_left:
+       movb @wally_frame,r0
+       bl   @wally_turn_head
+       cb   r0,@byte_00
+       jhe  wally_move_1
+wally_move_0:
+       movb @byte_00,@wally_head_turned ; Clear head turn flag (1)
+       movb @byte_00,r0
+       jmp  wally_move_2
+wally_move_1:
+       ab   @byte_02,r0
+       cb   r0,@byte_10
+       jhe  wally_move_0
+wally_move_2:
+       movb r0,@wally_frame            ; Store new frame.
+       movb @wally_x,r0                ; Get x position
+       sb   @byte_02,r0                ; Move Wally left
+       cb   r0,@byte_07
+       jhe  wally_move_3               ; Don't let him move off the left hand side of screen.
+       movb @byte_07,r0
+wally_move_3:
+       movb r0,@wally_x
+       jmp  wally_move_8
+*      Wally Move Right.
+wally_move_right:
+       movb @wally_frame,r0
+       bl   @wally_turn_head
+       cb   r0,@byte_10
+       jhe  wally_move_5
+wally_move_4:
+       movb @byte_00,@wally_head_turned ; Clear head turn flag (2)
+       movb @byte_10,r0
+       jmp  wally_move_6
+wally_move_5:
+       ab   @byte_02,r0
+       cb   r0,@byte_20
+       jhe  wally_move_4
+wally_move_6:
+       movb r0,@wally_frame            ; Store new frame.
+       movb @wally_x,r0                ; Get x position
+       ab   @byte_02,r0
+       cb   r0,@byte_e9
+       jl   wally_move_7
+       movb  @byte_e9,r0
+wally_move_7:
+       movb r0,@wally_x
+wally_move_8:
+       .endproc
+*// wally_handler
+
+*********************************************************************
+*
+* Checks to see if Wally should turn his head towards the camera
+*
+* Input:
+* r0: Current frame to test against
+*
+wally_turn_head:
+       .proc
+       mov r0,*r10+
+       cb   r0,@byte_00
+       jeq  wally_turn_head_2
+       cb   r0,@byte_10
+       jeq  wally_turn_head_2
+       cb   r0,@byte_0c
+       jeq  wally_turn_head_1
+       cb   r0,@byte_1c
+       jeq  wally_turn_head_1
+       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       jne  wally_turn_head_3
+       jmp  wally_turn_head_4
+wally_turn_head_1:
+       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       jne  wally_turn_head_3
+       movb r0,@wally_head_turned      ; Clear Wally's head turn flag(2).
+       bl   @rand                      ; Set a random value (0 ~ 1F) into countdown.
+       andi r0,>1f00
+       movb r0,@wally_head_countdown
+       jmp  wally_turn_head_4
+wally_turn_head_2
+       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       jne  wally_turn_head_3
+       movb @byte_01,@wally_head_turned
+       jmp  wally_turn_head_4
+wally_turn_head_3:
+       sb   @byte_01,r0
+       movb r0,@wally_head_countdown
+wally_turn_head_4:
+       dect r10
+       mov  *r10,r0
+       .endproc
+*// wally_turn_head
+
+*********************************************************************
+*
+* Checks to see if wally has put a foot down, classing as one step.
+*
+wally_step_check:
+       .proc
+;      TODO
+       .endproc
+*// wally_step_check
+
+*********************************************************************
+*
+* Check for Wally's death.
+*
+wally_check_for_death:
+       .proc
+;      TODO
+       .endproc
+*// wally_check_for_death
+
+*********************************************************************
+*
+* Checks to see if Wally has walked away from an object slot if just pick up and object.
+*
+wally_test_obj_slots:
+       .proc
+;      TODO
+       .endproc
+*// wally_test_obj_slots
+
+*********************************************************************
+*
+* Updates the percentage score.
+*
+wally_percent_update:
+       .proc
+;      TODO
+       .endproc
+*// wally_percent_update
+
+*********************************************************************
+*
+* Calls the event for the current room
+*
+room_event_caller:
+       .proc
+       mov  @wally_room_no,r1          ; Calculate address of jump vector (room*2) + vectors.
+       sla  r1,1
+       mov  @room_update_vectors(r1),r1
+       bl   *r1
+       .endproc
+*// room_event_caller
+
+*********************************************************************
+*
+* Check for SHIFT + BREAK to exit current game.
+*
+game_exit_check:
+       .proc
+       bl   @check_quit
+       .endproc
+*// game_exit_check
+
+*********************************************************************
+*
+* Check for food pickup by Wally.
+*
+food_check_pickup:
+       .proc
+;      TODO
+       .endproc
+*// food_check_pickup
+
+*********************************************************************
+*
+* Checks the current room's logic and acts on anything that is 'true'.
+*
+room_test_events:
+       .proc
+;      TODO
+       .endproc
+*// room_test_events

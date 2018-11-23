@@ -76,6 +76,48 @@ lives_reset_1:
 
 *********************************************************************
 *
+* Wally reset
+*
+wally_reset
+       .proc
+       clr  r0
+       movb r0,@wally_frame
+       movb r0,@wally_head_turned
+       movb r0,@wally_falling
+       movb r0,@wally_dir
+       movb r0,@wally_jump_dir
+       seto r0
+       movb r0,@wally_last_dir
+       c    @wally_y,@byte_78
+       jhe  wally_reset_0
+       movb @byte_10,@wally_frame
+       movb @byte_01,@wally_last_dir
+wally_reset_0:
+       .endproc
+*// wally_reset
+
+*********************************************************************
+*
+* Room enter
+*
+
+room_enter:
+       .proc
+       clr  r0
+       movb r0,@flag_baddy_init
+       movb r0,@flag_food_drawn
+       movb @byte_01,@mag_lock_dir
+       movb @byte_30,@spooky_hand
+       movb @byte_30,@flag_mag_lock
+       movb @byte_c8,@room_0_rock_count
+;      bl   @screen_clear_effect       ; TODO
+       bl   @room_draw
+       bl   @inventory_redraw
+       .endproc
+*// room_enter
+
+*********************************************************************
+*
 * Redraw inventory area
 *
 inventory_redraw:

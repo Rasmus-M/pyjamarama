@@ -123,8 +123,14 @@ wally_last_dir:
        equ  wally_char_aligned+2
 wally_head_countdown:
        equ  wally_last_dir+1
-input_flag:
+spooky_hand:
        equ  wally_head_countdown+1
+mag_lock_dir:
+       equ  spooky_hand+1
+room_0_rock_count:
+       equ  mag_lock_dir+1
+input_flag:
+       equ  room_0_rock_count+2
 pocket_1:
        equ  input_flag+2
 pocket_2:
@@ -274,12 +280,16 @@ byte_f4:
        byte >f4
 byte_f3:
        byte >f3
+byte_ef:
+       byte >ef
 byte_e9:
        byte >e9
 byte_de:
        byte >de
 byte_d0:
        byte >d0
+byte_c8:
+       byte >c8
 byte_c0:
        byte >c0
 byte_bf:
@@ -288,6 +298,8 @@ byte_b0:
        byte >b0
 byte_aa:
        byte >aa
+byte_78:
+       byte >78
 byte_30:
        byte >30
 byte_20:
@@ -304,12 +316,16 @@ byte_0b:
        byte >0b
 byte_0c:
        byte >0c
+byte_09:
+       byte >09
 byte_08:
        byte >08
 byte_07:
        byte >07
 byte_04:
        byte >04
+byte_03:
+       byte >03
 byte_02:
        byte >02
 byte_01:

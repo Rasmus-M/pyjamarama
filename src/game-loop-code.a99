@@ -135,9 +135,7 @@ wally_check_fall:
        cb   r0,@byte_attr_45           ; Cyan
        jne  wally_check_fall_0
 wally_check_attr_solid:
-;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
-;      andi r0,>0700
-       mov  @wally_char_aligned,r0     ; TODO
+       mov  @wally_char_aligned,r0      See if Wally is aligned with a character cell.
        jne  wally_check_fall_0         ; If not then let him fall regardless of colour.
        movb @byte_00,@wally_falling
        jmp  wally_handler_end
@@ -185,10 +183,7 @@ wally_jump_handler_entry:
        cb   r0,@byte_attr_45
        jne  wally_jump_2
 wally_jump_1:
-       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
-;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
-;      andi r0,>0700
-       mov  @wally_char_aligned,r0     ; TODO
+       mov  @wally_char_aligned,r0
        jne  wally_jump_2
 ;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
        jmp  wally_jump_4
@@ -234,10 +229,7 @@ wally_jump_5:
        cb   r0,@byte_attr_45
        jne  wally_jump_7
 wally_jump_6:
-       movb @wally_y,r0                ; If on a platform see if Wally hits to bottom of the current char. cell.
-;      movb @wally_y,r0                ; See if Wally is aligned with a character cell.
-;      andi r0,>0700
-       mov  @wally_char_aligned,r0     ; TODO
+       mov  @wally_char_aligned,r0
        jne  wally_jump_7
 ;	   CALL Wally_Erase	               ; Wally is standing directly on a platform, skip any further movement.
        jmp  wally_jump_9
@@ -258,9 +250,9 @@ wally_jump_9:
        movb @wally_jump_count,r0
        cb   r0,@byte_0c
        jne  wally_jump_right_end
-       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
-       movb  @byte_00,@wally_jump_dir
-;      CALL Wally_StepsIncr            ; TODO
+       movb @byte_00,@wally_dir       ; Jump has ended, reset the flags.
+       movb @byte_00,@wally_jump_dir
+;      bl   wally_steps_incr          ; TODO
 wally_jump_right_end:
        .endproc
 **

@@ -11,29 +11,26 @@ L821D  data Test06_LiftOff
 L821F  data Test07_HelpSwitchOff
 L8221  data Action08_BoxingGloveSafe
 
-* 898F: Test 00 : Exit position test.
+* Test 00 : Exit position test.
 * Input
-* HL  Address of room data after event marker.
+* r4  Address of room data after event marker.
 Test00_WallyPosCheck:
-     equ    $
-;898F  LD DE,(Wally_X)
-;8993  LD A,(HL)
-;8994  INC HL
-;8995  SUB E
-;8996  SUB $09
-;8998  CP $EF
-;899A  JR C,Test00_WallyPosCheck_0
-;899C  LD A,(HL)
-;899D  INC HL
-;899E  SUB D
-;899F  SUB $03
-;89A1  CP $FA
-;89A3  JR C,Test00_WallyPosCheck_1
-;89A5  JP Room_CllEvnt_NxtCmd
-;Test00_WallyPosCheck_0
-;89A8  INC HL
-;Test00_WallyPosCheck_1
-;89A9  JP Room_CllEvnt_EndIf
+       equ  $
+       movb *r4+,r0
+       sb   @wally_x,r0
+       sb   @byte_09,r0
+       cb   r0,@byte_ef
+       jl   test_00_wally_pos_check_0
+       movb *r4+,r0
+       sb   @wally_y,r0
+       sb   @byte_03,r0
+       cb   r0,@byte_fa
+       jl   test_00_wally_pos_check_1
+       b    @room_test_events_next_cmd
+test_00_wally_pos_check_0:
+       inc  r4
+test_00_wally_pos_check_1:
+       b    @room_test_events_endif
 
 * 89AC: Test 01 : Check for position.
 * Input

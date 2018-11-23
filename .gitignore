@@ -1,4 +1,11 @@
 # Created by .ignore support plugin (hsz.mobi)
+/.idea
+/remake
+/spectrum
 *.obj
 *.lst
-*.img
+*.log
+*.bin
+PYJA
+PYJB
+PYJC

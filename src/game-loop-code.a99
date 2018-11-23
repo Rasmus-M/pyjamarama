@@ -444,6 +444,37 @@ food_check_pickup:
 *
 room_test_events:
        .proc
-;      TODO
+       mov  @wally_room_no,r4          ; Gets the address of the room data, from the table of address based on the current room index number.
+       sla r4,1
+       mov  @table_room_logic_ptr(r4),r4
+room_test_events_next_cmd:
+       movb *r4+,r0
+       cb   r0,@byte_ff
+       jeq  room_test_events_end
+       cb   r0,@byte_fd
+       jeq  room_test_events_0
+*      Perform test (if)
+       clr  r1
+       movb r0,@r1lb
+       sla  r1,1
+       mov  @table_test_func_ptrs(r1),r1
+       b    *r1                        ; Get address of function, pop onto stack so that return calls it, before returning to original caller.
+*      Endif
+room_test_events_endif:
+       movb *r4+,r0
+       cb   r0,@byte_fe
+       jeq  room_test_events_next_cmd
+       jmp  room_test_events_endif
+room_test_events_0:
+       movb *r4+,r0
+       cb   r0,@byte_fe                ; End of test?
+       jeq  room_test_events_next_cmd
+*      Perform action
+       clr  r1
+       movb r0,@r1lb
+       sla  r1,1
+       mov  @table_action_func_ptrs(r1),r1
+       b    *r1                        ; Get address of function, pop onto stack so that return calls it, before returning to original caller.
+room_test_events_end:
        .endproc
 *// room_test_events

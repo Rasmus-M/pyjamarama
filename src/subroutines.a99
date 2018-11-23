@@ -1,5 +1,81 @@
 *********************************************************************
 *
+* Initialize game data
+*
+game_init_stats:
+       .proc
+       li   r0,>0000                   ; The Round Key
+       mov  r0,@pocket_1
+       li   r0,>0001                   ; The Radio
+       mov  r0,@pocket_2
+       li   r0,food_table              ; Reset active food
+       mov  r0,@food_active_ptr
+*      Clear all the object flags
+       li   r2,>16                      .
+       li   r0,lift_count
+game_init_stats_0:
+       clr  *r0+
+       dect r2
+       jne  game_init_stats_0
+*      Reset object positions by filling in the object slots, for each room, with and object index in incremental steps
+       li   r0,room_obj_slot_Obj
+       li   r2,>1e
+       li   r1,>0200
+game_init_stats_1:
+       movb r1,*r0+
+       inct r0
+       ai   r1,>0100
+       dec  r2
+       jne  game_init_stats_1
+*      Clear all object found markers
+       li   r0,object_found_table      ;
+       li   r2,>20
+       clr  r1
+game_init_stats_2:
+       movb r1,*r0
+       inct r0
+       dec  r2
+       jne  game_init_stats_2
+*      Clear all rooms visited
+       li   r0,rooms_visited_table
+       li   r2,>23
+game_init_stats_3:
+       movb r1,*r0+
+       dec  r2
+       jne  game_init_stats_3
+*      Allocate sprites for Wally
+       bl   @allocate_sprite
+       mov  r0,@wally_sprite_1
+       ai   r0,3
+       movb @byte_0b,*r0
+       bl   @allocate_sprite
+       mov  r0,@wally_sprite_2
+       ai   r0,3
+       movb @byte_0b,*r0
+       .endproc
+*// game_init_stats
+
+*********************************************************************
+*
+* Reset lives
+*
+lives_reset:
+       .proc
+       li   r0,3
+       mov  r0,@wally_lives
+       li   r0,3
+lives_reset_1:
+       mov  r0,*r10+                   ; Push r0
+       bl   @life_draw_blit
+       dect r10                        , Pop r0
+       mov  *r10,r0
+       dec  r0
+       jne  lives_reset_1
+       .endproc
+*// lives_reset
+
+*********************************************************************
+*
 * Redraw inventory area
 *
 inventory_redraw:

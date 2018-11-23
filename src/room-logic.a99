@@ -1,5 +1,5 @@
        even
-table_roomdata_ptr:
+table_room_logic_ptr:
        equ  $
 L82C6  data logic_room_00
 L82C8  data logic_room_01

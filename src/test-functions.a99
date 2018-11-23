@@ -1,0 +1,228 @@
+       even
+table_test_func_ptrs:
+       equ  $
+L8211  data Test00_WallyPosCheck
+L8213  data Test01_WallyPosCheck
+L8215  data Test02_PocketCheck
+L8217  data Test03_FuelCanFull
+L8219  data Test04_LiftOn
+L821B  data Test05_LiftFloor
+L821D  data Test06_LiftOff
+L821F  data Test07_HelpSwitchOff
+L8221  data Action08_BoxingGloveSafe
+
+* 898F: Test 00 : Exit position test.
+* Input
+* HL  Address of room data after event marker.
+Test00_WallyPosCheck:
+     equ    $
+;898F  LD DE,(Wally_X)
+;8993  LD A,(HL)
+;8994  INC HL
+;8995  SUB E
+;8996  SUB $09
+;8998  CP $EF
+;899A  JR C,Test00_WallyPosCheck_0
+;899C  LD A,(HL)
+;899D  INC HL
+;899E  SUB D
+;899F  SUB $03
+;89A1  CP $FA
+;89A3  JR C,Test00_WallyPosCheck_1
+;89A5  JP Room_CllEvnt_NxtCmd
+;Test00_WallyPosCheck_0
+;89A8  INC HL
+;Test00_WallyPosCheck_1
+;89A9  JP Room_CllEvnt_EndIf
+
+* 89AC: Test 01 : Check for position.
+* Input
+* HL  Next address of event data string.
+* Data string [01, x pos, y pos]
+* On entry HL points to the 'x pos'.
+Test01_WallyPosCheck:
+     equ    $
+;89AC  LD A,(ObjEventPause)  Make sure not just done an object pickup / event.
+;89AF  OR A
+;89B0  JP NZ,Room_CllEvnt_EndIf
+;89B3  LD DE,(Wally_X)  See if Wally is within range of the event position.
+;89B7  LD A,(HL)
+;89B8  INC HL
+;89B9  SUB E
+;89BA  SUB $03
+;89BC  CP $FA
+;89BE  JR C,Test01_WallyPosCheck_0
+;89C0  LD A,(HL)
+;89C1  INC HL
+;89C2  SUB D
+;89C3  SUB $03
+;89C5  CP $FA
+;89C7  JR C,Test01_WallyPosCheck_1
+;89C9  JP Room_CllEvnt_NxtCmd  If he is then run the next event in the data.
+;Test01_WallyPosCheck_0
+;89CC  INC HL
+;Test01_WallyPosCheck_1
+;89CD  JP Room_CllEvnt_EndIf
+
+* 89D2: Test 02 : See if Wally is carrying a specific object
+* Input
+* HL  Points to address of data string holding object index.
+Test02_PocketCheck:
+     equ    $
+;89D2  LD DE,(Pocket1)
+;89D6  LD A,(HL)
+;89D7  INC HL
+;89D8  CP E
+;89D9  JP Z,Room_CllEvnt_NxtCmd
+;89DC  CP D
+;89DD  JP Z,Room_CllEvnt_NxtCmd
+;89E0  JP Room_CllEvnt_EndIf
+
+* 89E3: Test 03 : See if fuel can is full.
+Test03_FuelCanFull:
+     equ    $
+;89E3  LD A,(Flag_FuelCan)  If the fuel can is...
+;89E6  OR A
+;89E7  JP NZ,Room_CllEvnt_NxtCmd  Full, TRUE.
+;89EA  JP Room_CllEvnt_EndIf  Empty, FALSE.
+
+* 8B67: Test 04 : Is the lift is on?
+Test04_LiftOn:
+     equ    $
+;8B67  LD A,(Lift_Count)
+;8B6A  OR A
+;8B6B  JP Z,Room_CllEvnt_EndIf  Lift count is down to zero, end the test.
+;8B6E  JP Room_CllEvnt_NxtCmd  If the lift count is more, then return true.
+
+* 8B88: Test 05 : Is lift at a specific floor value.
+* Input
+* HL  Points to address holding value to test for.
+* A floor value is different to the level shown on screen. See LiftFloorNo
+Test05_LiftFloor:
+     equ    $
+;8B88  LD A,(HL)  Get value to test for.
+;8B89  INC HL
+;8B8A  LD B,A
+;8B8B  LD A,(LiftFloorNo)  See the lift is set to the same value.
+;8B8E  CP B
+;8B8F  JP Z,Room_CllEvnt_NxtCmd  True.
+;8B92  JP Room_CllEvnt_EndIf  False.
+
+* 8B76: Test 06 : Is the lift is off.
+Test06_LiftOff:
+     equ    $
+;8B76  LD A,(Lift_Count)  If greater than zero then the lift is on.
+;This entry point is used by the routine at Test07_HelpSwitchOff.
+;Test06_LiftOff_0
+;8B79  OR A
+;8B7A  JP NZ,Room_CllEvnt_EndIf  False.
+;8B7D  JP Room_CllEvnt_NxtCmd  True.
+
+* 8B71: Test 07 : Is the help switch is of?
+Test07_HelpSwitchOff:
+     equ    $
+;8B71  LD A,(Flag_HelpSwitch)
+;8B74  JR Test06_LiftOff_0
+
+* BF72: Test 08 : Is Boxing Glove Trap safe.
+* Checks to see if Wally will get hit by the Boxing Glove trap, carrying the towel will stop this.
+* This test will act on the trap if it becomes false.
+Action08_BoxingGloveSafe:
+     equ    $
+;BF72  LD A,(Pocket1)  Is Wally carrying the towel.
+;BF75  CP $15
+;BF77  JP Z,Room_CllEvnt_NxtCmd  True, next command / test.
+;BF7A  LD A,(Pocket2)  Again for pocket 2.
+;BF7D  CP $15
+;BF7F  JP Z,Room_CllEvnt_NxtCmd
+;BF82  LD A,(Wally_RoomNo)  Is Wally in the same room as where the trap has been made active?
+;BF85  LD B,A
+;BF86  LD A,(BoxingTrap_Room)
+;BF89  CP B
+;BF8A  JP NZ,Room_CllEvnt_NxtCmd  False, next command / test.
+;BF8D  PUSH HL
+;BF8E  PUSH DE
+;BF8F  PUSH BC
+;BF90  LD BC,$0000
+;BF93  LD DE,$0101
+;BF96  LD HL,$E600
+;BF99  CALL Beep_Effect
+;BF9C  POP BC
+;BF9D  POP DE
+;BF9E  POP HL
+;BF9F  LD A,$01
+;BFA1  LD (DeathFlag),A
+;BFA4  LD HL,(BoxingTrap_NextPtr)  Move the trap onto the next room in the list.
+;BFA7  LD A,(HL)
+;BFA8  LD (BoxingTrap_Room),A
+;BFAB  INC HL
+;BFAC  LD A,(HL)
+;BFAD  CP $FF  If we reach the end of the list, then reset back to start of list.
+;BFAF  JR NZ,Action08_BoxingGloveSafe_0
+;BFB1  LD HL,BoxingTrap_Rooms
+;Action08_BoxingGloveSafe_0  BFB4  LD (BoxingTrap_NextPtr),HL
+;BFB7  LD HL,$98E8
+;BFBA  LD (BitmapX),HL
+;BFBD  LD A,$A5
+;BFBF  CALL Bitmap16Draw
+;BFC2  LD B,$07
+;BFC4  LD C,A
+;Action08_BoxingGloveSafe_1  BFC5  PUSH BC
+;BFC6  CALL Wally_Erase
+;BFC9  LD HL,(Wally_X)
+;BFCC  DEC L
+;BFCD  DEC L
+;BFCE  LD (Wally_X),HL
+;BFD1  CALL Wally_Draw
+;BFD4  POP BC
+;BFD5  LD A,C
+;BFD6  LD HL,$98E8
+;BFD9  LD (BitmapX),HL
+;BFDC  CALL Bitmap16Draw
+;BFDF  INC C
+;BFE0  INC A
+;BFE1  CALL Bitmap16Draw
+;BFE4  PUSH BC
+;BFE5  CALL Pause_Short
+;BFE8  CALL Room_EventCaller
+;BFEB  POP BC
+;BFEC  DJNZ Action08_BoxingGloveSafe_1
+;BFEE  CALL Wally_KnockedDown
+;BFF1  LD B,$28
+;Action08_BoxingGloveSafe_2  BFF3  PUSH BC
+;BFF4  CALL Pause_Short
+;BFF7  CALL Room_EventCaller
+;BFFA  POP BC
+;BFFB  DJNZ Action08_BoxingGloveSafe_2
+;BFFD  LD HL,$98E8
+;C000  LD (BitmapX),HL
+;C003  LD A,$AC
+;C005  CALL Bitmap16Draw
+;C008  CALL Wally_Erase
+;C00B  LD D,$A8
+;C00D  LD A,(MilkLevel)
+;C010  CP $1A
+;C012  JP NC,Wally_Death
+;C015  XOR A
+;C016  LD (DeathFlag),A
+;C019  LD (Wally_JumpDir),A
+;C01C  LD (Wally_Dir),A
+;C01F  LD A,$10
+;C021  LD (Wally_Frame),A
+;C024  CALL Wally_Draw
+;C027  LD B,$05
+;C029  CALL Milk_DecreaseByAmount
+;C02C  LD A,$01
+;C02E  LD (DeathFlag),A
+;C031  LD B,$0A
+;Action08_BoxingGloveSafe_3  C033  PUSH BC
+;C034  CALL Pause_Short
+;C037  CALL Room_EventCaller
+;C03A  POP BC
+;C03B  DJNZ Action08_BoxingGloveSafe_3
+;C03D  XOR A
+;C03E  LD (DeathFlag),A
+;C041  LD SP,$0000
+;C044  JP GameLoop
+
+       b    @room_test_events_endif

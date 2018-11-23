@@ -1,0 +1,69 @@
+       even
+table_action_func_ptrs:
+       equ  $
+L8223  data Action00_SwapObj  
+L8225  data Action01_PickUp  
+L8227  data Action02_EnterRoom  
+L8229  data Action03_FillBucket  
+L822B  data Action04_ChargeLaser  
+L822D  data Action05_DischargeLaser  
+L822F  data Action06_Emptybucket  
+L8231  data Action07_FillFuelCan  
+L8233  data Action08_EmptyFuelCan  
+L8235  data Action09_LiftOn  
+L8237  data Action0A_MoveLift  
+L8239  data Action0B_LiftDec  
+L823B  data Action0C_LiftLights  
+L823D  data Action0D_MagnetUnlock  
+L823F  data Action0E_HelpOn  
+L8241  data Action0F_HelpOff  
+L8243  data Action10_LiftOffFromEarth  
+L8245  data Action11_LiftOffFromMoon  
+L8247  data Action12_GrabRope  
+L8249  data Action13_EnterAcrade  
+L824B  data Action14_Win
+
+Action00_SwapObj:
+       equ  $
+Action01_PickUp:
+       equ  $
+Action02_EnterRoom:
+       equ  $
+Action03_FillBucket:
+       equ  $
+Action04_ChargeLaser:
+       equ  $
+Action05_DischargeLaser:
+       equ  $
+Action06_Emptybucket:
+       equ  $
+Action07_FillFuelCan:
+       equ  $
+Action08_EmptyFuelCan:
+       equ  $
+Action09_LiftOn:
+       equ  $
+Action0A_MoveLift:
+       equ  $
+Action0B_LiftDec:
+       equ  $
+Action0C_LiftLights:
+       equ  $
+Action0D_MagnetUnlock:
+       equ  $
+Action0E_HelpOn:
+       equ  $
+Action0F_HelpOff:
+       equ  $
+Action10_LiftOffFromEarth:
+       equ  $
+Action11_LiftOffFromMoon:
+       equ  $
+Action12_GrabRope:
+       equ  $
+Action13_EnterAcrade:
+       equ  $
+Action14_Win:
+       equ  $
+
+       b    @room_test_events_next_cmd

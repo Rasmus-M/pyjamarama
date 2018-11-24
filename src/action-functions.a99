@@ -31,9 +31,12 @@ Action02_EnterRoom:
        movb *r4+,@wally_room_no+1      ; Get new room number and set.
        movb *r4+,@wally_x              ; Get new position for wally.
        movb *r4+,@wally_y              ; Get new position for wally.
+       mov  r4,*r10+
        bl   @wally_reset               ; Reset Wally's animation ready for new room.
        bl   @room_enter                ; Set up the screen and data.
-       b    @room_test_events_0
+       dect r10
+       mov  *r10,r4
+       b    @room_test_events_then
 Action03_FillBucket:
        equ  $
 Action04_ChargeLaser:

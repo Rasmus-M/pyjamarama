@@ -14,10 +14,11 @@ L8221  data Action08_BoxingGloveSafe
 * Test 00 : Exit position test.
 * Input
 * r4  Address of room data after event marker.
+*
 Test00_WallyPosCheck:
        equ  $
-       movb *r4+,r0
-       sb   @wally_x,r0
+       movb *r4+,r0                    ; Get x position to test against
+       sb   @wally_x,r0                ; Subtract Wally x
        sb   @byte_09,r0
        cb   r0,@byte_ef
        jl   test_00_wally_pos_check_0
@@ -60,6 +61,7 @@ Test01_WallyPosCheck:
 ;89CC  INC HL
 ;Test01_WallyPosCheck_1
 ;89CD  JP Room_CllEvnt_EndIf
+       b    @room_test_events_endif
 
 * 89D2: Test 02 : See if Wally is carrying a specific object
 * Input
@@ -74,6 +76,7 @@ Test02_PocketCheck:
 ;89DC  CP D
 ;89DD  JP Z,Room_CllEvnt_NxtCmd
 ;89E0  JP Room_CllEvnt_EndIf
+       b    @room_test_events_endif
 
 * 89E3: Test 03 : See if fuel can is full.
 Test03_FuelCanFull:
@@ -82,6 +85,7 @@ Test03_FuelCanFull:
 ;89E6  OR A
 ;89E7  JP NZ,Room_CllEvnt_NxtCmd  Full, TRUE.
 ;89EA  JP Room_CllEvnt_EndIf  Empty, FALSE.
+       b    @room_test_events_endif
 
 * 8B67: Test 04 : Is the lift is on?
 Test04_LiftOn:
@@ -90,6 +94,7 @@ Test04_LiftOn:
 ;8B6A  OR A
 ;8B6B  JP Z,Room_CllEvnt_EndIf  Lift count is down to zero, end the test.
 ;8B6E  JP Room_CllEvnt_NxtCmd  If the lift count is more, then return true.
+       b    @room_test_events_endif
 
 * 8B88: Test 05 : Is lift at a specific floor value.
 * Input
@@ -104,6 +109,7 @@ Test05_LiftFloor:
 ;8B8E  CP B
 ;8B8F  JP Z,Room_CllEvnt_NxtCmd  True.
 ;8B92  JP Room_CllEvnt_EndIf  False.
+       b    @room_test_events_endif
 
 * 8B76: Test 06 : Is the lift is off.
 Test06_LiftOff:
@@ -114,12 +120,14 @@ Test06_LiftOff:
 ;8B79  OR A
 ;8B7A  JP NZ,Room_CllEvnt_EndIf  False.
 ;8B7D  JP Room_CllEvnt_NxtCmd  True.
+       b    @room_test_events_endif
 
 * 8B71: Test 07 : Is the help switch is of?
 Test07_HelpSwitchOff:
      equ    $
 ;8B71  LD A,(Flag_HelpSwitch)
 ;8B74  JR Test06_LiftOff_0
+       b    @room_test_events_endif
 
 * BF72: Test 08 : Is Boxing Glove Trap safe.
 * Checks to see if Wally will get hit by the Boxing Glove trap, carrying the towel will stop this.
@@ -221,5 +229,4 @@ Action08_BoxingGloveSafe:
 ;C03E  LD (DeathFlag),A
 ;C041  LD SP,$0000
 ;C044  JP GameLoop
-
        b    @room_test_events_endif

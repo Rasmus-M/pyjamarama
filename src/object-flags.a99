@@ -56,8 +56,12 @@ LF188  byte >00                        ; Copy of wally_head_turned?
 wally_head_turned:
        equ  $
 LF189  byte >00                        ; Wally turns head when set.
-LF18A  byte >00  
-LF18B  byte >00  
+flag_rolling_rock:
+       equ  $
+LF18A  byte >00                        ; Flag used for x position of rolling rock
+flag_balloon:
+       equ  $
+LF18B  byte >00                        ; Flag used for balloon
 flag_food_drawn:
        equ  $
 LF18C  byte >00                        ; Determines if the food requires drawing if set to 0. A 1 means the food has been drawn.

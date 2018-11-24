@@ -1,51 +1,5 @@
 *********************************************************************
 *
-* Draw Wally
-*
-wally_draw:
-       .proc
-*      Head
-       mov  @wally_sprite_1,r4
-       movb @wally_y,*r4+
-       movb @wally_x,*r4+
-       clr  r0
-       movb @wally_frame,@r0lb
-       movb @wally_head_turned,r1
-       jeq  wally_draw_1
-       ci   r0,>0010
-       jhe  wally_draw_0
-       ai   r0,>003e
-       jmp  wally_draw_1
-wally_draw_0:
-       ai   r0,>002f
-wally_draw_1:
-       bl   @get_sprite_pattern
-       movb r1,*r4+
-*      Feet
-       mov  @wally_sprite_2,r4
-       movb @wally_y,r0
-       ai   r0,>1000
-       movb r0,*r4+
-       movb @wally_x,*r4+
-       clr  r0
-       movb @wally_frame,@r0lb
-       inc  r0
-       bl   @get_sprite_pattern
-       movb r1,*r4+
-*      Update background color map
-       mov  @wally_y,r0                ; Get y and x
-       andi r0,7
-       mov  r0,@wally_shift_value      ; x shift
-       mov  @wally_y,r1
-       swpb r1
-       andi r1,7
-       mov  r1,@wally_char_aligned     ; y shift
-*      TODO: copy attributes behind Wally to map?
-       .endproc
-*// wally_draw
-
-*********************************************************************
-*
 * Main handler for moving Wally around
 *
 wally_handler:
@@ -441,32 +395,33 @@ room_test_events:
        mov  @table_room_logic_ptr(r4),r4
 room_test_events_next_cmd:
        movb *r4+,r0
-       cb   r0,@byte_ff
+       cb   r0,@byte_ff                ; END
        jeq  room_test_events_end
-       cb   r0,@byte_fd
-       jeq  room_test_events_0
-*      Perform test (if)
-       clr  r1
+       cb   r0,@byte_fd                ; THEN
+       jeq  room_test_events_then
+*      Perform test (IF)
+       clr  r1                         ; Get address of function
        movb r0,@r1lb
        sla  r1,1
        mov  @table_test_func_ptrs(r1),r1
-       b    *r1                        ; Get address of function, pop onto stack so that return calls it, before returning to original caller.
+       b    *r1                        ; Jump to test function
 *      Endif
 room_test_events_endif:
-       movb *r4+,r0
-       cb   r0,@byte_fe
+       movb *r4+,r0                    ; Skip bytes until
+       cb   r0,@byte_fe                ; ENDIF
        jeq  room_test_events_next_cmd
        jmp  room_test_events_endif
-room_test_events_0:
+*      Then
+room_test_events_then:
        movb *r4+,r0
-       cb   r0,@byte_fe                ; End of test?
+       cb   r0,@byte_fe                ; Nothing to do?
        jeq  room_test_events_next_cmd
 *      Perform action
-       clr  r1
+       clr  r1                         ; Get address of action
        movb r0,@r1lb
        sla  r1,1
        mov  @table_action_func_ptrs(r1),r1
-       b    *r1                        ; Get address of function, pop onto stack so that return calls it, before returning to original caller.
+       b    *r1                        ; Jump to action
 room_test_events_end:
        .endproc
 *// room_test_events

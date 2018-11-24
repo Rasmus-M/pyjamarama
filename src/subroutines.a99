@@ -98,6 +98,67 @@ wally_reset_0:
 
 *********************************************************************
 *
+* Draw Wally
+*
+wally_draw:
+       .proc
+*      Head
+       mov  @wally_sprite_1,r4
+       movb @wally_y,*r4+
+       movb @wally_x,*r4+
+       clr  r0
+       movb @wally_frame,@r0lb
+       movb @wally_head_turned,r1
+       jeq  wally_draw_1
+       ci   r0,>0010
+       jhe  wally_draw_0
+       ai   r0,>003e
+       jmp  wally_draw_1
+wally_draw_0:
+       ai   r0,>002f
+wally_draw_1:
+       bl   @get_sprite_pattern
+       movb r1,*r4+
+*      Feet
+       mov  @wally_sprite_2,r4
+       movb @wally_y,r0
+       ai   r0,>1000
+       movb r0,*r4+
+       movb @wally_x,*r4+
+       clr  r0
+       movb @wally_frame,@r0lb
+       inc  r0
+       bl   @get_sprite_pattern
+       movb r1,*r4+
+*      Update background color map
+       mov  @wally_y,r0                ; Get y and x
+       andi r0,7
+       mov  r0,@wally_shift_value      ; x shift
+       mov  @wally_y,r1
+       swpb r1
+       andi r1,7
+       mov  r1,@wally_char_aligned     ; y shift
+*      TODO: copy attributes behind Wally to map?
+       .endproc
+*// wally_draw
+
+*********************************************************************
+*
+* Hide Wally
+*
+wally_hide:
+       .proc
+       li   r0,>bf00
+       mov  @wally_sprite_1,r1
+       movb r0,*r1
+       mov  @wally_sprite_2,r1
+       movb r0,*r1
+       bl   @upload_sprites
+       .endproc
+*// wally_hide
+
+*********************************************************************
+*
 * Room enter
 *
 
@@ -106,11 +167,15 @@ room_enter:
        clr  r0
        movb r0,@flag_baddy_init
        movb r0,@flag_food_drawn
+       movb r0,@flag_rolling_rock
+       movb r0,@flag_balloon
        movb @byte_01,@mag_lock_dir
        movb @byte_30,@spooky_hand
        movb @byte_30,@flag_mag_lock
        movb @byte_c8,@room_0_rock_count
-;      bl   @screen_clear_effect       ; TODO
+       bl   @deallocate_sprites
+       bl   @wally_hide
+       bl   @screen_clear              ; TODO: screen_clear_effect
        bl   @room_draw
        bl   @inventory_redraw
        .endproc
@@ -664,7 +729,6 @@ opcode_nop:
        nop
 *// bitmap_16_draw
 
-
 *********************************************************************
 *
 * Initialize sprites
@@ -677,11 +741,11 @@ init_sprites:
        li   r0,sprite_table
        li   r1,>c000
        li   r2,sprite_table_size
-one_time_init_3:
+init_sprites_1:
        mov  r1,*r0+
        clr  *r0+
        dec  r2
-       jne  one_time_init_3
+       jne  init_sprites_1
 *      Set max sprite
        seto @max_sprite
        .endproc
@@ -758,6 +822,28 @@ deallocate_sprite_2:
 
 *********************************************************************
 *
+* Deallocate all sprites except Wally
+*
+deallocate_sprites:
+       li   r0,sprite_table+(2*sprite_size)
+       li   r1,>c000
+       mov  @max_sprite,r2
+       dec  r2
+       jeq  deallocate_sprites_2
+deallocate_sprites_1:
+       mov  r1,*r0+
+       clr  *r0+
+       dec  r2
+       jne  deallocate_sprites_1
+*      Set max sprite
+deallocate_sprites_2:
+       li   r0,1
+       mov  r0,@max_sprite
+       rt
+*// deallocate_sprites
+
+*********************************************************************
+*
 * Upload sprites to VDP
 *
 upload_sprites:
@@ -769,10 +855,12 @@ upload_sprites:
        inc  r2
        li   r1,sprite_table
 upload_sprites_1:
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
+       movb *r1+,r0                    ; y
+       ai   r0,->0100                  ; Adjust y coord
+       movb r0,*r15
+       movb *r1+,*r15                  ; x
+       movb *r1+,*r15                  ; pattern
+       movb *r1+,*r15                  ; color
        dec  r2
        jne  upload_sprites_1
 upload_sprites_2:

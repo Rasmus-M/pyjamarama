@@ -28,6 +28,33 @@ L824B  data action14_Win
 *
 *
 action00_SwapObj:
+       movb @byte_01,@obj_event_pause
+       movb *r4+,r0                    ; Get index of object required.
+       li   r1,pocket_1+1
+       cb   r0,*r1                     ; Check to see if its in pocket 1. If not assumes its in pocket 2.
+       jeq  Action00_SwapObj_0
+       inct  r1                        ; r1=pocket_2+1
+Action00_SwapObj_0:
+       mov  @wally_room_no,r3
+       sla  r3,1                       ; x2
+       a    @wally_room_no,r3          ; x3
+       ai   r3,room_obj_slots
+       clr  r0
+       movb *r3+,@r0lb                 ; Get x
+       mov  r0,@bitmap_x
+       movb *r3+,@r0lb                 ; Get y
+       ai   r0,>10
+       mov  r0,@bitmap_y
+       movb *r3,@r0lb                  ; Get object in room
+       movb *r1,r2                     ; Get index of required object from pocket
+       mov  r0,*r1                     ; Put room object into pocket
+       movb r2,*r3                     ; Put object, originally in pocket, into room
+       movb r2,@r0lb
+       ai   r0,>50
+       .push r4
+       bl   @bitmap_16_draw
+       bl   @inventory_redraw
+       .pop r4
        b    @room_test_events_then
 
 *********************************************************************
@@ -50,7 +77,7 @@ action01_PickUp:
        movb @pocket_2+1,*r3            ; Pocket 2 -> room
        mov  @pocket_1,@pocket_2        ; Pocket 1 -> pocket 2
        mov  r0,@pocket_1               ; Room -> pocket 1
-       mov  *r3,r0                     ; Get room object
+       movb *r3,@r0lb                  ; Get room object
        ai   r0,>50
        .push r4
        bl   @bitmap_16_draw

@@ -1,8 +1,9 @@
 room_obj_slots:
      equ  $
+* Room 00
 L8535  byte >3A                        X Position
 L8536  byte >88                        Y Position
-room_obj_slot_Obj:
+room_obj_slot_0_obj:
      equ  $
 L8537  byte >02                        Square Key, object currently in room 0.
 * Room 01
@@ -58,7 +59,7 @@ L857A  byte >78,>68,>19                Cross
 L857D  byte >64,>68,>1A                Bunch of Keys
 * Room 19
 L8580  byte >46,>88                    Lense
-obj_slot_19:
+obj_slot_19_obj:
      equ  $
 L8582  byte >1B
 * Room 1A

@@ -18,7 +18,7 @@ game_init_stats_0:
        dect r2
        jne  game_init_stats_0
 *      Reset object positions by filling in the object slots, for each room, with and object index in incremental steps
-       li   r0,room_obj_slot_Obj
+       li   r0,room_obj_slot_0_obj
        li   r2,>1e
        li   r1,>0200
 game_init_stats_1:
@@ -360,10 +360,10 @@ room_draw_5:
        a    @wally_room_no,r3          ; x3
        ai   r3,room_obj_slots
        clr  r0
-       movb *r3+,@r0lb
+       movb *r3+,@r0lb                 ; Get x
        mov  r0,@bitmap_x
-       movb *r3+,@r0lb
-       ai   r0,>10
+       movb *r3+,@r0lb                 ; Get y
+       ai   r0,>10                     ; Y values are offset by -16
        mov  r0,@bitmap_y
        movb *r3,@r0lb
        ai   r0,>50

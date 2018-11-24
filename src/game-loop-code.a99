@@ -336,7 +336,19 @@ wally_check_for_death:
 *
 wally_test_obj_slots:
        .proc
-;      TODO
+       movb @obj_event_pause,r0        ; See if Wally has just picked up.
+       jeq  wally_test_obj_slot_0
+       mov  @wally_room_no,r3          ; If he has, see if he has now walked away from the object position.
+       sla  r3,1                       ; x2
+       a    @wally_room_no,r3          ; x3
+       ai   r3,room_obj_slots
+       movb *r3,r0
+       sb   @wally_x,r0
+       sb   @byte_06,r0
+       cb   r0,@byte_f4
+       jhe  wally_test_obj_slot_0
+       movb @byte_00,@obj_event_pause
+wally_test_obj_slot_0:
        .endproc
 *// wally_test_obj_slots
 

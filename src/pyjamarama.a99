@@ -333,6 +333,8 @@ byte_08:
        byte >08
 byte_07:
        byte >07
+byte_06:
+       byte >06
 byte_04:
        byte >04
 byte_03:

@@ -1,22 +1,23 @@
        even
 table_test_func_ptrs:
        equ  $
-L8211  data Test00_WallyPosCheck
-L8213  data Test01_WallyPosCheck
-L8215  data Test02_PocketCheck
-L8217  data Test03_FuelCanFull
-L8219  data Test04_LiftOn
-L821B  data Test05_LiftFloor
-L821D  data Test06_LiftOff
-L821F  data Test07_HelpSwitchOff
-L8221  data Action08_BoxingGloveSafe
+L8211  data test00_wally_pos_check
+L8213  data test01_wally_pos_check
+L8215  data test02_pocket_check
+L8217  data test03_fuel_can_full
+L8219  data test04_lift_on
+L821B  data test05_lift_floor
+L821D  data test06_lift_off
+L821F  data test07_help_switch_off
+L8221  data test08_boxing_glove_safe
 
+*********************************************************************
+*
 * Test 00 : Exit position test.
-* Input
+* Input:
 * r4  Address of room data after event marker.
 *
-Test00_WallyPosCheck:
-       equ  $
+test00_wally_pos_check:
        movb *r4+,r0                    ; Get x position to test against
        sb   @wally_x,r0                ; Subtract Wally x
        sb   @byte_09,r0
@@ -33,106 +34,112 @@ test_00_wally_pos_check_0:
 test_00_wally_pos_check_1:
        b    @room_test_events_endif
 
+*********************************************************************
+*
 * 89AC: Test 01 : Check for position.
-* Input
-* HL  Next address of event data string.
+* r4  Address of room data after event marker.
 * Data string [01, x pos, y pos]
 * On entry HL points to the 'x pos'.
-Test01_WallyPosCheck:
-     equ    $
-;89AC  LD A,(ObjEventPause)  Make sure not just done an object pickup / event.
-;89AF  OR A
-;89B0  JP NZ,Room_CllEvnt_EndIf
-;89B3  LD DE,(Wally_X)  See if Wally is within range of the event position.
-;89B7  LD A,(HL)
-;89B8  INC HL
-;89B9  SUB E
-;89BA  SUB $03
-;89BC  CP $FA
-;89BE  JR C,Test01_WallyPosCheck_0
-;89C0  LD A,(HL)
-;89C1  INC HL
-;89C2  SUB D
-;89C3  SUB $03
-;89C5  CP $FA
-;89C7  JR C,Test01_WallyPosCheck_1
-;89C9  JP Room_CllEvnt_NxtCmd  If he is then run the next event in the data.
-;Test01_WallyPosCheck_0
-;89CC  INC HL
-;Test01_WallyPosCheck_1
-;89CD  JP Room_CllEvnt_EndIf
+*
+test01_wally_pos_check:
+       movb  @obj_event_pause,r0       ; Make sure not just done an object pickup / event.
+       jeq  test01_wally_pos_check_1
+       movb *r4+,r0                    ; See if Wally is within range of the event position.
+       sb   @wally_x,r0
+       sb   @byte_03,r0
+       cb   r0,@byte_fa
+       jl   test01_wally_pos_check_0
+       movb *r4+,r0
+       sb   @wally_y,r0
+       sb   @byte_03,r0
+       cb   r0,@byte_fa
+       jl   test01_wally_pos_check_0
+       b    @room_test_events_next_cmd ; If he is then run the next event in the data.
+test01_wally_pos_check_0:
+       inc  r4
+test01_wally_pos_check_1:
        b    @room_test_events_endif
 
+*********************************************************************
+*
 * 89D2: Test 02 : See if Wally is carrying a specific object
 * Input
-* HL  Points to address of data string holding object index.
-Test02_PocketCheck:
-     equ    $
-;89D2  LD DE,(Pocket1)
-;89D6  LD A,(HL)
-;89D7  INC HL
-;89D8  CP E
-;89D9  JP Z,Room_CllEvnt_NxtCmd
-;89DC  CP D
-;89DD  JP Z,Room_CllEvnt_NxtCmd
-;89E0  JP Room_CllEvnt_EndIf
+* r4  Points to address of data string holding object index.
+*
+test02_pocket_check:
+       movb *r4+,r0
+       cb   r0,@pocket_1+1
+       jeq  test02_pocket_check_1
+       cb   r0,@pocket_2+1
+       jne  test02_pocket_check_2
+test02_pocket_check_1:
+       b    @room_test_events_next_cmd
+test02_pocket_check_2:
        b    @room_test_events_endif
 
+*********************************************************************
+*
 * 89E3: Test 03 : See if fuel can is full.
-Test03_FuelCanFull:
-     equ    $
-;89E3  LD A,(Flag_FuelCan)  If the fuel can is...
-;89E6  OR A
-;89E7  JP NZ,Room_CllEvnt_NxtCmd  Full, TRUE.
-;89EA  JP Room_CllEvnt_EndIf  Empty, FALSE.
-       b    @room_test_events_endif
+*
+test03_fuel_can_full:
+       movb @flag_fuel_can,r0          ; If the fuel can is...
+       jeq  test03_fuel_can_full_1
+       b    @room_test_events_next_cmd ; full
+test03_fuel_can_full_1:
+       b    @room_test_events_endif    ; empty
 
+*********************************************************************
+*
 * 8B67: Test 04 : Is the lift is on?
-Test04_LiftOn:
-     equ    $
-;8B67  LD A,(Lift_Count)
-;8B6A  OR A
-;8B6B  JP Z,Room_CllEvnt_EndIf  Lift count is down to zero, end the test.
-;8B6E  JP Room_CllEvnt_NxtCmd  If the lift count is more, then return true.
-       b    @room_test_events_endif
+*
+test04_lift_on:
+       movb  @lift_count,r0
+       jeq  test04_lift_on_1
+       b    @room_test_events_next_cmd ; on
+test04_lift_on_1:
+       b    @room_test_events_endif    ; off
 
+*********************************************************************
+*
 * 8B88: Test 05 : Is lift at a specific floor value.
 * Input
-* HL  Points to address holding value to test for.
+* r4  Points to address holding value to test for.
 * A floor value is different to the level shown on screen. See LiftFloorNo
-Test05_LiftFloor:
-     equ    $
-;8B88  LD A,(HL)  Get value to test for.
-;8B89  INC HL
-;8B8A  LD B,A
-;8B8B  LD A,(LiftFloorNo)  See the lift is set to the same value.
-;8B8E  CP B
-;8B8F  JP Z,Room_CllEvnt_NxtCmd  True.
-;8B92  JP Room_CllEvnt_EndIf  False.
-       b    @room_test_events_endif
+*
+test05_lift_floor:
+       movb *r4+,r0                    ; Get value to test for.
+       cb   r0,@lift_floor_no          ; See the lift is set to the same value.
+       jne  test05_lift_floor_1
+       b    @room_test_events_next_cmd ; yes
+test05_lift_floor_1:
+       b    @room_test_events_endif    ; no
 
-* 8B76: Test 06 : Is the lift is off.
-Test06_LiftOff:
-     equ    $
-;8B76  LD A,(Lift_Count)  If greater than zero then the lift is on.
-;This entry point is used by the routine at Test07_HelpSwitchOff.
-;Test06_LiftOff_0
-;8B79  OR A
-;8B7A  JP NZ,Room_CllEvnt_EndIf  False.
-;8B7D  JP Room_CllEvnt_NxtCmd  True.
-       b    @room_test_events_endif
+*********************************************************************
+*
+* 8B76: Test 06 : Is the lift off.
+test06_lift_off:
+       movb  @lift_count,r0
+       jne  test04_lift_off_1
+       b    @room_test_events_next_cmd ; off
+test04_lift_off_1:
+       b    @room_test_events_endif    ; on
 
-* 8B71: Test 07 : Is the help switch is of?
-Test07_HelpSwitchOff:
-     equ    $
-;8B71  LD A,(Flag_HelpSwitch)
-;8B74  JR Test06_LiftOff_0
-       b    @room_test_events_endif
+*********************************************************************
+*
+* 8B71: Test 07 : Is the help switch off?
+test07_help_switch_off:
+       movb @flag_help_switch,r0
+       jne  test07_help_switch_off_1
+       b    @room_test_events_next_cmd ; off
+test07_help_switch_off_1:
+       b    @room_test_events_endif    ; on
 
+*********************************************************************
+*
 * BF72: Test 08 : Is Boxing Glove Trap safe.
 * Checks to see if Wally will get hit by the Boxing Glove trap, carrying the towel will stop this.
 * This test will act on the trap if it becomes false.
-Action08_BoxingGloveSafe:
+test08_boxing_glove_safe:
      equ    $
 ;BF72  LD A,(Pocket1)  Is Wally carrying the towel.
 ;BF75  CP $15

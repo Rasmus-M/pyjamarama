@@ -1,33 +1,33 @@
        even
 table_action_func_ptrs:
        equ  $
-L8223  data Action00_SwapObj  
-L8225  data Action01_PickUp  
-L8227  data Action02_EnterRoom  
-L8229  data Action03_FillBucket  
-L822B  data Action04_ChargeLaser  
-L822D  data Action05_DischargeLaser  
-L822F  data Action06_Emptybucket  
-L8231  data Action07_FillFuelCan  
-L8233  data Action08_EmptyFuelCan  
-L8235  data Action09_LiftOn  
-L8237  data Action0A_MoveLift  
-L8239  data Action0B_LiftDec  
-L823B  data Action0C_LiftLights  
-L823D  data Action0D_MagnetUnlock  
-L823F  data Action0E_HelpOn  
-L8241  data Action0F_HelpOff  
-L8243  data Action10_LiftOffFromEarth  
-L8245  data Action11_LiftOffFromMoon  
-L8247  data Action12_GrabRope  
-L8249  data Action13_EnterAcrade  
-L824B  data Action14_Win
+L8223  data action00_SwapObj  
+L8225  data action01_PickUp  
+L8227  data action02_EnterRoom  
+L8229  data action03_FillBucket  
+L822B  data action04_ChargeLaser  
+L822D  data action05_DischargeLaser  
+L822F  data action06_Emptybucket  
+L8231  data action07_FillFuelCan  
+L8233  data action08_EmptyFuelCan  
+L8235  data action09_LiftOn  
+L8237  data action0A_MoveLift  
+L8239  data action0B_LiftDec  
+L823B  data action0C_LiftLights  
+L823D  data action0D_MagnetUnlock  
+L823F  data action0E_HelpOn  
+L8241  data action0F_HelpOff  
+L8243  data action10_LiftOffFromEarth  
+L8245  data action11_LiftOffFromMoon  
+L8247  data action12_GrabRope  
+L8249  data action13_EnterAcrade  
+L824B  data action14_Win
 
-Action00_SwapObj:
-       equ  $
-Action01_PickUp:
-       equ  $
-Action02_EnterRoom:
+action00_SwapObj:
+       b    @room_test_events_then
+action01_PickUp:
+       b    @room_test_events_then
+action02_EnterRoom:
        movb *r4+,@wally_room_no+1      ; Get new room number and set.
        movb *r4+,@wally_x              ; Get new position for wally.
        movb *r4+,@wally_y              ; Get new position for wally.
@@ -37,41 +37,39 @@ Action02_EnterRoom:
        dect r10
        mov  *r10,r4
        b    @room_test_events_then
-Action03_FillBucket:
-       equ  $
-Action04_ChargeLaser:
-       equ  $
-Action05_DischargeLaser:
-       equ  $
-Action06_Emptybucket:
-       equ  $
-Action07_FillFuelCan:
-       equ  $
-Action08_EmptyFuelCan:
-       equ  $
-Action09_LiftOn:
-       equ  $
-Action0A_MoveLift:
-       equ  $
-Action0B_LiftDec:
-       equ  $
-Action0C_LiftLights:
-       equ  $
-Action0D_MagnetUnlock:
-       equ  $
-Action0E_HelpOn:
-       equ  $
-Action0F_HelpOff:
-       equ  $
-Action10_LiftOffFromEarth:
-       equ  $
-Action11_LiftOffFromMoon:
-       equ  $
-Action12_GrabRope:
-       equ  $
-Action13_EnterAcrade:
-       equ  $
-Action14_Win:
-       equ  $
-
-       b    @room_test_events_next_cmd
+action03_FillBucket:
+       b    @room_test_events_then
+action04_ChargeLaser:
+       b    @room_test_events_then
+action05_DischargeLaser:
+       b    @room_test_events_then
+action06_Emptybucket:
+       b    @room_test_events_then
+action07_FillFuelCan:
+       b    @room_test_events_then
+action08_EmptyFuelCan:
+       b    @room_test_events_then
+action09_LiftOn:
+       b    @room_test_events_then
+action0A_MoveLift:
+       b    @room_test_events_then
+action0B_LiftDec:
+       b    @room_test_events_then
+action0C_LiftLights:
+       b    @room_test_events_then
+action0D_MagnetUnlock:
+       b    @room_test_events_then
+action0E_HelpOn:
+       b    @room_test_events_then
+action0F_HelpOff:
+       b    @room_test_events_then
+action10_LiftOffFromEarth:
+       b    @room_test_events_then
+action11_LiftOffFromMoon:
+       b    @room_test_events_then
+action12_GrabRope:
+       b    @room_test_events_then
+action13_EnterAcrade:
+       b    @room_test_events_then
+action14_Win:
+       b    @room_test_events_then

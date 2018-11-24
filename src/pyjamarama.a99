@@ -310,6 +310,8 @@ byte_1a:
        byte >1a
 byte_10:
        byte >10
+byte_0f:
+       byte >0f
 byte_0d:
        byte >0d
 byte_0b:

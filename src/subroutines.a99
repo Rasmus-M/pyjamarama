@@ -47,11 +47,11 @@ game_init_stats_3:
        bl   @allocate_sprite
        mov  r0,@wally_sprite_1
        ai   r0,3
-       movb @byte_0b,*r0
+       movb @byte_0f,*r0
        bl   @allocate_sprite
        mov  r0,@wally_sprite_2
        ai   r0,3
-       movb @byte_0b,*r0
+       movb @byte_0f,*r0
        .endproc
 *// game_init_stats
 

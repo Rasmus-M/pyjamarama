@@ -23,53 +23,177 @@ L8247  data action12_GrabRope
 L8249  data action13_EnterAcrade  
 L824B  data action14_Win
 
+*********************************************************************
+*
+*
+*
 action00_SwapObj:
        b    @room_test_events_then
+
+*********************************************************************
+*
+* Picks up object in current room.
+*
 action01_PickUp:
+       movb @byte_01,@obj_event_pause  ; Stop continous swapping of objects
+       mov  @wally_room_no,r3
+       sla  r3,1                       ; x2
+       a    @wally_room_no,r3          ; x3
+       ai   r3,room_obj_slots
+       clr  r0
+       movb *r3+,@r0lb                 ; Get x
+       mov  r0,@bitmap_x
+       movb *r3+,@r0lb                 ; Get y
+       ai   r0,>10
+       mov  r0,@bitmap_y
+       movb *r3,@r0lb                  ; Get object
+       movb @pocket_2+1,*r3            ; Pocket 2 -> room
+       mov  @pocket_1,@pocket_2        ; Pocket 1 -> pocket 2
+       mov  r0,@pocket_1               ; Room -> pocket 1
+       mov  *r3,r0                     ; Get room object
+       ai   r0,>50
+       .push r4
+       bl   @bitmap_16_draw
+       bl   @inventory_redraw
+       .pop r4
        b    @room_test_events_then
+
+*********************************************************************
+*
+* Enters a new room.
+*
 action02_EnterRoom:
        movb *r4+,@wally_room_no+1      ; Get new room number and set.
        movb *r4+,@wally_x              ; Get new position for wally.
        movb *r4+,@wally_y              ; Get new position for wally.
-       mov  r4,*r10+
+       .push r4
        bl   @wally_reset               ; Reset Wally's animation ready for new room.
        bl   @room_enter                ; Set up the screen and data.
-       dect r10
-       mov  *r10,r4
+       .pop r4
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action03_FillBucket:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action04_ChargeLaser:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action05_DischargeLaser:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action06_Emptybucket:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action07_FillFuelCan:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action08_EmptyFuelCan:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action09_LiftOn:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0A_MoveLift:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0B_LiftDec:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0C_LiftLights:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0D_MagnetUnlock:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0E_HelpOn:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action0F_HelpOff:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action10_LiftOffFromEarth:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action11_LiftOffFromMoon:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action12_GrabRope:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action13_EnterAcrade:
        b    @room_test_events_then
+
+*********************************************************************
+*
+*
+*
 action14_Win:
        b    @room_test_events_then

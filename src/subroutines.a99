@@ -65,10 +65,9 @@ lives_reset:
        mov  r0,@wally_lives
        li   r0,3
 lives_reset_1:
-       mov  r0,*r10+                   ; Push r0
+       .push r0
        bl   @life_draw_blit
-       dect r10                        , Pop r0
-       mov  *r10,r0
+       .pop r0
        dec  r0
        jne  lives_reset_1
        .endproc
@@ -174,7 +173,7 @@ room_enter:
        movb @byte_c8,@room_0_rock_count
        bl   @deallocate_sprites
        bl   @wally_hide
-       bl   @screen_clear              ; TODO: screen_clear_effect
+       bl   @screen_clear_room         ; TODO: screen_clear_effect
        bl   @room_draw
        bl   @inventory_redraw
        .endproc
@@ -261,10 +260,9 @@ inventory_draw_text_7:
        ab   *r4+,r1
        jmp  inventory_draw_text_7
 inventory_draw_text_0:
-       mov  r1,*r10+
+       .push r1
        bl   @tile_draw
-       dect r10
-       mov  *r10,r1
+       .pop r1
        inc  r1
        jmp  inventory_draw_text_7
 inventory_draw_text_1:
@@ -1115,6 +1113,33 @@ screen_clear_1:
        jne  screen_clear_1
        .endproc
 *// screen_clear
+
+*********************************************************************
+*
+* Clear room area of screen
+*
+screen_clear_room:
+       .proc
+*      Patterns
+       li   r0,ptrntb+>500
+       li   r1,>0000
+       li   r2,>1800->500
+       bl   @vdpwr
+*      Colors
+       li   r0,colrtb+>500
+       li   r1,attr_46
+       li   r2,>1800->500
+       bl   @vdpwr
+*      Attributes
+       li   r0,attr_table+(5*32)
+       li   r1,attr_46
+       li   r2,>300-(5*32)
+screen_clear_room_1:
+       movb r1,*r0+
+       dec  r2
+       jne  screen_clear_room_1
+       .endproc
+*// screen_clear_room
 
 *********************************************************************
 *

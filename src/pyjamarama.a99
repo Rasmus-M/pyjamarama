@@ -165,6 +165,15 @@ pad_max:
        b    *r11
        .endm
 
+       .defm push
+       mov  #1,*r10+
+       .endm
+
+       .defm pop
+       dect r10
+       mov  *r10,#1
+       .endm
+
 *********************************************************************
 *
 * Main program

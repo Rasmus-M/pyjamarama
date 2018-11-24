@@ -43,7 +43,7 @@ test_00_wally_pos_check_1:
 *
 test01_wally_pos_check:
        movb  @obj_event_pause,r0       ; Make sure not just done an object pickup / event.
-       jeq  test01_wally_pos_check_1
+       jne  test01_wally_pos_check_1
        movb *r4+,r0                    ; See if Wally is within range of the event position.
        sb   @wally_x,r0
        sb   @byte_03,r0

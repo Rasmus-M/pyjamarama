@@ -277,7 +277,7 @@ wally_move_8:
 *
 wally_turn_head:
        .proc
-       mov r0,*r10+
+       .push r0
        cb   r0,@byte_00
        jeq  wally_turn_head_2
        cb   r0,@byte_10
@@ -306,8 +306,7 @@ wally_turn_head_3:
        sb   @byte_01,r0
        movb r0,@wally_head_countdown
 wally_turn_head_4:
-       dect r10
-       mov  *r10,r0
+       .pop r0
        .endproc
 *// wally_turn_head
 

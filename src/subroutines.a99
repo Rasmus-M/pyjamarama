@@ -148,7 +148,7 @@ wally_draw_1:
 *
 wally_hide:
        .proc
-       li   r0,>bf00
+       li   r0,>c800
        mov  @wally_sprite_1,r1
        movb r0,*r1
        mov  @wally_sprite_2,r1
@@ -161,7 +161,6 @@ wally_hide:
 *
 * Room enter
 *
-
 room_enter:
        .proc
        clr  r0
@@ -315,6 +314,8 @@ txt_empty:
 *
 room_draw:
        .proc
+       li   r0,>01a2                   ; Screen off
+       bl   @vwtr
        mov  @wally_room_no,r4          ; Get room number.
        sla  r4,1                       ; Work out address of room pointer.
        mov  @room_data(r4),r4          ; Get address to room description data.
@@ -369,6 +370,8 @@ room_draw_5:
        movb *r3,@r0lb
        ai   r0,>50
        bl   @bitmap_16_draw
+       li   r0,>01e2                   ; Screen on
+       bl   @vwtr
        .endproc
 *// room_draw
 

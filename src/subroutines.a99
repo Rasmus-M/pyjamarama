@@ -178,7 +178,6 @@ wally_hit_test:
        sb   @byte_0d,r1
        cb   r1,@byte_e6
        jl   wally_hit_test_1
-       andi r0,>00ff
        bl   @milk_decrease_by_amount   ; Its a hit, so decrease energy and check for death.
 wally_hit_test_1:
        .endproc

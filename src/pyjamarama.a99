@@ -293,8 +293,12 @@ byte_ef:
        byte >ef
 byte_e9:
        byte >e9
+byte_e6:
+       byte >e6
 byte_de:
        byte >de
+byte_d6:
+       byte >d6
 byte_d0:
        byte >d0
 byte_c8:

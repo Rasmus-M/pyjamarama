@@ -158,6 +158,34 @@ wally_hide:
 
 *********************************************************************
 *
+* Check to see if Wally is colliding with another sprite.
+*
+* Input:
+* r0: Amount to decrease wally's energy by
+* r1 MSB: y position of other sprite
+* r1 LSB: x position of other sprite
+*
+wally_hit_test:
+       .proc
+       movb @death_flag,r0             ; Check to see if wally is dead, if so return.
+       jne  wally_hit_test_1
+       sb   @wally_y,r1                ; See if Y pos is within range of sprite's Y => (Wy-$0e > Sy < Wy+$0e)
+       sb   @byte_1c,r1
+       cb   r1,@byte_d6
+       jl   wally_hit_test_1
+       swpb r1
+       sb   @wally_x,r1                ; See if X pos is within range of sprite's X => (Wx-$0D > Sx < Wx+$0D)
+       sb   @byte_0d,r1
+       cb   r1,@byte_e6
+       jl   wally_hit_test_1
+       andi r0,>00ff
+       bl   @milk_decrease_by_amount   ; Its a hit, so decrease energy and check for death.
+wally_hit_test_1:
+       .endproc
+*// wally_hit_test
+
+*********************************************************************
+*
 * Increases Wally's milk energy level by given amount.
 *
 * Input:

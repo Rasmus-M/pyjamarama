@@ -165,6 +165,8 @@ wally_hide:
 * r1 MSB: y position of other sprite
 * r1 LSB: x position of other sprite
 *
+* Modifies r0-r5
+*
 wally_hit_test:
        .proc
        movb @death_flag,r0             ; Check to see if wally is dead, if so return.

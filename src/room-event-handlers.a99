@@ -51,7 +51,7 @@ LE67E  .endproc
 
 update_room_02:
        .proc
-LE67F  bl @Handler_Angels
+LE67F  bl @handler_angels
 LE682  bl @handler_food
 LE685  bl @handler_spooky_hand
 LE688  .endproc  
@@ -100,12 +100,12 @@ LE6AE  .endproc
 
 update_room_0B:
        .proc
-LE6AF  bl @Handler_Angels
+LE6AF  bl @handler_angels
 LE6B2  .endproc  
 
 update_room_0C:
        .proc
-LE6B3  bl @Handler_Angels
+LE6B3  bl @handler_angels
 LE6B6  bl @handler_spooky_hand
 LE6B9  .endproc  
 
@@ -116,7 +116,7 @@ LE6BD  .endproc
 
 update_room_0E:
        .proc
-LE6BE  bl @Handler_Angels
+LE6BE  bl @handler_angels
 LE6C1  .endproc  
 
 update_room_0F:
@@ -135,7 +135,7 @@ LE6D2  .endproc
 update_room_11:
        .proc
 LE6D3  bl @handler_food
-LE6D6  bl @Handler_Angels  
+LE6D6  bl @handler_angels
 LE6D9  .endproc  
 
 update_room_12:
@@ -291,84 +291,84 @@ roll_ball_bmp:
 
 *********************************************************************
 *
-Handler_Angels:
+handler_angels:
        .proc
-
-;EB27  LD A,(Flag_BaddyInit)  See if angels have been intialised.
-;EB2A  OR A
-;EB2B  JR NZ,Handler_Angels_0
-;Initialise
-;EB2D  LD A,$01  Set as initialised.
-;EB2F  LD (Flag_BaddyInit),A
-;EB32  INC A  Set directions all the same.
-;EB33  LD (Angel1_Direction),A
-;EB36  LD (Angel2_Direction),A
-;EB39  LD (Angel3_Direction),A
-;EB3C  LD HL,$3278  Set positions and draw each angel.
-;EB3F  LD (Angel1_Pos),HL
-;EB42  LD (BitmapX),HL
-;EB45  LD A,(Angel_Bmp)
-;EB48  CALL Bitmap16Draw
-;EB4B  LD HL,$6438
-;EB4E  LD (Angel2_Pos),HL
-;EB51  LD (BitmapX),HL
-;EB54  CALL Bitmap16Draw
-;EB57  LD HL,$50B8
-;EB5A  LD (Angel3_Pos),HL
-;EB5D  LD (BitmapX),HL
-;EB60  CALL Bitmap16Draw
-;EB63  RET
-;Update
-;Handler_Angels_0
-;EB64  LD A,(Angel_Bmp)  Get bitmap frame for all angels.
-;EB67  INC A  Update to next frame.
-;EB68  CP $99  Check to see if frame needs to loop around.
-;EB6A  JR NZ,Handler_Angels_1
-;EB6C  LD A,$93
-;Handler_Angels_1
-;EB6E  LD D,A  Store frame for now.
-;EB6F  LD IX,Angel1_Pos  Point index to first angel.
-;EB73  LD B,$03  Number of angels to update.
-;Handler_Angels_2
-;EB75  LD L,(IX+$00)  Get x position.
-;EB78  LD H,(IX+$01)  Get y postion.
-;EB7B  LD C,(IX+$02)  Get direction / velocity
-;EB7E  INC IX  Point to next angel.
-;EB80  INC IX
-;EB82  INC IX
-;EB84  LD (BitmapX),HL  Tell bitmap draw position.
-;EB87  LD A,H  Update position by velocity.
-;EB88  ADD A,C
-;EB89  LD H,A
-;EB8A  CP $AA  See if at bottom of screen.
-;EB8C  JR NZ,Handler_Angels_4
-;Handler_Angels_3
-;EB8E  LD A,C  If at bottom reverse direction.
-;EB8F  NEG
-;EB91  LD C,A
-;EB92  JR Handler_Angels_5
-;Handler_Angels_4
-;EB94  CP $30  See if at top of screen.
-;EB96  JR Z,Handler_Angels_3  Reverse...
-;Handler_Angels_5
-;EB98  LD (IX-$01),C  Store new position and direction.
-;EB9B  LD (IX-$02),H
-;EB9E  LD A,(Angel_Bmp)  Set draw with previous bitmap.
-;EBA1  CALL Bitmap16Draw  Use draw to erase old frame.
-;EBA4  LD (BitmapX),HL  Set for new position.
-;EBA7  LD A,D  Get new frame and draw.
-;EBA8  CALL Bitmap16Draw
-;EBAB  PUSH BC
-;EBAC  PUSH DE
-;EBAD  LD B,$04  Amount of energy loss if angel hits wally.
-;EBAF  CALL Wally_HitTest
-;EBB2  POP DE
-;EBB3  POP BC
-;EBB4  DJNZ Handler_Angels_2  Next angel.
-;EBB6  LD A,D  Update new frame for next time.
-;EBB7  LD (Angel_Bmp),A
-
+       movb @flag_baddy_init,r0        ; See if angels have been intialised.
+       jne  handler_angels_0
+*      Initialize
+       movb @byte_01,@flag_baddy_init  ; Set as initialised.
+       li   r0,>0002
+       mov  r0,@angel1_direction       ; Set directions all the same.
+       mov  r0,@angel2_direction
+       mov  r0,@angel3_direction
+       li   r0,>0093
+       mov  r0,@angel_frame
+       bl   @get_sprite_pattern
+       li   r3,>0004                   ; Color
+       movb r1,r3                      ; Pattern
+       bl   @allocate_sprite           ; Set positions and draw each angel.
+       mov  r0,@angel1_sprite
+       li   r1,>3278
+       mov  r1,*r0+
+       mov  r3,*r0
+       bl   @allocate_sprite
+       mov  r0,@angel2_sprite
+       li   r1,>6438
+       mov  r1,*r0+
+       mov  r3,*r0
+       bl   @allocate_sprite
+       mov  r0,@angel3_sprite
+       li   r1,>50b8
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp  handler_angels_end
+* Update
+handler_angels_0:
+       mov  @angel_frame,r0            ; Get bitmap frame for all angels.
+       inc  r0                         ; Update to next frame.
+       ci   r0,>0099                   ; Check to see if frame needs to loop around.
+       jne  handler_angels_1
+       li   r0,>0093
+handler_angels_1:
+       mov  r0,@angel_frame
+       bl   @get_sprite_pattern
+       mov  r1,r6
+       li   r7,angel1_sprite           ; Point index to first angel.
+       li   r8,3                       ; Number of angels to update.
+handler_angels_2:
+       mov  *r7+,r4                    ; Get sprite
+       movb r6,@sprite_pattern(r4)
+       ab   @1(r7),*r4                 ; Add velocity to y position
+       cb   *r4,@byte_aa               ; See if at bottom of screen.
+       jhe  handler_angels_3
+       cb   *r4,@byte_30               ; See if at top of screen.
+       jh   handler_angels_4
+handler_angels_3:
+       neg  *r7
+handler_angels_4:
+       li   r0,4                       ; Amount of energy loss if angel hits wally.
+       mov  *r4,r1
+       bl   @wally_hit_test
+       inct r7
+       dec  r8
+       jne  handler_angels_2
+handler_angels_end:
        .endproc
+
+angel1_sprite:                         ; Sprite pointer
+       data >0000
+angel1_direction:                      ; Direction / Velocity of sprite.
+       data >0002
+angel2_sprite:
+       data >0000
+angel2_direction:
+       data >0002
+angel3_sprite:
+       data >0000
+angel3_direction:
+       data >0002
+angel_frame:                           ; Bitmap index. (93 ~ 98)
+       data >0093
 
 *********************************************************************
 *

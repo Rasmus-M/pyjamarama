@@ -246,8 +246,9 @@ room_enter:
        movb r0,@flag_food_drawn
        movb r0,@flag_rolling_rock
        movb r0,@flag_balloon
+       li   r0,>30
+       mov  r0,@spooky_hand_countdown
        movb @byte_01,@mag_lock_dir
-       movb @byte_30,@spooky_hand
        movb @byte_30,@flag_mag_lock
        movb @byte_c8,@room_0_rock_count
        bl   @deallocate_sprites
@@ -901,6 +902,8 @@ init_sprite_maps_1:
 *
 * On return r0 contains the address of the allocated sprite
 * or 0 if allocation failed.
+*
+* Modifies r0-r2
 *
 allocate_sprite:
        .proc

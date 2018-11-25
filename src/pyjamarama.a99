@@ -123,10 +123,10 @@ wally_last_dir:
        equ  wally_char_aligned+2
 wally_head_countdown:
        equ  wally_last_dir+1
-spooky_hand:
+free_byte:
        equ  wally_head_countdown+1
 mag_lock_dir:
-       equ  spooky_hand+1
+       equ  free_byte+1
 room_0_rock_count:
        equ  mag_lock_dir+1
 input_flag:

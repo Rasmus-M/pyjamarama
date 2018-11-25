@@ -41,187 +41,187 @@ LE675  data update_room_1e
 
 update_room_00:
        .proc
-LE677	bl @Update_RollRock	
-LE67A	.endproc	
+LE677  bl @Update_RollRock  
+LE67A  .endproc  
 
 update_room_01:
        .proc
-LE67B	bl @update_roll_ball
-LE67E	.endproc	
+LE67B  bl @update_roll_ball
+LE67E  .endproc  
 
 update_room_02:
        .proc
-LE67F	bl @Handler_Angels
-LE682	bl @handler_food
-LE685	bl @Handler_SpookyHand	
-LE688	.endproc	
+LE67F  bl @Handler_Angels
+LE682  bl @handler_food
+LE685  bl @handler_spooky_hand
+LE688  .endproc  
 
 update_room_03:
        .proc
-LE689	bl @Handler_Chickens
-LE68C	.endproc	
+LE689  bl @Handler_Chickens
+LE68C  .endproc  
 
 update_room_04:
        .proc
-LE68D	bl @Handler_Darts
-LE690	.endproc	
+LE68D  bl @Handler_Darts
+LE690  .endproc  
 
 update_room_05:
        .proc
-LE691	bl @Handler_BouncingAxe
-LE694	.endproc	
+LE691  bl @Handler_BouncingAxe
+LE694  .endproc  
 
 update_room_06:
        .proc
-LE695	bl @Handler_SavagePlant
-LE698	.endproc	
+LE695  bl @Handler_SavagePlant
+LE698  .endproc  
 
 update_room_07:
        .proc
-LE699	bl @update_roll_ball
-LE69C	.endproc	
+LE699  bl @update_roll_ball
+LE69C  .endproc  
 
 update_room_08:
        .proc
-LE69D	bl @Handler_Darts
-LE6A0	.endproc	
+LE69D  bl @Handler_Darts
+LE6A0  .endproc  
 
 update_room_09:
        .proc
-LE6A1	bl @handler_food
-LE6A4	bl @Handler_BalloonHelp	
-LE6A7	bl @Handler_SpookyHand	
-LE6AA	.endproc	
+LE6A1  bl @handler_food
+LE6A4  bl @Handler_BalloonHelp  
+LE6A7  bl @handler_spooky_hand
+LE6AA  .endproc  
 
 update_room_0A:
        .proc
-LE6AB	bl @Handler_BouncingAxe
-LE6AE	.endproc	
+LE6AB  bl @Handler_BouncingAxe
+LE6AE  .endproc  
 
 update_room_0B:
        .proc
-LE6AF	bl @Handler_Angels
-LE6B2	.endproc	
+LE6AF  bl @Handler_Angels
+LE6B2  .endproc  
 
 update_room_0C:
        .proc
-LE6B3	bl @Handler_Angels
-LE6B6	bl @Handler_SpookyHand	
-LE6B9	.endproc	
+LE6B3  bl @Handler_Angels
+LE6B6  bl @handler_spooky_hand
+LE6B9  .endproc  
 
 update_room_0D:
        .proc
-LE6BA	bl @Handler_SpookyHand
-LE6BD	.endproc	
+LE6BA  bl @handler_spooky_hand
+LE6BD  .endproc  
 
 update_room_0E:
        .proc
-LE6BE	bl @Handler_Angels
-LE6C1	.endproc	
+LE6BE  bl @Handler_Angels
+LE6C1  .endproc  
 
 update_room_0F:
        .proc
-LE6C2	bl @handler_food
-LE6C5	bl @Handler_Books	
-LE6C8	.endproc	
+LE6C2  bl @handler_food
+LE6C5  bl @Handler_Books  
+LE6C8  .endproc  
 
 update_room_10:
        .proc
-LE6C9	bl @Handler_MovingFloor
-LE6CC	bl @Animate_MovingFloor	
-LE6CF	bl @Handler_SpookyHand	
-LE6D2	.endproc	
+LE6C9  bl @Handler_MovingFloor
+LE6CC  bl @Animate_MovingFloor  
+LE6CF  bl @handler_spooky_hand
+LE6D2  .endproc  
 
 update_room_11:
        .proc
-LE6D3	bl @handler_food
-LE6D6	bl @Handler_Angels	
-LE6D9	.endproc	
+LE6D3  bl @handler_food
+LE6D6  bl @Handler_Angels  
+LE6D9  .endproc  
 
 update_room_12:
        .proc
-LE6DA	bl @Handler_BouncingAxe
-LE6DD	.endproc	
+LE6DA  bl @Handler_BouncingAxe
+LE6DD  .endproc  
 
 update_room_13:
        .proc
-LE6DE	bl @Handler_Darts
-LE6E1	.endproc	
+LE6DE  bl @Handler_Darts
+LE6E1  .endproc  
 
 update_room_14:
        .proc
-LE6E2	bl @Handler_SpookyHand
-LE6E5	.endproc	
+LE6E2  bl @handler_spooky_hand
+LE6E5  .endproc  
 
 update_room_15:
        .proc
-LE6E6	bl @handler_food
-LE6E9	bl @Handler_BouncingAxe	
-LE6EC	.endproc	
+LE6E6  bl @handler_food
+LE6E9  bl @Handler_BouncingAxe  
+LE6EC  .endproc  
 
 update_room_16:
        .proc
-LE6ED	bl @Handler_Ghosts
-LE6F0	.endproc	
+LE6ED  bl @Handler_Ghosts
+LE6F0  .endproc  
 
 update_room_17:
        .proc
-LE6F1	bl @Handler_Ghosts
-LE6F4	bl @handler_food
-LE6F7	.endproc	
+LE6F1  bl @Handler_Ghosts
+LE6F4  bl @handler_food
+LE6F7  .endproc  
 
 update_room_18:
        .proc
-LE6F8	bl @Handler_SpookyHand
-LE6FB	.endproc	
+LE6F8  bl @handler_spooky_hand
+LE6FB  .endproc  
 
 update_room_19:
        .proc
-LE6FC	bl @Handler_Invaders
-LE6FF	bl @Pause_Short	
-LE702	bl @Pause_Short	
-LE705	.endproc	
+LE6FC  bl @Handler_Invaders
+LE6FF  bl @Pause_Short  
+LE702  bl @Pause_Short  
+LE705  .endproc  
 
 update_room_1a:
        .proc
-LE706	bl @handler_food
-LE709	bl @Handler_ThreeTon	
-LE70C	.endproc	
+LE706  bl @handler_food
+LE709  bl @Handler_ThreeTon  
+LE70C  .endproc  
 
 update_room_1b:
        .proc
-LE70D	bl @Handler_ThreeTon
-LE710	bl @Handler_SpookyHand	
-LE713	.endproc	
+LE70D  bl @Handler_ThreeTon
+LE710  bl @handler_spooky_hand
+LE713  .endproc  
 
 update_room_1c:
        .proc
-LE714	bl @Handler_FallingBlocks
-LE717	bl @Handler_Fire	
-LE71A	.endproc	
+LE714  bl @Handler_FallingBlocks
+LE717  bl @Handler_Fire  
+LE71A  .endproc  
 
 update_room_1d:
        .proc
-LE71B	bl @Handler_BouncingAxe
-LE71E	bl @Handler_MagLock	
-LE721	bl @Handler_MagLock	
-LE724	bl @Handler_MagLock	
-LE727	bl @Handler_MagLock	
-LE72A	bl @Handler_MagLock	
-LE72D	.endproc	
+LE71B  bl @Handler_BouncingAxe
+LE71E  bl @Handler_MagLock  
+LE721  bl @Handler_MagLock  
+LE724  bl @Handler_MagLock  
+LE727  bl @Handler_MagLock  
+LE72A  bl @Handler_MagLock  
+LE72D  .endproc  
 
 update_room_1e:
        .proc
-LE72E	bl @Inv_Update
-LE731	bl @Inv_Update	
-LE734	bl @Inv_Update	
-LE737	bl @Inv_Update	
-LE73A	bl @Inv_Update	
-LE73D	bl @Inv_Update	
-LE740	bl @Arcade_UpdateExplosions	
-LE743	bl @Inv_BulletUpdate	
-LE746	bl @Arcade_UpdateBombs	
-LE749	.endproc	
+LE72E  bl @Inv_Update
+LE731  bl @Inv_Update  
+LE734  bl @Inv_Update  
+LE737  bl @Inv_Update  
+LE73A  bl @Inv_Update  
+LE73D  bl @Inv_Update  
+LE740  bl @Arcade_UpdateExplosions  
+LE743  bl @Inv_BulletUpdate  
+LE746  bl @Arcade_UpdateBombs  
+LE749  .endproc  
 
 *********************************************************************
 *
@@ -269,7 +269,7 @@ update_roll_ball_2:
        mov  r1,@roll_ball_bmp
        mov  r1,r0
        bl   @get_sprite_pattern
-       movb r1,@2(r4)                  ; Store pattern
+       movb r1,@sprite_pattern(r4)     ; Store pattern
        li   r0,10
        mov  *r4,r1
        bl   @wally_hit_test
@@ -294,79 +294,79 @@ roll_ball_bmp:
 Handler_Angels:
        .proc
 
-;EB27	LD A,(Flag_BaddyInit)	See if angels have been intialised.
-;EB2A	OR A
-;EB2B	JR NZ,Handler_Angels_0
+;EB27  LD A,(Flag_BaddyInit)  See if angels have been intialised.
+;EB2A  OR A
+;EB2B  JR NZ,Handler_Angels_0
 ;Initialise
-;EB2D	LD A,$01	Set as initialised.
-;EB2F	LD (Flag_BaddyInit),A
-;EB32	INC A	Set directions all the same.
-;EB33	LD (Angel1_Direction),A
-;EB36	LD (Angel2_Direction),A
-;EB39	LD (Angel3_Direction),A
-;EB3C	LD HL,$3278	Set positions and draw each angel.
-;EB3F	LD (Angel1_Pos),HL
-;EB42	LD (BitmapX),HL
-;EB45	LD A,(Angel_Bmp)
-;EB48	CALL Bitmap16Draw
-;EB4B	LD HL,$6438
-;EB4E	LD (Angel2_Pos),HL
-;EB51	LD (BitmapX),HL
-;EB54	CALL Bitmap16Draw
-;EB57	LD HL,$50B8
-;EB5A	LD (Angel3_Pos),HL
-;EB5D	LD (BitmapX),HL
-;EB60	CALL Bitmap16Draw
-;EB63	RET
+;EB2D  LD A,$01  Set as initialised.
+;EB2F  LD (Flag_BaddyInit),A
+;EB32  INC A  Set directions all the same.
+;EB33  LD (Angel1_Direction),A
+;EB36  LD (Angel2_Direction),A
+;EB39  LD (Angel3_Direction),A
+;EB3C  LD HL,$3278  Set positions and draw each angel.
+;EB3F  LD (Angel1_Pos),HL
+;EB42  LD (BitmapX),HL
+;EB45  LD A,(Angel_Bmp)
+;EB48  CALL Bitmap16Draw
+;EB4B  LD HL,$6438
+;EB4E  LD (Angel2_Pos),HL
+;EB51  LD (BitmapX),HL
+;EB54  CALL Bitmap16Draw
+;EB57  LD HL,$50B8
+;EB5A  LD (Angel3_Pos),HL
+;EB5D  LD (BitmapX),HL
+;EB60  CALL Bitmap16Draw
+;EB63  RET
 ;Update
 ;Handler_Angels_0
-;EB64	LD A,(Angel_Bmp)	Get bitmap frame for all angels.
-;EB67	INC A	Update to next frame.
-;EB68	CP $99	Check to see if frame needs to loop around.
-;EB6A	JR NZ,Handler_Angels_1
-;EB6C	LD A,$93
+;EB64  LD A,(Angel_Bmp)  Get bitmap frame for all angels.
+;EB67  INC A  Update to next frame.
+;EB68  CP $99  Check to see if frame needs to loop around.
+;EB6A  JR NZ,Handler_Angels_1
+;EB6C  LD A,$93
 ;Handler_Angels_1
-;EB6E	LD D,A	Store frame for now.
-;EB6F	LD IX,Angel1_Pos	Point index to first angel.
-;EB73	LD B,$03	Number of angels to update.
+;EB6E  LD D,A  Store frame for now.
+;EB6F  LD IX,Angel1_Pos  Point index to first angel.
+;EB73  LD B,$03  Number of angels to update.
 ;Handler_Angels_2
-;EB75	LD L,(IX+$00)	Get x position.
-;EB78	LD H,(IX+$01)	Get y postion.
-;EB7B	LD C,(IX+$02)	Get direction / velocity
-;EB7E	INC IX	Point to next angel.
-;EB80	INC IX
-;EB82	INC IX
-;EB84	LD (BitmapX),HL	Tell bitmap draw position.
-;EB87	LD A,H	Update position by velocity.
-;EB88	ADD A,C
-;EB89	LD H,A
-;EB8A	CP $AA	See if at bottom of screen.
-;EB8C	JR NZ,Handler_Angels_4
+;EB75  LD L,(IX+$00)  Get x position.
+;EB78  LD H,(IX+$01)  Get y postion.
+;EB7B  LD C,(IX+$02)  Get direction / velocity
+;EB7E  INC IX  Point to next angel.
+;EB80  INC IX
+;EB82  INC IX
+;EB84  LD (BitmapX),HL  Tell bitmap draw position.
+;EB87  LD A,H  Update position by velocity.
+;EB88  ADD A,C
+;EB89  LD H,A
+;EB8A  CP $AA  See if at bottom of screen.
+;EB8C  JR NZ,Handler_Angels_4
 ;Handler_Angels_3
-;EB8E	LD A,C	If at bottom reverse direction.
-;EB8F	NEG
-;EB91	LD C,A
-;EB92	JR Handler_Angels_5
+;EB8E  LD A,C  If at bottom reverse direction.
+;EB8F  NEG
+;EB91  LD C,A
+;EB92  JR Handler_Angels_5
 ;Handler_Angels_4
-;EB94	CP $30	See if at top of screen.
-;EB96	JR Z,Handler_Angels_3	Reverse...
+;EB94  CP $30  See if at top of screen.
+;EB96  JR Z,Handler_Angels_3  Reverse...
 ;Handler_Angels_5
-;EB98	LD (IX-$01),C	Store new position and direction.
-;EB9B	LD (IX-$02),H
-;EB9E	LD A,(Angel_Bmp)	Set draw with previous bitmap.
-;EBA1	CALL Bitmap16Draw	Use draw to erase old frame.
-;EBA4	LD (BitmapX),HL	Set for new position.
-;EBA7	LD A,D	Get new frame and draw.
-;EBA8	CALL Bitmap16Draw
-;EBAB	PUSH BC
-;EBAC	PUSH DE
-;EBAD	LD B,$04	Amount of energy loss if angel hits wally.
-;EBAF	CALL Wally_HitTest
-;EBB2	POP DE
-;EBB3	POP BC
-;EBB4	DJNZ Handler_Angels_2	Next angel.
-;EBB6	LD A,D	Update new frame for next time.
-;EBB7	LD (Angel_Bmp),A
+;EB98  LD (IX-$01),C  Store new position and direction.
+;EB9B  LD (IX-$02),H
+;EB9E  LD A,(Angel_Bmp)  Set draw with previous bitmap.
+;EBA1  CALL Bitmap16Draw  Use draw to erase old frame.
+;EBA4  LD (BitmapX),HL  Set for new position.
+;EBA7  LD A,D  Get new frame and draw.
+;EBA8  CALL Bitmap16Draw
+;EBAB  PUSH BC
+;EBAC  PUSH DE
+;EBAD  LD B,$04  Amount of energy loss if angel hits wally.
+;EBAF  CALL Wally_HitTest
+;EBB2  POP DE
+;EBB3  POP BC
+;EBB4  DJNZ Handler_Angels_2  Next angel.
+;EBB6  LD A,D  Update new frame for next time.
+;EBB7  LD (Angel_Bmp),A
 
        .endproc
 
@@ -397,9 +397,76 @@ handler_food_1:
 
 *********************************************************************
 *
-Handler_SpookyHand:
+handler_spooky_hand:
        .proc
+       mov  @spooky_hand_countdown,r0  ; Check count down, animating hand if already zero.
+       jeq  handler_spooky_hand_update
+       dec  @spooky_hand_countdown
+       jne  handler_spooky_hand_end
+       mov  @wally_room_no,r0          ; Get data for current room with a spooky hand. (Assumes this routine is only called by rooms that match.)
+       swpb r0
+       li   r3,spooky_hand_pos_table
+handler_spooky_hand_0:
+       cb   *r3+,r0
+       jeq  handler_spooky_hand_1
+       inct r3
+       jmp  handler_spooky_hand_0
+handler_spooky_hand_1:
+       bl   @allocate_sprite           ; r0 contains address of sprite
+       mov  r0,r4
+       movb *r3+,@sprite_x(r4)         ; x
+       movb *r3,*r4                    ; y
+       li   r0,>00ad
+       mov  r0,@spooky_hand_frame
+       bl   @get_sprite_pattern
+       movb r1,@sprite_pattern(r4)
+       movb @byte_09,@sprite_color(r4)
+       mov  r4,@spooky_hand_sprite
+       jmp  handler_spooky_hand_end
+* Update spooky hand for animation.
+handler_spooky_hand_update:
+* Check delay for a frame, exit if not ready to update.
+       dec  @spooky_hand_frame_delay
+       jne  handler_spooky_hand_end
+       li   r0,>0004                   ; Set frame delay.
+       mov  r0,@spooky_hand_frame_delay
+       mov  @spooky_hand_sprite,r4
+       mov  @spooky_hand_frame,r0
+       inc  r0                         ; Next frame
+       ci   r0,>00b3                   ; Check for end of animation, restarting countdown if end reached.
+       jeq  handler_spooky_hand_2
+       mov  r0,@spooky_hand_frame
+       bl   @get_sprite_pattern
+       movb r1,@sprite_pattern(r4)
+       li   r0,2
+       mov  *r4,r1
+       bl   @wally_hit_test
+       jmp  handler_spooky_hand_end
+handler_spooky_hand_2:
+       li   r0,>32
+       mov  r0,@spooky_hand_countdown
+       mov  r4,r0
+       bl   @deallocate_sprite
+handler_spooky_hand_end:
        .endproc
+
+spooky_hand_countdown:
+       data >0030                      ; Spooky Hand countdown. When zero reached hand appears out of ground.
+spooky_hand_pos_table:
+       byte >02,>68,>A8                ; Room and position of each spooky hand.
+       byte >09,>40,>A8
+       byte >0D,>60,>A8
+       byte >10,>A0,>A8
+       byte >14,>A8,>A8
+       byte >18,>88,>78
+       byte >1B,>20,>90
+       byte >0C,>D8,>88
+spooky_hand_frame:
+       data >0000                      ; Index of current spooky hand bitmap.
+spooky_hand_frame_delay:
+       data >0004
+spooky_hand_sprite:
+       data >0000
 
 *********************************************************************
 *

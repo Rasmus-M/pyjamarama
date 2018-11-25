@@ -391,7 +391,42 @@ game_exit_check:
 *
 food_check_pickup:
        .proc
-;      TODO
+       mov  @food_active_ptr,r1        ; Get pointer to first active food.
+       movb @wally_room_no+1,r0
+       cb   r0,*r1                     ; See if is same room as Wally, returning if not.
+       jeq  food_check_pickup_0
+       ai   r1,>0016
+       cb   r0,*r1                     ; If not, check for active food B.
+       jeq  food_check_pickup_0
+       jmp  food_check_pickup_end
+*      Food found
+food_check_pickup_0:
+       inc  r1
+       movb @wally_x,r0                ; Check to see if Wally is on the same X plane as the food.
+       sb   *r1,r0
+       sb   @byte_01,r0
+       cb   r0,@byte_fe
+       jl   food_check_pickup_end
+       cb   @wally_y,@byte_98          ; Make sure he is also on the same Y position, which is fixed to $98.
+       jne  food_check_pickup_end
+       movb *r1+,@bitmap_x+1           ; Get the X position again and set for drawing.
+       movb @byte_a8,@bitmap_y+1
+*      Update bitmap
+       clr  r0
+       movb *r1,@r0lb                  ; Get the bitmap index.
+       bl   @bitmap_16_erase
+*      Update pointer
+       mov  @food_active_ptr,r1        ; Set the next food in line as active, to replace the one just eaten.
+       ai   r1,3
+       cb   *r1,@byte_ff               ; Check for end of group, if so wrap around to start of table again.
+       jne  food_check_pickup_1
+       li   r1,food_table
+food_check_pickup_1:
+       mov  r1,@food_active_ptr        ; Store address for next time.
+*      TODO
+; EECB	LD B,$0A	Increase Wally's energy by 10 and update the Milk Glass.
+; EECD	CALL Wally_EnergyIncBy
+food_check_pickup_end:
        .endproc
 *// food_check_pickup
 

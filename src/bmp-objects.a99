@@ -482,3 +482,8 @@ LAACB  byte >DF,>F7,>4F,>FB,>5F,>FD,>4F,>FE
 LAAD3  byte >DF,>FF,>D2,>03,>D4,>D7,>D2,>53
 LAADB  byte >D6,>D7,>D6,>53,>DF,>FF,>D8,>07
 LAAE3  byte >CF,>FE,>DF,>FD,>4F,>FB,>DF,>F7
+empty_object:
+       byte >00,>00,>00,>00,>00,>00,>00,>00
+       byte >00,>00,>00,>00,>00,>00,>00,>00
+       byte >00,>00,>00,>00,>00,>00,>00,>00
+       byte >00,>00,>00,>00,>00,>00,>00,>00

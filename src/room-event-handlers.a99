@@ -52,7 +52,7 @@ LE67E	.endproc
 update_room_02:
        .proc
 LE67F	bl @Handler_Angels
-LE682	bl @Handler_Food	
+LE682	bl @handler_food
 LE685	bl @Handler_SpookyHand	
 LE688	.endproc	
 
@@ -88,7 +88,7 @@ LE6A0	.endproc
 
 update_room_09:
        .proc
-LE6A1	bl @Handler_Food
+LE6A1	bl @handler_food
 LE6A4	bl @Handler_BalloonHelp	
 LE6A7	bl @Handler_SpookyHand	
 LE6AA	.endproc	
@@ -121,7 +121,7 @@ LE6C1	.endproc
 
 update_room_0F:
        .proc
-LE6C2	bl @Handler_Food
+LE6C2	bl @handler_food
 LE6C5	bl @Handler_Books	
 LE6C8	.endproc	
 
@@ -134,7 +134,7 @@ LE6D2	.endproc
 
 update_room_11:
        .proc
-LE6D3	bl @Handler_Food
+LE6D3	bl @handler_food
 LE6D6	bl @Handler_Angels	
 LE6D9	.endproc	
 
@@ -155,7 +155,7 @@ LE6E5	.endproc
 
 update_room_15:
        .proc
-LE6E6	bl @Handler_Food
+LE6E6	bl @handler_food
 LE6E9	bl @Handler_BouncingAxe	
 LE6EC	.endproc	
 
@@ -167,7 +167,7 @@ LE6F0	.endproc
 update_room_17:
        .proc
 LE6F1	bl @Handler_Ghosts
-LE6F4	bl @Handler_Food	
+LE6F4	bl @handler_food
 LE6F7	.endproc	
 
 update_room_18:
@@ -184,7 +184,7 @@ LE705	.endproc
 
 update_room_1a:
        .proc
-LE706	bl @Handler_Food
+LE706	bl @handler_food
 LE709	bl @Handler_ThreeTon	
 LE70C	.endproc	
 
@@ -296,8 +296,27 @@ Handler_Angels:
 
 *********************************************************************
 *
-Handler_Food:
+handler_food:
        .proc
+       movb @flag_food_drawn,r0
+       jne  handler_food_1
+       movb @byte_01,@flag_food_drawn
+       mov  @food_active_ptr,r1        ; Get info of currently active food.
+       movb @wally_room_no+1,r0
+       cb   r0,*r1                     ; See if is same room as Wally, returning if not.
+       jeq  handler_food_0
+       ai   r1,>0016
+       cb   r0,*r1
+       jne  handler_food_1
+handler_food_0:
+       inc  r1                         ; Get X position of food.
+       movb *r1+,@bitmap_x+1
+       li   r0,>00a8
+       mov r0,@bitmap_y
+       clr  r0
+       movb *r1,@r0lb                  ; Get bitmap to display.
+       bl   @bitmap_16_draw
+handler_food_1:
        .endproc
 
 *********************************************************************

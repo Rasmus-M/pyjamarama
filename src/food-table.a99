@@ -1,6 +1,7 @@
 * All food are always placed on y position $98
 * There are always two food items active at one time.
 * The first, from table A, is pointed to by food_active_ptr and the second is always the same index in table B.
+* Structure is: room_no, x, bitmap_no
 
 food_table:
        equ  $

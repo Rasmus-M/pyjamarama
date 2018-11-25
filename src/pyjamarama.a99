@@ -307,6 +307,10 @@ byte_b0:
        byte >b0
 byte_aa:
        byte >aa
+byte_a8:
+       byte >a8
+byte_98:
+       byte >98
 byte_78:
        byte >78
 byte_30:

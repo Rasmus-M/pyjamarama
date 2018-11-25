@@ -423,9 +423,8 @@ food_check_pickup_0:
        li   r1,food_table
 food_check_pickup_1:
        mov  r1,@food_active_ptr        ; Store address for next time.
-*      TODO
-; EECB	LD B,$0A	Increase Wally's energy by 10 and update the Milk Glass.
-; EECD	CALL Wally_EnergyIncBy
+       li   r0,10
+       bl   @milk_increase_by_amount
 food_check_pickup_end:
        .endproc
 *// food_check_pickup

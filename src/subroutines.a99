@@ -158,6 +158,58 @@ wally_hide:
 
 *********************************************************************
 *
+* Increases Wally's milk energy level by given amount.
+*
+* Input:
+* r0: Amount to increasse by
+*
+milk_increase_by_amount:
+       .proc
+       clr  r2
+       movb @milk_level,@r2lb
+       s    r0,r2
+       jgt  milk_increase_by_amount_1
+       clr  r2
+milk_increase_by_amount_1:
+       movb  @r2lb,@milk_level
+       li   r0,13*8                    ; Destination
+       li   r1,bmp_milk_full           ; Source
+       li   r2,32
+       bl   @bmp_draw_lines
+       li   r0,13*8                    ; Destination
+       li   r1,bmp_milk_empty          ; Source
+       clr  r2
+       movb @milk_level,@r2lb
+       bl   @bmp_draw_lines
+       .endproc
+*// milk_increase_by_amount
+
+*********************************************************************
+*
+* Decreases Wally's milk energy level by given amount.
+*
+* Input:
+* r0: Amount to decreasse by
+*
+milk_decrease_by_amount:
+       .proc
+       clr  r2
+       movb @milk_level,@r2lb
+       a    r0,r2
+       ci   r2,32
+       jlt  milk_decrease_by_amount_1
+       li   r2,32
+       movb @byte_01,@death_flag
+milk_decrease_by_amount_1:
+       movb  @r2lb,@milk_level
+       li   r0,13*8                    ; Destination
+       li   r1,bmp_milk_empty          ; Source
+       bl   @bmp_draw_lines
+       .endproc
+*// milk_decrease_by_amount
+
+*********************************************************************
+*
 * Room enter
 *
 room_enter:
@@ -501,26 +553,65 @@ milk_draw_full:
        .proc
        li   r0,13*8                    ; Destination
        li   r1,bmp_milk_full
-       li   r2,4                       ; 4 rows
-milk_draw_full_1:
-       bl   @vwad
-       li   r3,3                       ; 3 columns
-milk_draw_full_2:
-       li   r4,8                       ; 8 lines
-milk_draw_full_3:
-       movb *r1+,*r15
-       inct r1
-       dec  r4
-       jne  milk_draw_full_3
-       ai   r1,-23
-       dec  r3
-       jne  milk_draw_full_2
-       ai   r0,256
-       ai   r1,21
-       dec  r2
-       jne  milk_draw_full_1
+       li   r2,32                      ; 32 lines
+       bl   @bmp_draw_lines
        .endproc
 *// milk_draw_full
+
+*********************************************************************
+*
+* Draw a number of lines of a bitmap.
+* Bitmap width is 24 pixels.
+*
+* r0: Destination VDP address
+* r1: Bitmap to draw
+* r2: Number of lines to draw
+*
+bmp_draw_lines:
+       .proc
+       mov  r2,r5
+       srl  r2,3                       ; Number of rows of 8 lines
+       jeq  bmp_draw_lines_4
+*      Full rows
+bmp_draw_lines_1:
+       bl   @vwad
+       li   r3,3                       ; 3 columns
+bmp_draw_lines_2:
+       li   r4,8                       ; 8 lines per row
+bmp_draw_lines_3:
+       movb *r1+,*r15
+       inct r1                         ; Source increased by 3
+       dec  r4
+       jne  bmp_draw_lines_3
+       ai   r1,-23                     ; Next source column: 24 back + 1 forward
+       dec  r3
+       jne  bmp_draw_lines_2
+       ai   r0,256                     ; Next VDP row
+       ai   r1,21                      ; Next source row: 7 lines down
+       dec  r2
+       jne  bmp_draw_lines_1
+*      Remaining lines
+bmp_draw_lines_4:
+       andi r5,7                       ; Number of lines left
+       jeq  bmp_draw_lines_7
+       li   r3,3                       ; 3 columns
+bmp_draw_lines_5:
+       bl   @vwad
+       mov  r1,r2                      ; Save source address
+       mov  r5,r4                      ; Number of lines
+bmp_draw_lines_6:
+       movb *r1+,*r15
+       inct r1                         ; Source increased by 3
+       dec  r4
+       jne  bmp_draw_lines_6
+       ai   r0,8                       ; Next VDP column
+       mov  r2,r1                      ; Restore source address
+       inc  r1                         ; Next column
+       dec  r3
+       jne  bmp_draw_lines_5
+bmp_draw_lines_7:
+       .endproc
+*// bmp_draw_lines
 
 *********************************************************************
 *

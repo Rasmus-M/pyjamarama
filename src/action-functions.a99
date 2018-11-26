@@ -1,40 +1,40 @@
        even
 table_action_func_ptrs:
        equ  $
-L8223  data action00_SwapObj  
-L8225  data action01_PickUp  
-L8227  data action02_EnterRoom  
-L8229  data action03_FillBucket  
-L822B  data action04_ChargeLaser  
-L822D  data action05_DischargeLaser  
-L822F  data action06_Emptybucket  
-L8231  data action07_FillFuelCan  
-L8233  data action08_EmptyFuelCan  
-L8235  data action09_LiftOn  
-L8237  data action0A_MoveLift  
-L8239  data action0B_LiftDec  
-L823B  data action0C_LiftLights  
-L823D  data action0D_MagnetUnlock  
-L823F  data action0E_HelpOn  
-L8241  data action0F_HelpOff  
-L8243  data action10_LiftOffFromEarth  
-L8245  data action11_LiftOffFromMoon  
-L8247  data action12_GrabRope  
-L8249  data action13_EnterAcrade  
-L824B  data action14_Win
+L8223  data action00_swap_obj
+L8225  data action01_pick_up
+L8227  data action02_enter_room
+L8229  data action03_fill_bucket
+L822B  data action04_charge_laser
+L822D  data action05_discharge_laser
+L822F  data action06_empty_bucket
+L8231  data action07_fill_fuel_can
+L8233  data action08_empty_fuel_can
+L8235  data action09_lift_on
+L8237  data action0a_move_lift
+L8239  data action0b_lift_dec
+L823B  data action0c_lift_lights
+L823D  data action0d_magnet_unlock
+L823F  data action0e_help_on
+L8241  data action0f_help_off
+L8243  data action10_lift_off_from_earth
+L8245  data action11_lift_off_from_moon
+L8247  data action12_grab_rope
+L8249  data action13_enter_arcade
+L824B  data action14_win
 
 *********************************************************************
 *
+* Swap objects.
 *
-*
-action00_SwapObj:
+action00_swap_obj:
        movb @byte_01,@obj_event_pause
        movb *r4+,r0                    ; Get index of object required.
        li   r1,pocket_1+1
        cb   r0,*r1                     ; Check to see if its in pocket 1. If not assumes its in pocket 2.
-       jeq  Action00_SwapObj_0
+       jeq  action00_swap_obj_1
        inct  r1                        ; r1=pocket_2+1
-Action00_SwapObj_0:
+action00_swap_obj_1:
        mov  @wally_room_no,r3
        sla  r3,1                       ; x2
        a    @wally_room_no,r3          ; x3
@@ -61,7 +61,7 @@ Action00_SwapObj_0:
 *
 * Picks up object in current room.
 *
-action01_PickUp:
+action01_pick_up:
        movb @byte_01,@obj_event_pause  ; Stop continous swapping of objects
        mov  @wally_room_no,r3
        sla  r3,1                       ; x2
@@ -89,7 +89,7 @@ action01_PickUp:
 *
 * Enters a new room.
 *
-action02_EnterRoom:
+action02_enter_room:
        movb *r4+,@wally_room_no+1      ; Get new room number and set.
        movb *r4+,@wally_x              ; Get new position for wally.
        movb *r4+,@wally_y              ; Get new position for wally.
@@ -101,126 +101,166 @@ action02_EnterRoom:
 
 *********************************************************************
 *
+* Fills the bucket.
 *
+action03_fill_bucket:
+       movb @flag_water_bucket,r0      ; Don't bother if the bucket is already full.
+       jne  action03_fill_bucket_1
+       movb @byte_01,@flag_water_bucket
+       .push r4
+       bl   @inventory_redraw
+       .pop r4
+action03_fill_bucket_1:
+       b    @room_test_events_then
+
+*********************************************************************
 *
-action03_FillBucket:
+* Charges the Laser Gun.
+*
+action04_charge_laser:
+       movb @flag_laser_gun,r0         ; Don't bother if the gun is already charged.
+       jne  action04_charge_laser_1
+       movb @byte_01,@flag_laser_gun   ; Charge the gun.
+       .push r4
+       bl   @inventory_redraw          ; Update the inventory on screen.
+       .pop r4
+action04_charge_laser_1:
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Discharges the laser.
+*
+action05_discharge_laser:
+       movb @byte_00,@flag_laser_gun
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Empties the Bucket.
+*
+action06_empty_bucket:
+       movb @byte_00,@flag_water_bucket
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Fills the Fuel Can.
+*
+action07_fill_fuel_can:
+       movb @flag_fuel_can,r0          ; Don't bother if the can is already full.
+       jne  action07_fill_fuel_can_1
+       movb @byte_01,@flag_fuel_can    ; Fill the Fuel Can.
+       .push r4
+       bl   @inventory_redraw          ; Update the inventory on screen.
+       .pop r4
+action07_fill_fuel_can_1:
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Empties the Fuel Can.
+*
+action08_empty_fuel_can:
+       movb @byte_00,@flag_fuel_can
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Switches on the lift.
+*
+action09_lift_on:
+       movb @byte_04,@lift_count       ; Switch on.
+       li   r1,>78                     ; Set position of switch.
+       li   r2,>88
+action_update:
+       li   r0,>0071
+       mov  r1,@bitmap_x
+       mov  r2,@bitmap_y
+       .push r4
+       bl   @bitmap_16_draw            ; Draw the ON switch.
+       .pop r4
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Moves the lift to a given floor value.
+*
+action0a_move_lift:
+       movb *r4+,@lift_floor_no
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Decrease lift count by one.
+*
+action0b_lift_dec:
+       sb   @byte_01,@lift_count
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action04_ChargeLaser:
+action0c_lift_lights:
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action05_DischargeLaser:
+action0d_magnet_unlock:
+       b    @room_test_events_then
+
+*********************************************************************
+*
+* Switches the help on.
+*
+action0e_help_on:
+       movb @byte_01,@flag_help_switch ; Switch on.
+       li   r1,>78
+       li   r2,>60
+       b    @action_update
+
+*********************************************************************
+*
+* Switch help off.
+*
+action0f_help_off:
+       movb @byte_00,@flag_help_switch
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action06_Emptybucket:
+action10_lift_off_from_earth:
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action07_FillFuelCan:
+action11_lift_off_from_moon:
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action08_EmptyFuelCan:
+action12_grab_rope:
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action09_LiftOn:
+action13_enter_arcade:
        b    @room_test_events_then
 
 *********************************************************************
 *
 *
 *
-action0A_MoveLift:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action0B_LiftDec:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action0C_LiftLights:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action0D_MagnetUnlock:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action0E_HelpOn:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action0F_HelpOff:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action10_LiftOffFromEarth:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action11_LiftOffFromMoon:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action12_GrabRope:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action13_EnterAcrade:
-       b    @room_test_events_then
-
-*********************************************************************
-*
-*
-*
-action14_Win:
+action14_win:
        b    @room_test_events_then

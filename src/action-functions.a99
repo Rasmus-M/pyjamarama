@@ -200,17 +200,35 @@ action0b_lift_dec:
 
 *********************************************************************
 *
-*
+* Set lift lighting
 *
 action0c_lift_lights:
-       b    @room_test_events_then
+       clr  r0
+       movb *r4+,@r0lb                 ; Get index of light to be lit.
+*      Colour all lights bright red by changing their colour on screen.
+       li   r5,>0c08
+       li   r6,0
+action0c_lift_lights_1:
+       li   r2,attr_42
+       c    r6,r0
+       jne  action0c_lift_lights_2
+       li   r2,attr_47
+action0c_lift_lights_2:
+       mov  r5,r1
+       bl   @set_attribute
+       ai   r5,>0006
+       inc  r6
+       ci   r6,4
+       jlt  action0c_lift_lights_1
+       b    @room_test_events_endif
 
 *********************************************************************
 *
 *
 *
 action0d_magnet_unlock:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif
 
 *********************************************************************
 *
@@ -235,32 +253,37 @@ action0f_help_off:
 *
 *
 action10_lift_off_from_earth:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif
 
 *********************************************************************
 *
 *
 *
 action11_lift_off_from_moon:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif
 
 *********************************************************************
 *
 *
 *
 action12_grab_rope:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif
 
 *********************************************************************
 *
 *
 *
 action13_enter_arcade:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif
 
 *********************************************************************
 *
 *
 *
 action14_win:
-       b    @room_test_events_then
+;      TODO
+       b    @room_test_events_endif

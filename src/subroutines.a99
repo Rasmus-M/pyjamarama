@@ -664,55 +664,30 @@ life_draw_blit:
 
 *********************************************************************
 *
-* Draw tile
+* Draw tile and color attribute
 *
 * Input:
 * r0 MSB: Tile number
-* r1 MSB: y position
-* r1 LSB: x position
+* r1 MSB: y position (chars)
+* r1 LSB: x position (chars)
 * r2 MSB: color
 * Modifies r0,r1,r3
 *
 tile_draw:
        .proc
-*      Update attribute table
-       mov  r1,r3
-       sla  r3,3
-       movb r1,r3
-       srl  r3,3
-       movb r2,@attr_table(r3)
-*      Bitmap screen position
-       mov  r1,r3                      ; x and y positions
-       andi r3,>001f                   ; x position
-       sla  r3,3                       ; x8
-       andi r1,>1f00                   ; y position
-       abs  @tile_flip_vertical
-       jeq  !
-       neg  r1                         ; Invert y
-       ai   r1,>1C00
-!      movb r1,r3
+*      Draw color
+       bl   @set_attribute
+*      Draw tile
        clr  r1
        movb r0,@r1lb                   ; Tile number
        sla  r1,3                       ; x8
        a    @tile_start_ptr,r1         ; Add base address
-*      Draw color
-       mov  r3,r0
-       ai   r0,colrtb
-       bl   @vwad
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-       movb r2,*r15
-*      Draw tile
+       movb @r3lb,@vdpwa               ; Send low byte of VDP RAM write address
+       ai   r3,>4000
+       movb r3,@vdpwa                  ; Send high byte of VDP RAM write address
        abs  @tile_flip_vertical
        jne  tile_draw_1
 *      Draw normal tile
-       mov  r3,r0
-       bl   @vwad
        movb *r1+,*r15
        movb *r1+,*r15
        movb *r1+,*r15
@@ -724,8 +699,6 @@ tile_draw:
        jmp  tile_draw_2
 tile_draw_1:
 *      Draw upside down tile
-       mov  r3,r0
-       bl   @vwad
        ai   r1,7
        movb *r1,*r15
        dec  r1
@@ -746,6 +719,76 @@ tile_draw_1:
 tile_draw_2:
        .endproc
 *// tile_draw
+
+*********************************************************************
+*
+* set color attribute at character position
+*
+* Input:
+* r1 MSB: y position (chars)
+* r1 LSB: x position (chars)
+* r2 MSB: color
+*
+* On return:
+* r3: VDP address
+* Modifies r1
+*
+set_attribute:
+*      Update attribute table
+       mov  r1,r3
+       sla  r3,3
+       movb r1,r3
+       srl  r3,3
+       movb r2,@attr_table(r3)
+*      Bitmap screen position
+       mov  r1,r3                      ; x and y positions
+       andi r3,>001f                   ; x position
+       sla  r3,3                       ; x8
+       andi r1,>1f00                   ; y position
+       abs  @tile_flip_vertical
+       jeq  !
+       neg  r1                         ; Invert y
+       ai   r1,>1C00
+!      movb r1,r3
+*      Draw color
+       mov  r3,r1
+       movb @r1lb,@vdpwa               ; Send low byte of VDP RAM write address
+       ai   r1,>4000+colrtb
+       movb r1,@vdpwa                  ; Send high byte of VDP RAM write address
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       movb r2,*r15
+       rt
+*// set_attribute
+
+*********************************************************************
+*
+* Get color attribute at pixel position
+*
+* Input:
+* r0 MSB: y position
+* r0 LSB: x position
+*
+* On return:
+* r0 MSB: attribute value
+* r1: attribute table address
+*
+get_attribute:
+       mov  r0,r1
+       andi r0,>00f8
+       srl  r0,3
+       andi r1,>f800
+       srl  r1,6
+       soc  r0,r1
+       ai   r1,attr_table
+       movb *r1,r0
+       rt
+*// get_attribute
 
 *********************************************************************
 *
@@ -1125,30 +1168,6 @@ screen_address:
        s    r7,r6                      ; 000yyyyyxxxxxyyy
        rt
 *// screen_address
-
-*********************************************************************
-*
-* Get color attribute at pixel position
-*
-* Input:
-* r0 MSB: y position
-* r0 LSB: x position
-*
-* On return:
-* r0 MSB: attribute value
-* r1: attribute table address
-*
-get_attribute:
-       mov  r0,r1
-       andi r0,>00f8
-       srl  r0,3
-       andi r1,>f800
-       srl  r1,6
-       soc  r0,r1
-       ai   r1,attr_table
-       movb *r1,r0
-       rt
-*// get_attribute
 
 *********************************************************************
 *

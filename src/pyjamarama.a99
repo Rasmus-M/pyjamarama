@@ -20,7 +20,7 @@ immunity:
 * Constants
 *
 start_room:
-       equ  1
+       equ  8
 attr_40:                               ; Black
        equ  >1100
 attr_41:                               ; Blue

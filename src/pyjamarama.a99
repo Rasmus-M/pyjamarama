@@ -13,14 +13,14 @@
 **
 * Assembly options
 *
+start_room:
+       equ  1
 immunity:
        equ  0
 
 **
 * Constants
 *
-start_room:
-       equ  8
 attr_40:                               ; Black
        equ  >1100
 attr_41:                               ; Blue

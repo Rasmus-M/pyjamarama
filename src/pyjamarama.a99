@@ -253,9 +253,9 @@ game_loop:
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
-       bl   @wally_check_for_death     ; TODO
+       bl   @wally_check_for_death
        bl   @wally_test_obj_slots
-       bl   @wally_percent_update      ; TODO
+       bl   @wally_percent_update
        bl   @room_event_caller
        bl   @game_exit_check
        bl   @food_check_pickup

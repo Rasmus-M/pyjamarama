@@ -65,3 +65,4 @@ LF18B  byte >00                        ; Flag used for balloon
 flag_food_drawn:
        equ  $
 LF18C  byte >00                        ; Determines if the food requires drawing if set to 0. A 1 means the food has been drawn.
+

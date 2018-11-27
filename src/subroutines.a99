@@ -395,7 +395,7 @@ txt_empty:
 room_draw:
        .proc
        li   r0,>01a2                   ; Screen off
-       bl   @vwtr
+;       bl   @vwtr
        mov  @wally_room_no,r4          ; Get room number.
        sla  r4,1                       ; Work out address of room pointer.
        mov  @room_data(r4),r4          ; Get address to room description data.
@@ -421,8 +421,8 @@ room_draw_2:
 room_draw_3:
        cb   r0,@byte_de
        jne  room_draw_4
-       movb *r4+,r1                    ; Get address of action flag.
-       movb *r4+,@r1lb
+       movb *r4+,@r1lb                 ; Get address of action flag.
+       movb *r4+,r1
        movb *r1,r0                     ; Get action flag
        jeq  room_draw_5                ; If not set then handle action,
        jmp  room_draw_1                ; else continue onto next byte.

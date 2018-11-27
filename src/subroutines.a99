@@ -145,7 +145,7 @@ wally_draw_1:
 *
 * Hide Wally
 *
-wally_hide:
+wally_erase:
        .proc
        li   r0,>c800
        mov  @wally_sprite_1,r1
@@ -154,7 +154,7 @@ wally_hide:
        movb r0,*r1
        bl   @upload_sprites
        .endproc
-*// wally_hide
+*// wally_erase
 
 *********************************************************************
 *
@@ -184,6 +184,24 @@ wally_hit_test:
 wally_hit_test_1:
        .endproc
 *// wally_hit_test
+
+*********************************************************************
+*
+* Handles countdown which indicates the loss of energy.
+*
+energy_countdown:
+       .proc
+       abs  @ignore_energy             ; Skip countdown?
+       jne  energy_countdown_end
+       dec  @energy_counter
+       jne  energy_countdown_end
+       li   r0,>012c
+       mov  r0,@energy_counter
+       li   r0,1
+       bl   @milk_decrease_by_amount
+energy_countdown_end:
+       .endproc
+*// energy_countdown
 
 *********************************************************************
 *
@@ -254,7 +272,7 @@ room_enter:
        movb @byte_30,@flag_mag_lock
        movb @byte_c8,@room_0_rock_count
        bl   @deallocate_sprites
-       bl   @wally_hide
+       bl   @wally_erase
        bl   @screen_clear_room         ; TODO: screen_clear_effect
        bl   @room_draw
        bl   @inventory_redraw

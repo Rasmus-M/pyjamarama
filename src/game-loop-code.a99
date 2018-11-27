@@ -105,7 +105,7 @@ wally_jump:
 ;      jne  wally_shoot_create         ; TODO
 * This entry point is used by the routine at Demo.
 wally_jump_demo_entry:
-;      bl   @energy_countdown          ; TODO
+       bl   @energy_countdown
        movb @wally_dir,r0              ; Either use the current direction if moving...
        jne  wally_jump_0
        movb @wally_last_dir,r0         ; Or use the last direction if standing still...
@@ -160,7 +160,7 @@ wally_jump_4:
        jne  wally_jump_left_end
        movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
        movb  @byte_00,@wally_jump_dir
-;      CALL Wally_StepsIncr            ; TODO
+       bl   @wally_steps_incr
 wally_jump_left_end:
        .endproc
 * Jumping right.
@@ -206,14 +206,14 @@ wally_jump_9:
        jne  wally_jump_right_end
        movb @byte_00,@wally_dir       ; Jump has ended, reset the flags.
        movb @byte_00,@wally_jump_dir
-;      bl   wally_steps_incr          ; TODO
+       bl   @wally_steps_incr
 wally_jump_right_end:
        .endproc
 **
 * Subroutine: Wally Move
 *
 wally_move:
-;      bl   @energy_countdown          ; TODO
+       bl   @energy_countdown
        movb @wally_dir,r0
        cb   r0,@byte_01
        jeq  wally_move_right
@@ -316,9 +316,24 @@ wally_turn_head_4:
 *
 wally_step_check:
        .proc
-;      TODO
+       movb @wally_frame,r0
+       andi r0,7
+       jeq  wally_step_check_0
+       movb @byte_00,@wally_step_flag
+       jmp  wally_step_check_1
+wally_step_check_0:
+       movb @wally_step_flag,r0
+       jne  wally_step_check_1
+       movb @byte_01,@wally_step_flag
+       bl   @wally_steps_incr
+wally_step_check_1:
        .endproc
 *// wally_step_check
+
+wally_steps_incr:
+       inc  @steps_counter
+       rt
+*//
 
 *********************************************************************
 *
@@ -326,7 +341,13 @@ wally_step_check:
 *
 wally_check_for_death:
        .proc
+       movb @death_flag,r0
+       jeq  wally_check_for_death_1
 ;      TODO
+;      bl   @wally_knocked_down
+;      bl   @room_event_six_times
+;      bl   @wally_erase
+wally_check_for_death_1:
        .endproc
 *// wally_check_for_death
 
@@ -357,9 +378,14 @@ wally_test_obj_slot_0:
 * Updates the percentage score.
 *
 wally_percent_update:
-       .proc
-;      TODO
-       .endproc
+       li   r0,>0100
+       mov  @wally_room_no,r1          ; Mark room as visited
+       movb r0,@rooms_visited_table(r1)
+       mov  @pocket_1,r1               ; Make the first object being carried for percentage score.
+       movb r0,@object_found_table(r1)
+       mov  @pocket_2,r1               ; Make the first object being carried for percentage score.
+       movb r0,@object_found_table(r1)
+       rt
 *// wally_percent_update
 
 *********************************************************************

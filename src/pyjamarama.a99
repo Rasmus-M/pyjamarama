@@ -103,8 +103,14 @@ wally_room_no:
        equ  start_room_no+2
 wally_lives:
        equ  wally_room_no+2
-wally_y:
+ignore_energy:
        equ  wally_lives+2
+energy_counter:
+       equ  ignore_energy+2
+steps_counter:
+       equ  energy_counter+2
+wally_y:
+       equ  steps_counter+2
 wally_x:
        equ  wally_y+1
 wally_attr:
@@ -123,10 +129,10 @@ wally_last_dir:
        equ  wally_char_aligned+2
 wally_head_countdown:
        equ  wally_last_dir+1
-free_byte:
+wally_step_flag:
        equ  wally_head_countdown+1
 mag_lock_dir:
-       equ  free_byte+1
+       equ  wally_step_flag+1
 room_0_rock_count:
        equ  mag_lock_dir+1
 input_flag:
@@ -215,6 +221,10 @@ one_time_init_1:
        mov  r0,@start_room_no
 *      Choose joystick
        seto @input_flag
+*      Don't ignore energy
+       clr  @ignore_energy
+       li   r0,>012c
+       mov  r0,@energy_counter
        .endproc
 *// one_time_init
 
@@ -243,9 +253,9 @@ game_loop:
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
-       bl   @wally_check_for_death
+       bl   @wally_check_for_death     ; TODO
        bl   @wally_test_obj_slots
-       bl   @wally_percent_update
+       bl   @wally_percent_update      ; TODO
        bl   @room_event_caller
        bl   @game_exit_check
        bl   @food_check_pickup

@@ -433,6 +433,7 @@ sprite_bitmap_map_alt:
        copy "object-found-table.a99"
        copy "food-table.a99"
        copy "bmp-tiles.a99"
+       copy "roll-rock.a99"
 
 attr_table:
        bss  >300

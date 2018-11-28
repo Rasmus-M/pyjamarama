@@ -1267,21 +1267,22 @@ screen_clear:
 *      Patterns
        li   r0,ptrntb
        li   r1,>0000
-       li   r2,>1800
+       li   r2,>500
        bl   @vdpwr
 *      Colors
        li   r0,colrtb
        li   r1,attr_46
-       li   r2,>1800
+       li   r2,>500
        bl   @vdpwr
 *      Attributes
        li   r0,attr_table
        li   r1,attr_46
-       li   r2,>300
+       li   r2,>a0
 screen_clear_1:
        movb r1,*r0+
        dec  r2
        jne  screen_clear_1
+       bl   @screen_clear_room
        .endproc
 *// screen_clear
 
@@ -1297,13 +1298,14 @@ screen_clear_room:
        li   r2,>1800->500
        bl   @vdpwr
 *      Colors
+       mov  @wally_room_no,r1
+       movb @room_color_table(r1),r0
+       bl   @ti_color
        li   r0,colrtb+>500
-       li   r1,attr_46
        li   r2,>1800->500
        bl   @vdpwr
 *      Attributes
        li   r0,attr_table+(5*32)
-       li   r1,attr_46
        li   r2,>300-(5*32)
 screen_clear_room_1:
        movb r1,*r0+
@@ -1387,6 +1389,20 @@ vwad:
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
        b    *r11
 *// vwad
+
+*********************************************************************
+*
+* VDP Set Read Address
+*
+* R0: Read address in VDP RAM
+*
+vrad:
+       swpb r0
+       movb r0,@vdpwa                  ; Send low byte of VDP RAM red address
+       swpb r0
+       movb r0,@vdpwa                  ; Send high byte of VDP RAM read address
+       b    *r11
+*// vrad
 
 *********************************************************************
 *

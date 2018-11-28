@@ -250,19 +250,90 @@ action0f_help_off:
 
 *********************************************************************
 *
-*
+* Lift off from Earth.
 *
 action10_lift_off_from_earth:
-;      TODO
-       b    @room_test_events_endif
+       li   r8,>06c0                   ; VDP address 7*256+24*8
+       li   r9,17                      ; Height in rows
+lift_off_0:
+       .push r4
+       bl   @wally_erase
+*      Read bitmap from VDP
+       mov  r8,r0                      ; VDP address
+       li   r1,attr_table              ; Use attribute table aa buffer
+       mov  r9,r2                      ; Rows
+lift_off_1:
+       bl   @vrad
+       li   r3,3                       ; Columns
+lift_off_2:
+       li   r4,8                       ; Lines per row
+lift_off_3:
+       movb @vdprd,*r1+
+       inct r1
+       dec  r4
+       jne  lift_off_3
+       ai   r1,-23
+       dec  r3
+       jne  lift_off_2
+       ai   r0,>0100
+       ai   r1,21
+       dec  r2
+       jne  lift_off_1
+*      Pad with zeroes
+       li   r2,24
+lift_off_7:
+       clr  *r1+
+       dect r2
+       jne  lift_off_7
+*      Write bitmap to VDP x times
+       li   r5,attr_table
+       mov  r9,r6                      ; Lines
+       sla  r6,3
+       ai   r6,7
+lift_off_8:
+       bl   @vsync
+       mov  r8,r0
+       mov  r5,r1
+       mov  r6,r2
+       srl  r2,3
+       jeq  lift_off_9
+lift_off_4:
+       bl   @vwad
+       li   r3,3                       ; Columns
+lift_off_5:
+       li   r4,4
+lift_off_6:
+       movb *r1+,*r15
+       inct r1
+       movb *r1+,*r15
+       inct r1
+       dec  r4
+       jne  lift_off_6
+       ai   r1,-23
+       dec  r3
+       jne  lift_off_5
+       ai   r0,>0100
+       ai   r1,21
+       dec  r2
+       jne  lift_off_4
+       ai   r5,3
+       dec  r6
+       jne  lift_off_8
+lift_off_9:
+       .pop r4
+       abs  @ignore_energy
+       jne  !
+       b    @room_test_events_then
+!      b    @room_test_events_then     ; TODO: jump to demo
 
 *********************************************************************
 *
-*
+* Lift off from Moon.
 *
 action11_lift_off_from_moon:
-;      TODO
-       b    @room_test_events_endif
+       li   r8,>0510                   ; VDP address 5*256+2*8
+       li   r9,16                      ; Height in rows
+       b    @lift_off_0
 
 *********************************************************************
 *

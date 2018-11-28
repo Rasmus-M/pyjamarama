@@ -14,7 +14,7 @@
 * Assembly options
 *
 start_room:
-       equ  1
+       equ  7
 immunity:
        equ  0
 
@@ -450,6 +450,7 @@ rooms_visited_table:
        copy "bmp-objects.a99"
        copy "object-text.a99"
        copy "room-data.a99"
+       copy "room-color-table.a99"
        copy "wally-jump-table.a99"
 
        end  main

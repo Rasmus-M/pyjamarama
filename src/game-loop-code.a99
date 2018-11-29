@@ -342,14 +342,169 @@ wally_steps_incr:
 wally_check_for_death:
        .proc
        movb @death_flag,r0
-       jeq  wally_check_for_death_1
-;      TODO
-;      bl   @wally_knocked_down
-;      bl   @room_event_six_times
-;      bl   @wally_erase
+       jeq  wally_check_for_death_2
+       bl   @wally_knocked_down
+       li   r2,6
 wally_check_for_death_1:
+       bl   @animation_frame
+       dec  r2
+       jne  wally_check_for_death_1
+       bl   @wally_erase
+*      Animate Wally's Death
+wally_death:
+       equ  $
+;BDC3	LD A,L	Get X position.
+;BDC4	LD H,D	Get Y position of lower half.
+;BDC5	SUB $08	Adjust X position to left of standing position.
+;BDC7	JR NC,Wally_Death_0	Don't let it drop of the left hand of screen.
+;BDC9	XOR A
+;Wally_Death_0
+;BDCA	CP $E0
+;BDCC	JR C,Wally_Death_1
+;BDCE	LD A,$E0	Don't let it drop of the right hand of screen.
+;Wally_Death_1
+;BDD0	LD L,A	Update X position for drawing.
+;BDD1	LD (BitmapX),HL
+;BDD4	LD A,$4D	Dead Wally graphic.
+;BDD6	CALL Bitmap16Draw
+;BDD9	LD A,L
+;BDDA	ADD A,$10
+;BDDC	LD (BitmapX),A
+;BDDF	LD A,$4E
+;BDE1	CALL Bitmap16Draw
+;BDE4	LD B,$28	Wait for a little while, updating the room.
+;Wally_Death_2
+;BDE6	PUSH BC
+;BDE7	PUSH HL
+;BDE8	CALL Pause_Short
+;BDEB	CALL Room_EventCaller
+;BDEE	POP HL
+;BDEF	POP BC
+;BDF0	DJNZ Wally_Death_2
+;Wally_Death_3	BDF2	PUSH HL	Now float lying down Wally graphic up the screen.
+;BDF3	CALL Room_EventCaller	Update room.
+;BDF6	CALL Pause_Short
+;BDF9	POP HL
+;BDFA	LD (BitmapX),HL	Draw Wally.
+;BDFD	LD A,$4D
+;BDFF	CALL Bitmap16Draw
+;BE02	LD A,L
+;BE03	ADD A,$10
+;BE05	LD (BitmapX),A
+;BE08	LD A,$4E
+;BE0A	CALL Bitmap16Draw
+;BE0D	DEC H
+;BE0E	DEC H
+;BE0F	LD A,H
+;BE10	CP $30	End of animation, move onto to losing a life.
+;BE12	JR C,Wally_Resurrect
+;BE14	LD (BitmapX),HL	Erase Wally.
+;BE17	LD A,$4D
+;BE19	CALL Bitmap16Draw
+;BE1C	LD A,L
+;BE1D	ADD A,$10
+;BE1F	LD (BitmapX),A
+;BE22	LD A,$4E
+;BE24	CALL Bitmap16Draw
+;BE27	JR Wally_Death_3
+wally_check_for_death_2:
        .endproc
 *// wally_check_for_death
+
+*********************************************************************
+*
+* Lose a life, end game or resurrect Wally.
+*
+wally_resurrect:
+;BE29	XOR A	Reset the energy glass.
+;BE2A	LD (MilkLevel),A
+;BE2D	CALL Milk_DrawFull
+;BE30	LD HL,WallyLives	Lose one life and update the scoreboard.
+;BE33	DEC (HL)
+;BE34	LD A,(HL)
+;BE35	ADD A,A
+;BE36	ADD A,A
+;BE37	ADD A,A
+;BE38	ADD A,A
+;BE39	LD (BitmapX),A
+;BE3C	LD A,$10
+;BE3E	LD (BitmapY),A
+;BE41	LD A,$4C
+;BE43	CALL Bitmap16Draw
+;BE46	LD A,(WallyLives)	No more lives, so display the losing screen.
+;BE49	OR A
+;BE4A	JP Z,Screen_YouLost
+;BE4D	LD A,(Wally_RoomNo)	Get the resurrect position, within the room, for Wally.
+;BE50	LD E,A
+;BE51	LD D,$00
+;BE53	LD HL,Wally_ResurectY
+;BE56	ADD HL,DE
+;BE57	LD A,(HL)
+;BE58	LD HL,Wally_ResurectX
+;BE5B	ADD HL,DE
+;BE5C	LD L,(HL)
+;BE5D	LD H,A
+;BE5E	LD (BitmapX),HL
+;BE61	LD A,$9F	Index for 'puff of smoke' image, drawn to bring back Wally from the dead.
+;BE63	CALL Bitmap16Draw
+;BE66	LD A,H
+;BE67	ADD A,$10
+;BE69	LD (BitmapY),A
+;BE6C	LD A,$9F
+;BE6E	CALL Bitmap16Draw
+;BE71	CALL Pause_Short
+;BE74	LD D,$9F	'puff of smoke' animation start index.
+;BE76	LD B,$05	Number of frames.
+;Wally_Resurrect_0
+;BE78	LD (BitmapX),HL	Animate smoke.
+;BE7B	LD A,D
+;BE7C	CALL Bitmap16Draw
+;BE7F	LD A,H
+;BE80	ADD A,$10
+;BE82	LD (BitmapY),A
+;BE85	LD A,D
+;BE86	CALL Bitmap16Draw
+;BE89	INC D
+;BE8A	LD (BitmapX),HL
+;BE8D	LD A,D
+;BE8E	CALL Bitmap16Draw
+;BE91	LD A,H
+;BE92	ADD A,$10
+;BE94	LD (BitmapY),A
+;BE97	LD A,D
+;BE98	CALL Bitmap16Draw	Make sure the rest of the room is still animated.
+;BE9B	PUSH HL
+;BE9C	PUSH DE
+;BE9D	PUSH BC
+;BE9E	CALL Room_EventCaller
+;BEA1	CALL Pause_Short
+;BEA4	CALL Room_EventCaller
+;BEA7	CALL Pause_Short
+;BEAA	POP BC
+;BEAB	POP DE
+;BEAC	POP HL
+;BEAD	DJNZ Wally_Resurrect_0
+;BEAF	LD (Wally_X),HL	Make sure Wally is resurrected.
+;BEB2	LD (BitmapX),HL
+;BEB5	LD A,D
+;BEB6	CALL Bitmap16Draw
+;BEB9	LD A,H
+;BEBA	ADD A,$10
+;BEBC	LD (BitmapY),A
+;BEBF	LD A,D
+;BEC0	CALL Bitmap16Draw
+;BEC3	LD SP,$0000
+;BEC6	XOR A
+;BEC7	LD (DeathFlag),A
+;BECA	CALL Wally_Reset
+;BECD	CALL Wally_Draw
+;BED0	LD A,(Wally_RoomNo)	For all the normal rooms...
+;BED3	CP $1E
+;BED5	JP C,GameLoop
+;BED8	CALL Invaders_Init_YPos	For the special arcade room...
+;BEDB	CALL Invaders_Init
+;BEDE	JP Invaders_Loop
+*// wally_resurrect
 
 *********************************************************************
 *

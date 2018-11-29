@@ -188,7 +188,7 @@ test08_boxing_glove_safe_4:
        movb @milk_level,r0
        cb   r0,@byte_1a
        jl   test08_boxing_glove_safe_5
-;      b    @wally_death               ; TODO
+       b    @wally_death
 test08_boxing_glove_safe_5:
        clr  r0
        movb r0,@death_flag

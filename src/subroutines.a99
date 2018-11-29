@@ -203,16 +203,6 @@ wally_knocked_down_2:
 
 *********************************************************************
 *
-* Animate Wally's Death
-*
-wally_death:
-       .proc
-;      TODO
-       .endproc
-*// wally_death
-
-*********************************************************************
-*
 * Check to see if Wally is colliding with another sprite.
 *
 * Input:

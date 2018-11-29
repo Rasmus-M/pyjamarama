@@ -14,7 +14,7 @@
 * Assembly options
 *
 start_room:
-       equ  7
+       equ  8
 immunity:
        equ  0
 
@@ -323,6 +323,10 @@ byte_aa:
        byte >aa
 byte_a8:
        byte >a8
+byte_9d:
+       byte >9d
+byte_9b:
+       byte >9b
 byte_98:
        byte >98
 byte_78:
@@ -434,6 +438,7 @@ sprite_bitmap_map_alt:
        copy "food-table.a99"
        copy "bmp-tiles.a99"
        copy "roll-rock.a99"
+       copy "wally-resurrect-table.a99"
 
 attr_table:
        bss  >300

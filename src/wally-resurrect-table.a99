@@ -1,0 +1,14 @@
+wally_resurrect_y:
+       equ  $
+LC047  byte >88,>98,>98,>98,>98,>98,>98,>98      ; Y position of Wally when being resurected, in order of each room index.
+LC04F  byte >98,>98,>98,>98,>98,>98,>98,>98
+LC057  byte >98,>98,>98,>98,>98,>98,>98,>98
+LC05F  byte >68,>88,>98,>98,>88,>98
+LC065  byte >98,>98,>98,>98,>98,>98,>98,>98
+wally_resurrect_x:
+       equ  $
+LC06D  byte >80,>58,>10,>B0,>40,>A0,>10,>E0      ; X position of Wally when being resurected, in order of each room index.
+LC075  byte >90,>90,>10,>50,>58,>58,>10,>70
+LC07D  byte >90,>E0,>50,>68,>E0,>10,>10,>40
+LC085  byte >40,>30,>88,>10,>80,>20
+LC08B  byte >11,>20,>28,>3C,>48,>64,>82,>C8

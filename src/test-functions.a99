@@ -140,100 +140,82 @@ test07_help_switch_off_1:
 * Checks to see if Wally will get hit by the Boxing Glove trap, carrying the towel will stop this.
 * This test will act on the trap if it becomes false.
 test08_boxing_glove_safe:
-     equ    $
-;BF72  LD A,(Pocket1)  Is Wally carrying the towel.
-;BF75  CP $15
-;BF77  JP Z,Room_CllEvnt_NxtCmd  True, next command / test.
-;BF7A  LD A,(Pocket2)  Again for pocket 2.
-;BF7D  CP $15
-;BF7F  JP Z,Room_CllEvnt_NxtCmd
-;BF82  LD A,(Wally_RoomNo)  Is Wally in the same room as where the trap has been made active?
-;BF85  LD B,A
-;BF86  LD A,(BoxingTrap_Room)
-;BF89  CP B
-;BF8A  JP NZ,Room_CllEvnt_NxtCmd  False, next command / test.
-;BF8D  PUSH HL
-;BF8E  PUSH DE
-;BF8F  PUSH BC
-;BF90  LD BC,$0000
-;BF93  LD DE,$0101
-;BF96  LD HL,$E600
-;BF99  CALL Beep_Effect
-;BF9C  POP BC
-;BF9D  POP DE
-;BF9E  POP HL
-;BF9F  LD A,$01
-;BFA1  LD (DeathFlag),A
-;BFA4  LD HL,(BoxingTrap_NextPtr)  Move the trap onto the next room in the list.
-;BFA7  LD A,(HL)
-;BFA8  LD (BoxingTrap_Room),A
-;BFAB  INC HL
-;BFAC  LD A,(HL)
-;BFAD  CP $FF  If we reach the end of the list, then reset back to start of list.
-;BFAF  JR NZ,Action08_BoxingGloveSafe_0
-;BFB1  LD HL,BoxingTrap_Rooms
-;Action08_BoxingGloveSafe_0  BFB4  LD (BoxingTrap_NextPtr),HL
-;BFB7  LD HL,$98E8
-;BFBA  LD (BitmapX),HL
-;BFBD  LD A,$A5
-;BFBF  CALL Bitmap16Draw
-;BFC2  LD B,$07
-;BFC4  LD C,A
-;Action08_BoxingGloveSafe_1  BFC5  PUSH BC
-;BFC6  CALL Wally_Erase
-;BFC9  LD HL,(Wally_X)
-;BFCC  DEC L
-;BFCD  DEC L
-;BFCE  LD (Wally_X),HL
-;BFD1  CALL Wally_Draw
-;BFD4  POP BC
-;BFD5  LD A,C
-;BFD6  LD HL,$98E8
-;BFD9  LD (BitmapX),HL
-;BFDC  CALL Bitmap16Draw
-;BFDF  INC C
-;BFE0  INC A
-;BFE1  CALL Bitmap16Draw
-;BFE4  PUSH BC
-;BFE5  CALL Pause_Short
-;BFE8  CALL Room_EventCaller
-;BFEB  POP BC
-;BFEC  DJNZ Action08_BoxingGloveSafe_1
-;BFEE  CALL Wally_KnockedDown
-;BFF1  LD B,$28
-;Action08_BoxingGloveSafe_2  BFF3  PUSH BC
-;BFF4  CALL Pause_Short
-;BFF7  CALL Room_EventCaller
-;BFFA  POP BC
-;BFFB  DJNZ Action08_BoxingGloveSafe_2
-;BFFD  LD HL,$98E8
-;C000  LD (BitmapX),HL
-;C003  LD A,$AC
-;C005  CALL Bitmap16Draw
-;C008  CALL Wally_Erase
-;C00B  LD D,$A8
-;C00D  LD A,(MilkLevel)
-;C010  CP $1A
-;C012  JP NC,Wally_Death
-;C015  XOR A
-;C016  LD (DeathFlag),A
-;C019  LD (Wally_JumpDir),A
-;C01C  LD (Wally_Dir),A
-;C01F  LD A,$10
-;C021  LD (Wally_Frame),A
-;C024  CALL Wally_Draw
-;C027  LD B,$05
-;C029  CALL Milk_DecreaseByAmount
-;C02C  LD A,$01
-;C02E  LD (DeathFlag),A
-;C031  LD B,$0A
-;Action08_BoxingGloveSafe_3  C033  PUSH BC
-;C034  CALL Pause_Short
-;C037  CALL Room_EventCaller
-;C03A  POP BC
-;C03B  DJNZ Action08_BoxingGloveSafe_3
-;C03D  XOR A
-;C03E  LD (DeathFlag),A
-;C041  LD SP,$0000
-;C044  JP GameLoop
-       b    @room_test_events_endif
+       mov  @pocket_1,r0               ; Is Wally carrying the towel.
+       ci   r0,>15
+       jeq  test08_boxing_glove_safe_0
+       mov  @pocket_2,r0               ; Again for pocket 2.
+       ci   r0,>15
+       jne  test08_boxing_glove_safe_1
+test08_boxing_glove_safe_0:
+       b    @room_test_events_next_cmd
+test08_boxing_glove_safe_1:
+       c    @boxing_trap_room,@wally_room_no    ; Is Wally in the same room as where the trap has been made active?
+       jne  test08_boxing_glove_safe_0          ; False, next command / test.
+       mov  @boxing_trap_next_ptr,r0   ; Move the trap onto the next room in the list.
+       movb *r0+,@boxing_trap_room+1   ; Value for next time
+       cb   *r0,@byte_ff               ; If we reach the end of the list, then reset back to start of list.
+       jne  test08_boxing_glove_safe_2
+       li   r0,boxing_trap_rooms
+test08_boxing_glove_safe_2:
+       .push r4
+       mov  r0,@boxing_trap_next_ptr
+       movb @byte_01,@death_flag       ; Die
+       li   r0,>00e8
+       mov  r0,@bitmap_x
+       li   r0,>0098
+       mov  r0,@bitmap_y
+       li   r0,>00a5
+       li   r2,8
+test08_boxing_glove_safe_3:
+       .push r0
+       .push r2
+       bl   @bitmap_16_draw
+       .pop r2
+       sb   @byte_02,@wally_x
+       bl   @animation_frame
+       .pop r0
+       inc  r0
+       dec  r2
+       jne  test08_boxing_glove_safe_3
+       bl   @wally_knocked_down
+       li   r2,>28
+test08_boxing_glove_safe_4:
+       bl   @animation_frame
+       dec  r2
+       jne  test08_boxing_glove_safe_4
+       bl   @bitmap_16_erase
+       bl   @wally_erase
+       movb @milk_level,r0
+       cb   r0,@byte_1a
+       jl   test08_boxing_glove_safe_5
+;      b    @wally_death               ; TODO
+test08_boxing_glove_safe_5:
+       clr  r0
+       movb r0,@death_flag
+       movb r0,@wally_jump_dir
+       movb r0,@wally_dir
+       movb @byte_10,@wally_frame
+       bl   @wally_draw
+       li   r0,5
+       bl   @milk_decrease_by_amount
+       movb @byte_01,@death_flag
+       li   r2,10
+test08_boxing_glove_safe_6:
+       .push r2
+       bl   @room_event_caller
+       bl   @upload_sprites
+       .pop r2
+       dec  r2
+       jne  test08_boxing_glove_safe_6
+       movb @byte_00,@death_flag
+       .pop r4
+       b    @room_test_events_end
+
+* Boxing Glove Trap details.
+boxing_trap_room:                      ; Holds the index of the room that springs the next boxing glove trap on a door.
+       data >0008
+boxing_trap_next_ptr:                  ; Holds address of next room in the table.
+       data boxing_trap_rooms
+boxing_trap_rooms:                     ; Table of rooms where the trap can appear.
+       byte >11,>0F,>03,>07
+       byte >01,>14,>0A,>FF            ; End of table.

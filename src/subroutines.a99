@@ -1,5 +1,21 @@
 *********************************************************************
 *
+* Animation frame
+*
+animation_frame:
+       .proc
+       .push r2
+       bl   @vsync
+       bl   @vsync
+       bl   @wally_draw
+       bl   @room_event_caller
+       bl   @upload_sprites
+       .pop r2
+       .endproc
+*// animation_frame
+
+*********************************************************************
+*
 * Initialize game data
 *
 game_init_stats:
@@ -155,6 +171,45 @@ wally_erase:
        bl   @upload_sprites
        .endproc
 *// wally_erase
+
+*********************************************************************
+*
+* Knock Wally down to the floor
+*
+wally_knocked_down:
+       .proc
+       movb @byte_00,@wally_head_turned
+       mov  @wally_room_no,r1          ; Workout the position of the bottom floor in room.
+       movb @wally_resurrect_y(r1),r2
+wally_knocked_down_0:
+       bl   @animation_frame
+       movb @wally_y,r0
+       ab   @byte_03,r0
+       cb   r0,r2
+       jh   wally_knocked_down_1
+       movb r0,@wally_y
+       jmp  wally_knocked_down_0
+wally_knocked_down_1:
+       movb @byte_9b,@wally_frame
+       li   r2,6
+wally_knocked_down_2:
+       bl   @animation_frame
+       dec  r2
+       jne  wally_knocked_down_2
+       movb @byte_9d,@wally_frame
+       bl   @animation_frame
+       .endproc
+*// wally_knocked_down
+
+*********************************************************************
+*
+* Animate Wally's Death
+*
+wally_death:
+       .proc
+;      TODO
+       .endproc
+*// wally_death
 
 *********************************************************************
 *
@@ -827,6 +882,8 @@ bitmap_16_erase:
 * r0: Index of bitmap to draw
 * @bitmap_x: x coordinate
 * @bitmap_y: y coordinate
+*
+* MOdifies r0-r9
 *
 bitmap_16_draw:
        .proc

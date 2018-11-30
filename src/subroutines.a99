@@ -137,15 +137,17 @@ wally_draw_1:
 *      Feet
        mov  @wally_sprite_2,r4
        movb @wally_y,r0
-       ai   r0,>1000
+       ab   @wally_feet_dy,r0
        movb r0,*r4+
-       movb @wally_x,*r4+
+       movb @wally_x,r0
+       ab   @wally_feet_dx,r0
+       movb r0,*r4+
        clr  r0
        movb @wally_frame,@r0lb
        inc  r0
        bl   @get_sprite_pattern
        movb r1,*r4+
-*      Update background color map
+*      Record shifts
        mov  @wally_y,r0                ; Get y and x
        andi r0,7
        mov  r0,@wally_shift_value      ; x shift
@@ -153,7 +155,6 @@ wally_draw_1:
        swpb r1
        andi r1,7
        mov  r1,@wally_char_aligned     ; y shift
-*      TODO: copy attributes behind Wally to map?
        .endproc
 *// wally_draw
 

@@ -113,8 +113,12 @@ wally_y:
        equ  steps_counter+2
 wally_x:
        equ  wally_y+1
-wally_attr:
+wally_feet_dy:
        equ  wally_x+1
+wally_feet_dx:
+       equ  wally_feet_dy+1
+wally_attr:
+       equ  wally_feet_dx+1
 wally_attr_alt:
        equ  wally_attr+1
 wally_sprite_1:
@@ -247,6 +251,8 @@ game_start:
        bl   @milk_draw_full
        li   r0,>9858
        mov  r0,@wally_y
+       li   r0,>1000
+       mov  r0,@wally_feet_dy
 game_loop:
        bl   @vsync
        bl   @vsync

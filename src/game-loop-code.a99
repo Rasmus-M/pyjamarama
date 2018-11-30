@@ -353,60 +353,36 @@ wally_check_for_death_1:
 *      Animate Wally's Death
 wally_death:
        equ  $
-;BDC3	LD A,L	Get X position.
-;BDC4	LD H,D	Get Y position of lower half.
-;BDC5	SUB $08	Adjust X position to left of standing position.
-;BDC7	JR NC,Wally_Death_0	Don't let it drop of the left hand of screen.
-;BDC9	XOR A
-;Wally_Death_0
-;BDCA	CP $E0
-;BDCC	JR C,Wally_Death_1
-;BDCE	LD A,$E0	Don't let it drop of the right hand of screen.
-;Wally_Death_1
-;BDD0	LD L,A	Update X position for drawing.
-;BDD1	LD (BitmapX),HL
-;BDD4	LD A,$4D	Dead Wally graphic.
-;BDD6	CALL Bitmap16Draw
-;BDD9	LD A,L
-;BDDA	ADD A,$10
-;BDDC	LD (BitmapX),A
-;BDDF	LD A,$4E
-;BDE1	CALL Bitmap16Draw
-;BDE4	LD B,$28	Wait for a little while, updating the room.
-;Wally_Death_2
-;BDE6	PUSH BC
-;BDE7	PUSH HL
-;BDE8	CALL Pause_Short
-;BDEB	CALL Room_EventCaller
-;BDEE	POP HL
-;BDEF	POP BC
-;BDF0	DJNZ Wally_Death_2
-;Wally_Death_3	BDF2	PUSH HL	Now float lying down Wally graphic up the screen.
-;BDF3	CALL Room_EventCaller	Update room.
-;BDF6	CALL Pause_Short
-;BDF9	POP HL
-;BDFA	LD (BitmapX),HL	Draw Wally.
-;BDFD	LD A,$4D
-;BDFF	CALL Bitmap16Draw
-;BE02	LD A,L
-;BE03	ADD A,$10
-;BE05	LD (BitmapX),A
-;BE08	LD A,$4E
-;BE0A	CALL Bitmap16Draw
-;BE0D	DEC H
-;BE0E	DEC H
-;BE0F	LD A,H
-;BE10	CP $30	End of animation, move onto to losing a life.
-;BE12	JR C,Wally_Resurrect
-;BE14	LD (BitmapX),HL	Erase Wally.
-;BE17	LD A,$4D
-;BE19	CALL Bitmap16Draw
-;BE1C	LD A,L
-;BE1D	ADD A,$10
-;BE1F	LD (BitmapX),A
-;BE22	LD A,$4E
-;BE24	CALL Bitmap16Draw
-;BE27	JR Wally_Death_3
+       movb @wally_x,r0
+       movb @byte_08,r1
+       cb   r0,r1                      ; Don't let it drop of the right hand of screen.
+       jhe  wally_death_0
+       movb r1,r0
+wally_death_0:
+       sb   r1,r0                      ; Adjust X position to left of standing position.
+       movb @byte_e0,r1
+       cb   r0,r1                      ; Don't let it drop of the right hand of screen.
+       jl   wally_death_1
+       movb r1,r0
+wally_death_1:
+       movb r0,@wally_x                ; Update X position for drawing.
+       ab   @byte_10,@wally_y
+       swpb @wally_feet_dy             ; Change to vertical Wally
+       li   r0,>4d00                   ; Dead Wally graphic
+       movb r0,@wally_frame
+       li   r2,>28                     ; Wait for a little while, updating the room.
+wally_death_2:
+       bl   @animation_frame
+       dec  r2
+       jne  wally_death_2
+wally_death_3:                         ; Now float lying down Wally graphic up the screen.
+       bl   @animation_frame
+       sb   @byte_02,@wally_y
+       cb   @wally_y,@byte_30
+       jh   wally_death_3
+       swpb @wally_feet_dy             ; Change to horizontal Wally
+       movb @byte_00,@wally_frame
+;      b    @wally_resurrect
 wally_check_for_death_2:
        .endproc
 *// wally_check_for_death

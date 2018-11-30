@@ -311,6 +311,8 @@ byte_e9:
        byte >e9
 byte_e6:
        byte >e6
+byte_e0:
+       byte >e0
 byte_de:
        byte >de
 byte_d6:

@@ -14,7 +14,7 @@
 * Assembly options
 *
 start_room:
-       equ  8
+       equ  1
 immunity:
        equ  0
 

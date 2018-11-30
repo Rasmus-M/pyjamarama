@@ -382,7 +382,7 @@ wally_death_3:                         ; Now float lying down Wally graphic up t
        jh   wally_death_3
        swpb @wally_feet_dy             ; Change to horizontal Wally
        movb @byte_00,@wally_frame
-;      b    @wally_resurrect
+       b    @wally_resurrect
 wally_check_for_death_2:
        .endproc
 *// wally_check_for_death
@@ -480,6 +480,7 @@ wally_resurrect:
 ;BED8	CALL Invaders_Init_YPos	For the special arcade room...
 ;BEDB	CALL Invaders_Init
 ;BEDE	JP Invaders_Loop
+       .endproc
 *// wally_resurrect
 
 *********************************************************************

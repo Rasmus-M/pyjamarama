@@ -14,7 +14,7 @@
 * Assembly options
 *
 start_room:
-       equ  1
+       equ  16
 immunity:
        equ  0
 
@@ -308,6 +308,8 @@ byte_ef:
        byte >ef
 byte_e9:
        byte >e9
+byte_e8:
+       byte >e8
 byte_e6:
        byte >e6
 byte_e0:
@@ -338,6 +340,8 @@ byte_9b:
        byte >9b
 byte_98:
        byte >98
+byte_91:
+       byte >91
 byte_78:
        byte >78
 byte_30:
@@ -348,6 +352,8 @@ byte_1c:
        byte >1c
 byte_1a:
        byte >1a
+byte_12:
+       byte >12
 byte_10:
        byte >10
 byte_0f:

@@ -127,8 +127,8 @@ LE6C8  .endproc
 
 update_room_10:
        .proc
-LE6C9  bl @Handler_MovingFloor
-LE6CC  bl @Animate_MovingFloor  
+LE6C9  bl @handler_moving_floor
+LE6CC  bl @animate_moving_floor
 LE6CF  bl @handler_spooky_hand
 LE6D2  .endproc  
 
@@ -506,14 +506,60 @@ Handler_Books:
 
 *********************************************************************
 *
-Handler_MovingFloor:
+handler_moving_floor:
        .proc
+       movb @death_flag,r0             ; Ignore if dead.
+       jne  handler_moving_floor_2
+       cb   @pocket_1+1,@byte_12       ; See if Wally is carrying the remote control. If he is don't update making it look like the floor has been stopped.
+       jeq  handler_moving_floor_2
+       cb   @pocket_2+1,@byte_12
+       jeq  handler_moving_floor_2
+       cb   @wally_y,@byte_91          ; If Wally is above the floor then don't update.
+       jl   handler_moving_floor_2
+       movb @wally_x,r0
+       ab   @byte_02,r0
+       cb   r0,@byte_e8
+       jle  handler_moving_floor_1
+       movb @byte_e8,r0
+handler_moving_floor_1:
+       movb r0,@wally_x
+handler_moving_floor_2:
        .endproc
 
 *********************************************************************
 *
-Animate_MovingFloor:
+* Scrolls the top two layers of the floor, animating it like a travelator.
+*
+animate_moving_floor:
        .proc
+       cb   @pocket_1+1,@byte_12
+       jeq  animate_moving_floor_2
+       cb   @pocket_2+1,@byte_12
+       jeq  animate_moving_floor_2
+       cb   @death_flag,@byte_01
+       jeq  animate_moving_floor_2
+       li   r0,>1700
+       bl   @vsbr
+       clr  r3
+       movb r1,r3
+       srl  r3,2
+       socb @r3lb,r3
+       clr  r4
+       movb @vdprd,r4
+       srl  r4,2
+       socb @r4lb,r4
+       li   r0,>1700+>4000
+       li   r2,32
+animate_moving_floor_1:
+       movb @r0lb,@vdpwa
+       movb r0,@vdpwa
+       bl   @vwad
+       movb r3,*r15
+       movb r4,*r15
+       ai   r0,8
+       dec  r2
+       jne  animate_moving_floor_1
+animate_moving_floor_2:
        .endproc
 
 *********************************************************************

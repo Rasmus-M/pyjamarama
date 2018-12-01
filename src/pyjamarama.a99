@@ -117,8 +117,10 @@ wally_feet_dy:
        equ  wally_x+1
 wally_feet_dx:
        equ  wally_feet_dy+1
-wally_attr:
+wally_feet_frame_offset:
        equ  wally_feet_dx+1
+wally_attr:
+       equ  wally_feet_frame_offset+2
 wally_attr_alt:
        equ  wally_attr+1
 wally_sprite_1:
@@ -249,10 +251,7 @@ game_start:
        bl   @inventory_redraw
        bl   @lives_reset
        bl   @milk_draw_full
-       li   r0,>9858
-       mov  r0,@wally_y
-       li   r0,>1000
-       mov  r0,@wally_feet_dy
+       bl   @wally_init
 game_loop:
        bl   @vsync
        bl   @vsync
@@ -331,6 +330,8 @@ byte_aa:
        byte >aa
 byte_a8:
        byte >a8
+byte_9f:
+       byte >9f
 byte_9d:
        byte >9d
 byte_9b:

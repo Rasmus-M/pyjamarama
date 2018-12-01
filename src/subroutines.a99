@@ -59,15 +59,6 @@ game_init_stats_3:
        movb r1,*r0+
        dec  r2
        jne  game_init_stats_3
-*      Allocate sprites for Wally
-       bl   @allocate_sprite
-       mov  r0,@wally_sprite_1
-       ai   r0,3
-       movb @byte_0f,*r0
-       bl   @allocate_sprite
-       mov  r0,@wally_sprite_2
-       ai   r0,3
-       movb @byte_0f,*r0
        .endproc
 *// game_init_stats
 
@@ -88,6 +79,31 @@ lives_reset_1:
        jne  lives_reset_1
        .endproc
 *// lives_reset
+
+*********************************************************************
+*
+* Wally init
+*
+wally_init:
+       .proc
+*      Allocate sprites for Wally
+       bl   @allocate_sprite
+       mov  r0,@wally_sprite_1
+       ai   r0,3
+       movb @byte_0f,*r0
+       bl   @allocate_sprite
+       mov  r0,@wally_sprite_2
+       ai   r0,3
+       movb @byte_0f,*r0
+*      Set position
+       li   r0,>9858
+       mov  r0,@wally_y
+       li   r0,>1000
+       mov  r0,@wally_feet_dy
+       li   r0,>0001
+       mov  r0,@wally_feet_frame_offset
+       .endproc
+*// wally_init
 
 *********************************************************************
 *
@@ -144,7 +160,7 @@ wally_draw_1:
        movb r0,*r4+
        clr  r0
        movb @wally_frame,@r0lb
-       inc  r0
+       a    @wally_feet_frame_offset,r0
        bl   @get_sprite_pattern
        movb r1,*r4+
 *      Record shifts

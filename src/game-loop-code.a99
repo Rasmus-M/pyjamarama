@@ -352,7 +352,6 @@ wally_check_for_death_1:
        bl   @wally_erase
 *      Animate Wally's Death
 wally_death:
-       equ  $
        movb @wally_x,r0
        movb @byte_08,r1
        cb   r0,r1                      ; Don't let it drop of the right hand of screen.
@@ -382,7 +381,7 @@ wally_death_3:                         ; Now float lying down Wally graphic up t
        jh   wally_death_3
        swpb @wally_feet_dy             ; Change to horizontal Wally
        movb @byte_00,@wally_frame
-       b    @wally_resurrect
+       bl   @wally_resurrect
 wally_check_for_death_2:
        .endproc
 *// wally_check_for_death
@@ -392,96 +391,55 @@ wally_check_for_death_2:
 * Lose a life, end game or resurrect Wally.
 *
 wally_resurrect:
-;BE29	XOR A	Reset the energy glass.
-;BE2A	LD (MilkLevel),A
-;BE2D	CALL Milk_DrawFull
-;BE30	LD HL,WallyLives	Lose one life and update the scoreboard.
-;BE33	DEC (HL)
-;BE34	LD A,(HL)
-;BE35	ADD A,A
-;BE36	ADD A,A
-;BE37	ADD A,A
-;BE38	ADD A,A
-;BE39	LD (BitmapX),A
-;BE3C	LD A,$10
-;BE3E	LD (BitmapY),A
-;BE41	LD A,$4C
-;BE43	CALL Bitmap16Draw
-;BE46	LD A,(WallyLives)	No more lives, so display the losing screen.
-;BE49	OR A
-;BE4A	JP Z,Screen_YouLost
-;BE4D	LD A,(Wally_RoomNo)	Get the resurrect position, within the room, for Wally.
-;BE50	LD E,A
-;BE51	LD D,$00
-;BE53	LD HL,Wally_ResurectY
-;BE56	ADD HL,DE
-;BE57	LD A,(HL)
-;BE58	LD HL,Wally_ResurectX
-;BE5B	ADD HL,DE
-;BE5C	LD L,(HL)
-;BE5D	LD H,A
-;BE5E	LD (BitmapX),HL
-;BE61	LD A,$9F	Index for 'puff of smoke' image, drawn to bring back Wally from the dead.
-;BE63	CALL Bitmap16Draw
-;BE66	LD A,H
-;BE67	ADD A,$10
-;BE69	LD (BitmapY),A
-;BE6C	LD A,$9F
-;BE6E	CALL Bitmap16Draw
-;BE71	CALL Pause_Short
-;BE74	LD D,$9F	'puff of smoke' animation start index.
-;BE76	LD B,$05	Number of frames.
-;Wally_Resurrect_0
-;BE78	LD (BitmapX),HL	Animate smoke.
-;BE7B	LD A,D
-;BE7C	CALL Bitmap16Draw
-;BE7F	LD A,H
-;BE80	ADD A,$10
-;BE82	LD (BitmapY),A
-;BE85	LD A,D
-;BE86	CALL Bitmap16Draw
-;BE89	INC D
-;BE8A	LD (BitmapX),HL
-;BE8D	LD A,D
-;BE8E	CALL Bitmap16Draw
-;BE91	LD A,H
-;BE92	ADD A,$10
-;BE94	LD (BitmapY),A
-;BE97	LD A,D
-;BE98	CALL Bitmap16Draw	Make sure the rest of the room is still animated.
-;BE9B	PUSH HL
-;BE9C	PUSH DE
-;BE9D	PUSH BC
-;BE9E	CALL Room_EventCaller
-;BEA1	CALL Pause_Short
-;BEA4	CALL Room_EventCaller
-;BEA7	CALL Pause_Short
-;BEAA	POP BC
-;BEAB	POP DE
-;BEAC	POP HL
-;BEAD	DJNZ Wally_Resurrect_0
-;BEAF	LD (Wally_X),HL	Make sure Wally is resurrected.
-;BEB2	LD (BitmapX),HL
-;BEB5	LD A,D
-;BEB6	CALL Bitmap16Draw
-;BEB9	LD A,H
-;BEBA	ADD A,$10
-;BEBC	LD (BitmapY),A
-;BEBF	LD A,D
-;BEC0	CALL Bitmap16Draw
-;BEC3	LD SP,$0000
-;BEC6	XOR A
-;BEC7	LD (DeathFlag),A
-;BECA	CALL Wally_Reset
-;BECD	CALL Wally_Draw
-;BED0	LD A,(Wally_RoomNo)	For all the normal rooms...
-;BED3	CP $1E
-;BED5	JP C,GameLoop
+       .proc
+       movb @byte_00,@milk_level
+       bl   @milk_draw_full
+       mov  @wally_lives,r0            ; Lose one life and update the scoreboard.
+       dec  r0
+       mov  r0,@wally_lives
+       sla  r0,4
+       mov  r0,@bitmap_x
+       li   r0,>0010
+       mov  r0,@bitmap_y
+       bl   @bitmap_16_erase
+       abs  @wally_lives
+       jne  wally_resurrect_1
+       b    @screen_you_lost
+wally_resurrect_1:
+       mov  @wally_room_no,r1
+       movb @wally_resurrect_y(r1),@wally_y
+       movb @wally_resurrect_x(r1),@wally_x
+       movb @byte_9f,@wally_frame
+       clr  @wally_feet_frame_offset
+       li   r2,6
+wally_resurrect_2:
+       bl   @animation_frame
+       bl   @animation_frame
+       ab   @byte_01,@wally_frame
+       dec  r2
+       jne  wally_resurrect_2
+       inc  @wally_feet_frame_offset
+       movb @byte_10,@wally_frame
+       movb @byte_00,@death_flag
+       bl   @wally_reset
+       mov  @wally_room_no,r0
+       ci   r0,>001e
+       jhe  wally_resurrect_3
+       .endproc
+wally_resurrect_3:
 ;BED8	CALL Invaders_Init_YPos	For the special arcade room...
 ;BEDB	CALL Invaders_Init
 ;BEDE	JP Invaders_Loop
        .endproc
 *// wally_resurrect
+
+*********************************************************************
+*
+* Sets up and displays the lost game screen.
+*
+screen_you_lost:
+       b    @main                      ; TODO
+*// screen_you_lost
 
 *********************************************************************
 *

@@ -325,6 +325,9 @@ handler_angels:
 * Update
 handler_angels_0:
        mov  @angel_frame,r0            ; Get bitmap frame for all angels.
+       mov  @frame,r1
+       andi r1,3
+       jne  handler_angels_1
        inc  r0                         ; Update to next frame.
        ci   r0,>0099                   ; Check to see if frame needs to loop around.
        jne  handler_angels_1
@@ -333,6 +336,7 @@ handler_angels_1:
        mov  r0,@angel_frame
        bl   @get_sprite_pattern
        mov  r1,r6
+handler_angels_5:
        li   r7,angel1_sprite           ; Point index to first angel.
        li   r8,3                       ; Number of angels to update.
 handler_angels_2:
@@ -494,10 +498,10 @@ handler_chickens:
        mov  r3,*r0
        jmp handler_chickens_9
 handler_chickens_1:
-       mov  @frame,r0
-       andi r0,3
-       jne  handler_chickens_3
        mov  @chicken_frame,r0
+       mov  @frame,r1
+       andi r1,3
+       jne  handler_chickens_2
        inc  r0
        ci   r0,>007f
        jne  handler_chickens_2

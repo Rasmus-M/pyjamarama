@@ -10,6 +10,7 @@ animation_frame:
        bl   @wally_draw
        bl   @room_event_caller
        bl   @upload_sprites
+       inc  @frame
        .pop r2
        .endproc
 *// animation_frame

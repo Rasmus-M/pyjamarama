@@ -15,8 +15,6 @@
 **
 * Assembly options
 *
-start_room:
-       equ  1
 immunity:
        equ  0
 slow_animations:
@@ -25,8 +23,20 @@ slow_animations:
 **
 * Constants
 *
+start_room:
+       equ  1
 animation_speed:
        equ  4
+sprite_table_size:
+       equ  32
+sprite_pattern_map_size:
+       equ  200
+sprite_bitmap_map_size:
+       equ  64
+
+**
+* ZX Spectrum color attributes and their corresponding TI values
+*
 attr_40:                               ; Black
        equ  >1100
 attr_41:                               ; Blue
@@ -43,12 +53,6 @@ attr_46:                               ; Yellow
        equ  >b100
 attr_47:                               ; White
        equ  >f100
-sprite_table_size:
-       equ  32
-sprite_pattern_map_size:
-       equ  200
-sprite_bitmap_map_size:
-       equ  64
 
 **
 * Memory mapped addresses

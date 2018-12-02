@@ -25,6 +25,8 @@ slow_animations:
 **
 * Constants
 *
+animation_speed:
+       equ  4
 attr_40:                               ; Black
        equ  >1100
 attr_41:                               ; Blue

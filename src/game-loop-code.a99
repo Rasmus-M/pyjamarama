@@ -230,7 +230,7 @@ wally_move_0:
 wally_move_1:
        .ifeq slow_animations,1
        mov  @frame,r1
-       andi r1,3
+       andi r1,animation_speed-1
        jne  wally_move_2
        .endif
        ab   @byte_02,r0
@@ -259,7 +259,7 @@ wally_move_4:
 wally_move_5:
        .ifeq slow_animations,1
        mov  @frame,r1
-       andi r1,3
+       andi r1,animation_speed-1
        jne  wally_move_6
        .endif
        ab   @byte_02,r0

@@ -262,7 +262,7 @@ update_roll_ball_1:
 *      Animate
        .ifeq slow_animations,1
        mov  @frame,r0
-       andi r0,3
+       andi r0,animation_speed-1
        jne  update_roll_ball_2
        .else
        andi r0,>0002
@@ -334,7 +334,7 @@ handler_angels_0:
        mov  @angel_frame,r0            ; Get bitmap frame for all angels.
        .ifeq slow_animations,1
        mov  @frame,r1
-       andi r1,3
+       andi r1,animation_speed-1
        jne  handler_angels_1
        .endif
        inc  r0                         ; Update to next frame.
@@ -441,7 +441,11 @@ handler_spooky_hand_update:
 * Check delay for a frame, exit if not ready to update.
        dec  @spooky_hand_frame_delay
        jne  handler_spooky_hand_end
-       li   r0,>0004                   ; Set frame delay (3 on ZX)
+       .ifeq slow_animations,1
+       li   r0,animation_speed         ; Set frame delay
+       .else
+       li   r0,>0003                   ; Set frame delay as on Spectrum
+       .endif
        mov  r0,@spooky_hand_frame_delay
        mov  @spooky_hand_sprite,r4
        mov  @spooky_hand_frame,r0
@@ -510,7 +514,7 @@ handler_chickens_1:
        mov  @chicken_frame,r0
        .ifeq slow_animations,1
        mov  @frame,r1
-       andi r1,3
+       andi r1,animation_speed-1
        jne  handler_chickens_2
        .endif
        inc  r0

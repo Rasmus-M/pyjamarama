@@ -41,7 +41,7 @@ LE675  data update_room_1e
 
 update_room_00:
        .proc
-LE677  bl @Update_RollRock  
+LE677  bl @update_rolling_rock
 LE67A  .endproc  
 
 update_room_01:
@@ -63,7 +63,7 @@ LE68C  .endproc
 
 update_room_04:
        .proc
-LE68D  bl @Handler_Darts
+LE68D  bl @handler_darts
 LE690  .endproc  
 
 update_room_05:
@@ -73,7 +73,7 @@ LE694  .endproc
 
 update_room_06:
        .proc
-LE695  bl @Handler_SavagePlant
+LE695  bl @handler_savage_plant
 LE698  .endproc  
 
 update_room_07:
@@ -83,13 +83,13 @@ LE69C  .endproc
 
 update_room_08:
        .proc
-LE69D  bl @Handler_Darts
+LE69D  bl @handler_darts
 LE6A0  .endproc  
 
 update_room_09:
        .proc
 LE6A1  bl @handler_food
-LE6A4  bl @Handler_BalloonHelp  
+LE6A4  bl @handler_balloon_help
 LE6A7  bl @handler_spooky_hand
 LE6AA  .endproc  
 
@@ -122,7 +122,7 @@ LE6C1  .endproc
 update_room_0F:
        .proc
 LE6C2  bl @handler_food
-LE6C5  bl @Handler_Books  
+LE6C5  bl @handler_books
 LE6C8  .endproc  
 
 update_room_10:
@@ -145,7 +145,7 @@ LE6DD  .endproc
 
 update_room_13:
        .proc
-LE6DE  bl @Handler_Darts
+LE6DE  bl @handler_darts
 LE6E1  .endproc  
 
 update_room_14:
@@ -161,12 +161,12 @@ LE6EC  .endproc
 
 update_room_16:
        .proc
-LE6ED  bl @Handler_Ghosts
+LE6ED  bl @handler_ghosts
 LE6F0  .endproc  
 
 update_room_17:
        .proc
-LE6F1  bl @Handler_Ghosts
+LE6F1  bl @handler_ghosts
 LE6F4  bl @handler_food
 LE6F7  .endproc  
 
@@ -177,7 +177,7 @@ LE6FB  .endproc
 
 update_room_19:
        .proc
-LE6FC  bl @Handler_Invaders
+LE6FC  bl @handler_invaders
 LE6FF  bl @Pause_Short  
 LE702  bl @Pause_Short  
 LE705  .endproc  
@@ -185,29 +185,29 @@ LE705  .endproc
 update_room_1a:
        .proc
 LE706  bl @handler_food
-LE709  bl @Handler_ThreeTon  
+LE709  bl @handler_three_ton
 LE70C  .endproc  
 
 update_room_1b:
        .proc
-LE70D  bl @Handler_ThreeTon
+LE70D  bl @handler_three_ton
 LE710  bl @handler_spooky_hand
 LE713  .endproc  
 
 update_room_1c:
        .proc
-LE714  bl @Handler_FallingBlocks
-LE717  bl @Handler_Fire  
+LE714  bl @handler_falling_blocks
+LE717  bl @handler_fire
 LE71A  .endproc  
 
 update_room_1d:
        .proc
 LE71B  bl @handler_bouncing_axe
-LE71E  bl @Handler_MagLock  
-LE721  bl @Handler_MagLock  
-LE724  bl @Handler_MagLock  
-LE727  bl @Handler_MagLock  
-LE72A  bl @Handler_MagLock  
+LE71E  bl @handler_mag_lock
+LE721  bl @handler_mag_lock
+LE724  bl @handler_mag_lock
+LE727  bl @handler_mag_lock
+LE72A  bl @handler_mag_lock
 LE72D  .endproc  
 
 update_room_1e:
@@ -225,11 +225,17 @@ LE749  .endproc
 
 *********************************************************************
 *
-Update_RollRock:
+* Handler for rolling tock
+*
+update_rolling_rock:
        .proc
+;      TODO
        .endproc
+*// update_rolling_rock
 
 *********************************************************************
+*
+* Handler for the rolling ball
 *
 update_roll_ball:
        .proc
@@ -290,13 +296,17 @@ update_roll_ball_3:
        jmp  update_roll_ball_1
 update_roll_ball_4:
        .endproc
+
 roll_ball_sprite
        data 0
 roll_ball_frame:
        data 0
+
 *// update_roll_ball
 
 *********************************************************************
+*
+* Handler for 'angels'
 *
 handler_angels:
        .proc
@@ -383,7 +393,11 @@ angel3_direction:
 angel_frame:                           ; Bitmap index. (93 ~ 98)
        data >0093
 
+*// handler_angels
+
 *********************************************************************
+*
+* Food handler
 *
 handler_food:
        .proc
@@ -407,8 +421,11 @@ handler_food_0:
        bl   @bitmap_16_draw
 handler_food_1:
        .endproc
+*// handler_food
 
 *********************************************************************
+*
+* Hendler for spooky hand
 *
 handler_spooky_hand:
        .proc
@@ -485,9 +502,11 @@ spooky_hand_frame_delay:
 spooky_hand_sprite:
        data >0000
 
+*// handler_spooky_hand
+
 *********************************************************************
 *
-* Room Event : Cooked Chickens
+* Handler for cooked chickens
 *
 handler_chickens:
        .proc
@@ -580,15 +599,21 @@ chicken1_sprite:
 chicken2_sprite:
        data >0000
 
-*********************************************************************
-*
-Handler_Darts:
-       .proc
-       .endproc
+*// handler_chickens
 
 *********************************************************************
 *
-* Bouncing axe
+* Handler for darts
+*
+handler_darts:
+       .proc
+;      TODO
+       .endproc
+*// handler_darts
+
+*********************************************************************
+*
+* Handler for bouncing axe
 *
 handler_bouncing_axe:
        .proc
@@ -655,6 +680,7 @@ handler_bouncing_axe_6:
        bl   @wally_hit_test
 handler_bouncing_axe_7:
        .endproc
+
 axe_sprite:
        data >0000
 axe_velocity_y
@@ -662,23 +688,37 @@ axe_velocity_y
 axe_frame:
        data >00b3
 
-*********************************************************************
-*
-Handler_SavagePlant:
-       .proc
-       .endproc
+*// handler_bouncing_axe
 
 *********************************************************************
 *
-Handler_BalloonHelp:
+* Handler for savage plant
+*
+handler_savage_plant:
        .proc
+
        .endproc
+
+savage_plant_frame:
+       data >0075
+
+*// handler_savage_plant
 
 *********************************************************************
 *
-Handler_Books:
+handler_balloon_help:
        .proc
+;      TODO
        .endproc
+*// handler_balloon_help
+
+*********************************************************************
+*
+handler_books:
+       .proc
+;      TODO
+       .endproc
+*// handler_books
 
 *********************************************************************
 *
@@ -740,66 +780,95 @@ animate_moving_floor_2:
 
 *********************************************************************
 *
-Handler_Ghosts:
+* Handler for ghosts
+*
+handler_ghosts:
        .proc
+;      TODO
        .endproc
+*// handler_ghosts
 
 *********************************************************************
 *
-Handler_Invaders:
+* Handler for 3 ton weight
+*
+handler_three_ton:
        .proc
+;      TODO
        .endproc
+*// handler_three_ton
 
 *********************************************************************
 *
-Pause_Short:
+* Handler for falling blocks
+*
+handler_falling_blocks:
        .proc
+;      TODO
        .endproc
+*// handler_falling_blocks
 
 *********************************************************************
 *
-Handler_ThreeTon:
+* Handler for fire
+*
+handler_fire:
        .proc
+;      TODO
        .endproc
+*// handler_fire
 
 *********************************************************************
 *
-Handler_FallingBlocks:
+* Handler for magnetic lock
+*
+handler_mag_lock:
        .proc
+;      TODO
        .endproc
+*// handler_mag_lock
 
 *********************************************************************
 *
-Handler_Fire:
-       .proc
-       .endproc
-
-*********************************************************************
+* Handler for space invaders
 *
-Handler_MagLock:
+handler_invaders:
        .proc
+;      TODO
        .endproc
+*// handler_invaders
 
 *********************************************************************
 *
 Inv_Update:
        .proc
+;      TODO
        .endproc
 
 *********************************************************************
 *
 Arcade_UpdateExplosions:
        .proc
+;      TODO
        .endproc
 
 *********************************************************************
 *
 Inv_BulletUpdate:
        .proc
+;      TODO
        .endproc
 
 *********************************************************************
 *
 Arcade_UpdateBombs:
        .proc
+;      TODO
+       .endproc
+
+*********************************************************************
+*
+Pause_Short:
+       .proc
+;      TODO
        .endproc

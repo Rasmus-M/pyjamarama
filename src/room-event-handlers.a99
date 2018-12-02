@@ -58,7 +58,7 @@ LE688  .endproc
 
 update_room_03:
        .proc
-LE689  bl @Handler_Chickens
+LE689  bl @handler_chickens
 LE68C  .endproc  
 
 update_room_04:
@@ -470,9 +470,96 @@ spooky_hand_sprite:
 
 *********************************************************************
 *
-Handler_Chickens:
+* Room Event : Cooked Chickens
+*
+handler_chickens:
        .proc
+       movb @flag_baddy_init,r0
+       jne  handler_chickens_1
+       movb @byte_01,@flag_baddy_init
+       li   r0,>007b
+       mov  r0,@chicken_frame
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_06,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@chicken1_sprite
+       li   r1,>8088
+       mov  r1,*r0+
+       mov  r3,*r0
+       bl   @allocate_sprite
+       mov  r0,@chicken2_sprite
+       li   r1,>a8a8
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp handler_chickens_9
+handler_chickens_1:
+       mov  @frame,r0
+       andi r0,3
+       jne  handler_chickens_3
+       mov  @chicken_frame,r0
+       inc  r0
+       ci   r0,>007f
+       jne  handler_chickens_2
+       li   r0,>007b
+handler_chickens_2:
+       mov  r0,@chicken_frame
+       bl   @get_sprite_pattern
+       movb r1,r9
+handler_chickens_3:
+       li   r6,2
+       li   r7,chicken1_sprite
+handler_chickens_4:
+       mov  *r7+,r8
+       movb r9,@sprite_pattern(r8)
+       li   r0,1
+       mov  *r8,r1
+       bl   @wally_hit_test
+       mov  *r8,r1                     ; Get y and x
+       cb   r1,@byte_80                ; Is chicken on table?
+       jne  handler_chickens_5         ; Jump if not
+       sb   @byte_02,@r1lb             ; Move left
+       cb   @r1lb,@byte_78             ; Reached edge of table?
+       jne  handler_chickens_8         ; Jump if not
+       movb @byte_82,r1                ; Start the drop
+       jmp  handler_chickens_8         ; Next chicken
+*      Not on table
+handler_chickens_5:
+       cb   r1,@byte_a8                ; On the floor?
+       jeq  handler_chickens_6
+*      Dropping to the floor
+       ab   @byte_02,r1                ; Move down
+       jmp  handler_chickens_8         ; Next chicken
+*      On floor
+handler_chickens_6:
+       ci   r6,1
+       jeq  handler_chickens_7
+*      Move left
+       sb   @byte_02,@r1lb             ; Move left
+       cb   @r1lb,@byte_08
+       jne  handler_chickens_8
+       li   r1,>80b4
+       jmp  handler_chickens_8
+*      Move right
+handler_chickens_7:
+       ab   @byte_02,@r1lb             ; Move right
+       cb   @r1lb,@byte_e8
+       jne  handler_chickens_8
+       li   r1,>80b4
+handler_chickens_8:
+       mov  r1,*r8                     ; Write y and x
+       dec  r6
+       jne  handler_chickens_4
+
+handler_chickens_9:
        .endproc
+
+chicken_frame:
+       data >007b                       Index of chicken bitmap
+chicken1_sprite:
+       data >0000
+chicken2_sprite:
+       data >0000
 
 *********************************************************************
 *

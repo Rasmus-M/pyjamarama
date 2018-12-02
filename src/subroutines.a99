@@ -59,6 +59,8 @@ game_init_stats_3:
        movb r1,*r0+
        dec  r2
        jne  game_init_stats_3
+*      Clear frame counter
+       clr  @frame
        .endproc
 *// game_init_stats
 
@@ -299,6 +301,8 @@ milk_increase_by_amount_1:
 *
 * Input:
 * r0: Amount to decreasse by
+*
+* Modifies r0-r5
 *
 milk_decrease_by_amount:
        .proc
@@ -676,6 +680,8 @@ milk_draw_full:
 * r0: Destination VDP address
 * r1: Bitmap to draw
 * r2: Number of lines to draw
+*
+* Modifies r0-r5
 *
 bmp_draw_lines:
        .proc

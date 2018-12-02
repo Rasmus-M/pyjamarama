@@ -14,7 +14,7 @@
 * Assembly options
 *
 start_room:
-       equ  16
+       equ  1
 immunity:
        equ  0
 
@@ -161,8 +161,10 @@ max_sprite:
        equ  food_active_ptr+2
 rand_no:
        equ  max_sprite+2
-pad_max:
+frame:
        equ  rand_no+2
+pad_max:
+       equ  frame+2
 
 **
 * Macros
@@ -266,6 +268,7 @@ game_loop:
        bl   @food_check_pickup
        bl   @room_test_events
        bl   @upload_sprites
+       inc  @frame
        li   r0,KEY_SH
        bl   @check_key
        jeq  game_loop
@@ -342,6 +345,10 @@ byte_98:
        byte >98
 byte_91:
        byte >91
+byte_82:
+       byte >82
+byte_80:
+       byte >80
 byte_78:
        byte >78
 byte_30:

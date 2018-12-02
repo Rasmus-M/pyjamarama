@@ -146,9 +146,17 @@ wally_draw:
        jeq  wally_draw_1
        ci   r0,>0010
        jhe  wally_draw_0
+       ci   r0,>0000
+       jeq  wally_draw_1
+       ci   r0,>0008
+       jeq  wally_draw_1
        ai   r0,>003e
        jmp  wally_draw_1
 wally_draw_0:
+       ci   r0,>0010
+       jeq  wally_draw_1
+       ci   r0,>001e
+       jeq  wally_draw_1
        ai   r0,>002f
 wally_draw_1:
        bl   @get_sprite_pattern

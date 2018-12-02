@@ -242,7 +242,7 @@ update_roll_ball:
        li   r1,>3008
        mov  r1,*r4+                    ; Set position
        li   r0,>008d                   ; Pattern
-       mov  r0,@roll_ball_bmp
+       mov  r0,@roll_ball_frame
        bl   @get_sprite_pattern
        movb r1,*r4+
        movb @byte_0b,*r4               ; Color
@@ -250,7 +250,7 @@ update_roll_ball:
 update_roll_ball_0:
        mov  @roll_ball_sprite,r4
        mov  *r4,r0                     ; Get position
-       mov  @roll_ball_bmp,r1
+       mov  @roll_ball_frame,r1
        cb   @r0lb,@byte_b0             ; At end of railing?
        jne  update_roll_ball_3         ; Jump if not
        ab   @byte_02,r0                ; Move down
@@ -259,14 +259,21 @@ update_roll_ball_0:
        li   r0,>3008
 update_roll_ball_1:
        mov  r0,*r4                     ; Store position
-       andi r0,>0003                   ; Animate
+*      Animate
+       .ifeq slow_animations,1
+       mov  @frame,r0
+       andi r0,3
        jne  update_roll_ball_2
-       inc  r1
+       .else
+       andi r0,>0002
+       jne  update_roll_ball_2
+       .endif
+       inc  r1                         ; Animate
        ci   r1,>0090
        jne  update_roll_ball_2
        li   r1,>008d
 update_roll_ball_2:
-       mov  r1,@roll_ball_bmp
+       mov  r1,@roll_ball_frame
        mov  r1,r0
        bl   @get_sprite_pattern
        movb r1,@sprite_pattern(r4)     ; Store pattern
@@ -285,7 +292,7 @@ update_roll_ball_4:
        .endproc
 roll_ball_sprite
        data 0
-roll_ball_bmp:
+roll_ball_frame:
        data 0
 *// update_roll_ball
 
@@ -325,9 +332,11 @@ handler_angels:
 * Update
 handler_angels_0:
        mov  @angel_frame,r0            ; Get bitmap frame for all angels.
+       .ifeq slow_animations,1
        mov  @frame,r1
        andi r1,3
        jne  handler_angels_1
+       .endif
        inc  r0                         ; Update to next frame.
        ci   r0,>0099                   ; Check to see if frame needs to loop around.
        jne  handler_angels_1
@@ -432,7 +441,7 @@ handler_spooky_hand_update:
 * Check delay for a frame, exit if not ready to update.
        dec  @spooky_hand_frame_delay
        jne  handler_spooky_hand_end
-       li   r0,>0004                   ; Set frame delay.
+       li   r0,>0004                   ; Set frame delay (3 on ZX)
        mov  r0,@spooky_hand_frame_delay
        mov  @spooky_hand_sprite,r4
        mov  @spooky_hand_frame,r0
@@ -499,9 +508,11 @@ handler_chickens:
        jmp handler_chickens_9
 handler_chickens_1:
        mov  @chicken_frame,r0
+       .ifeq slow_animations,1
        mov  @frame,r1
        andi r1,3
        jne  handler_chickens_2
+       .endif
        inc  r0
        ci   r0,>007f
        jne  handler_chickens_2

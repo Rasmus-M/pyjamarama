@@ -24,7 +24,7 @@ slow_animations:
 * Constants
 *
 start_room:
-       equ  1
+       equ  0
 animation_speed:
        equ  4
 sprite_table_size:
@@ -103,7 +103,7 @@ r7lb   equ  wrksp+15
 r8lb   equ  wrksp+17
 r9lb   equ  wrksp+19
 stack  equ  pad+>20                    ; Stack (grows up)
-padvar equ  stack+>10                  ; Start of pad variables
+padvar equ  stack+>20                  ; Start of pad variables
 *
 * PAD variables
 *
@@ -147,12 +147,8 @@ wally_head_countdown:
        equ  wally_last_dir+1
 wally_step_flag:
        equ  wally_head_countdown+1
-mag_lock_dir:
-       equ  wally_step_flag+1
-room_0_rock_count:
-       equ  mag_lock_dir+1
 input_flag:
-       equ  room_0_rock_count+2
+       equ  wally_step_flag+2
 pocket_1:
        equ  input_flag+2
 pocket_2:

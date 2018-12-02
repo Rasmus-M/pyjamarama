@@ -229,8 +229,72 @@ LE749  .endproc
 *
 update_rolling_rock:
        .proc
-;      TODO
+       mov  @room_0_rock_count,r0      ; Check and update countdown.
+       jeq  update_rolling_rock_0
+       dec  r0
+       mov  r0,@room_0_rock_count
+       jmp  update_rolling_rock_2      ; Do nothing if not zero yet.
+update_rolling_rock_0:
+       li   r0,>0026                   ; Number of times to move and draw rock.
+       mov  r0,@room_0_update_count
+update_rolling_rock_1:
+       bl   @vsync
+       li   r6,>0e00                   ; Y position of rock.
+       movb @flag_rolling_rock,@r6lb   ; Use flag as X position of rock.
+       bl   @rolling_rock_draw
+       ab   @byte_01,@flag_rolling_rock         ; Move position for next frame.
+       movb @wally_x,r0
+       srl  r0,3
+       cb   r0,@flag_rolling_rock
+       jhe  update_rolling_rock_3
+       bl   @wally_erase
+update_rolling_rock_3:
+       dec  @room_0_update_count
+       jne  update_rolling_rock_1
+       li   r0,>001c
+       mov  r0,@wally_room_no
+       clr  r0
+       movb r0,@rolling_rock_draw
+       movb r0,@flag_baddy_init
+       movb @byte_01,@death_flag
+       li   r0,>00c8
+       mov  r0,@room_0_rock_count
+       bl   @screen_clear_room
+       bl   @room_draw
+       bl   @wally_resurrect
+update_rolling_rock_2:
        .endproc
+
+rolling_rock_draw:
+       .proc
+       li   r7,8                       ; Width of rock in characters.
+       li   r0,roll_rock_tiles
+       mov  r0,@tile_start_ptr         ; Set draw to use the tiles for the rolling rock.
+       li   r5,roll_rock_furniture     ; The furniture string for the rock.
+rolling_rock_draw_0:
+       li   r8,7                       ; Height of rock in characters.
+rolling_rock_draw_1:
+       cb   @r6lb,@byte_20             ; Check for edge of screen
+       jhe  rolling_rock_draw_2
+       movb *r5+,r0                    ; Tile no
+       mov  r6,r1                      ; Position
+       li   r2,attr_45                 ; Colour rock cyan.
+       bl   @tile_draw
+rolling_rock_draw_2:
+       ab   @byte_01,r6                ; Next tile position down.
+       dec  r8
+       jne  rolling_rock_draw_1
+       sb   @byte_01,@r6lb             ; Next column to the left!
+       sb   @byte_07,r6                ; Back to top
+       dec  r7
+       jne  rolling_rock_draw_0
+       .endproc
+
+room_0_rock_count:
+       data >00c8
+room_0_update_count:
+       data >00c8
+
 *// update_rolling_rock
 
 *********************************************************************
@@ -885,6 +949,10 @@ handler_mag_lock:
        .proc
 ;      TODO
        .endproc
+
+mag_lock_dir:
+       data >0000
+
 *// handler_mag_lock
 
 *********************************************************************

@@ -341,13 +341,15 @@ room_enter:
        clr  r0
        movb r0,@flag_baddy_init
        movb r0,@flag_food_drawn
-       movb r0,@flag_rolling_rock
-       movb r0,@flag_balloon
-       li   r0,>30
+       movb r0,@flag_rolling_rock      ; F18A
+       movb r0,@flag_balloon           ; F18B
+       inc  r0
+       mov  r0,@mag_lock_dir
+       li   r0,>0030
        mov  r0,@spooky_hand_countdown
-       movb @byte_01,@mag_lock_dir
+       li   r0,>0028
+       movb r0,@room_0_rock_count
        movb @byte_30,@flag_mag_lock
-       movb @byte_c8,@room_0_rock_count
        bl   @deallocate_sprites
        bl   @wally_erase
        bl   @screen_clear_room         ; TODO: screen_clear_effect

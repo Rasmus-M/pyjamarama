@@ -308,7 +308,9 @@ milk_decrease_by_amount:
        .proc
        clr  r2
        movb @milk_level,@r2lb
+       .ifeq immunity,0
        a    r0,r2
+       .endif
        ci   r2,32
        jlt  milk_decrease_by_amount_1
        li   r2,32

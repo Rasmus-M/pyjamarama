@@ -24,7 +24,7 @@ slow_animations:
 * Constants
 *
 start_room:
-       equ  6
+       equ  1
 animation_speed:
        equ  4
 sprite_table_size:

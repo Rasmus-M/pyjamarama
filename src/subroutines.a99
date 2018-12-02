@@ -1047,7 +1047,7 @@ init_sprite_maps_1:
 * On return r0 contains the address of the allocated sprite
 * or 0 if allocation failed.
 *
-* Modifies r0-r2
+* Modifies r1-r2
 *
 allocate_sprite:
        .proc

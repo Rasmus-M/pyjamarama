@@ -357,6 +357,8 @@ byte_80:
        byte >80
 byte_78:
        byte >78
+byte_38:
+       byte >38
 byte_30:
        byte >30
 byte_20:
@@ -371,6 +373,8 @@ byte_10:
        byte >10
 byte_0f:
        byte >0f
+byte_0e:
+       byte >0e
 byte_0d:
        byte >0d
 byte_0b:

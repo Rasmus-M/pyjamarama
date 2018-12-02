@@ -68,7 +68,7 @@ LE690  .endproc
 
 update_room_05:
        .proc
-LE691  bl @Handler_BouncingAxe
+LE691  bl @handler_bouncing_axe
 LE694  .endproc  
 
 update_room_06:
@@ -95,7 +95,7 @@ LE6AA  .endproc
 
 update_room_0A:
        .proc
-LE6AB  bl @Handler_BouncingAxe
+LE6AB  bl @handler_bouncing_axe
 LE6AE  .endproc  
 
 update_room_0B:
@@ -140,7 +140,7 @@ LE6D9  .endproc
 
 update_room_12:
        .proc
-LE6DA  bl @Handler_BouncingAxe
+LE6DA  bl @handler_bouncing_axe
 LE6DD  .endproc  
 
 update_room_13:
@@ -156,7 +156,7 @@ LE6E5  .endproc
 update_room_15:
        .proc
 LE6E6  bl @handler_food
-LE6E9  bl @Handler_BouncingAxe  
+LE6E9  bl @handler_bouncing_axe
 LE6EC  .endproc  
 
 update_room_16:
@@ -202,7 +202,7 @@ LE71A  .endproc
 
 update_room_1d:
        .proc
-LE71B  bl @Handler_BouncingAxe
+LE71B  bl @handler_bouncing_axe
 LE71E  bl @Handler_MagLock  
 LE721  bl @Handler_MagLock  
 LE724  bl @Handler_MagLock  
@@ -588,9 +588,79 @@ Handler_Darts:
 
 *********************************************************************
 *
-Handler_BouncingAxe:
+* Bouncing axe
+*
+handler_bouncing_axe:
        .proc
+       movb @flag_baddy_init,r0        ; Has axe been intiialised yet?
+       jne  handler_bouncing_axe_0
+*      Initialise
+       li   r0,>00b3
+       mov  r0,@axe_frame
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_0e,@r3lb             ; Color
+       bl   @allocate_sprite
+       mov  r0,@axe_sprite
+       li   r1,>3a64
+       mov  r1,*r0+
+       mov  r3,*r0
+       li   r0,>0004
+       mov  r0,@axe_velocity_y
+       movb @byte_01,@flag_baddy_init
+       jmp  handler_bouncing_axe_7
+*      Update
+handler_bouncing_axe_0:
+       mov  @axe_sprite,r4
+       mov  *r4,r0                     ; Get position
+       ab   @axe_velocity_y+1,r0       ; Move Y in direction and speed of velocity.
+       cb   r0,@byte_a8                ; Check for hitting the floor.
+       jl   handler_bouncing_axe_2
+handler_bouncing_axe_1:
+       neg  @axe_velocity_y            ; Change direction of the Y velocity.
+       jmp  handler_bouncing_axe_3
+handler_bouncing_axe_2:
+       cb   r0,@byte_38
+       jl   handler_bouncing_axe_1
+handler_bouncing_axe_3:
+       inc  r0                         ; Move along X axis.
+       cb   @r0lb,@byte_e8             ; Check for wrap around the room.
+       jl   handler_bouncing_axe_4     ; Reset position to the left hand side.
+       li   r0,>9808
+       li   r1,-4
+       mov  r1,@axe_velocity_y         ; Update velocity, in case it changed.
+handler_bouncing_axe_4:
+       mov  r0,*r4                     ; Update position.
+       mov  @axe_frame,r0
+       .ifeq slow_animations,1
+       mov  @frame,r1
+       andi r1,animation_speed-1
+       jne  handler_bouncing_axe_6
+       .else
+       mov  *r4,r1
+       andi r1,1                       ; Animate every even move.
+       jne  handler_bouncing_axe_6
+       .endif
+       inc  r0
+       ci   r0,>00bb
+       jl   handler_bouncing_axe_6
+handler_bouncing_axe_5:
+       li   r0,>00b3                   ; Reset to first frame again.
+handler_bouncing_axe_6:
+       mov  r0,@axe_frame
+       bl   @get_sprite_pattern
+       movb r1,@sprite_pattern(r4)
+       li   r0,5
+       mov  *r4,r1
+       bl   @wally_hit_test
+handler_bouncing_axe_7:
        .endproc
+axe_sprite:
+       data >0000
+axe_velocity_y
+       data >0004                      ; Speed and direction of Axe's Y direction.
+axe_frame:
+       data >00b3
 
 *********************************************************************
 *

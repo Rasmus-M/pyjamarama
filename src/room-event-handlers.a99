@@ -897,8 +897,53 @@ handler_balloon_help:
 *
 handler_books:
        .proc
-;      TODO
+       movb @flag_baddy_init,r0        ; See if baddies need initializing.
+       jne  handler_books_1
+       movb @byte_01,@flag_baddy_init
+       li   r0,>007a
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_02,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@book_sprite_1
+       li   r1,>5870
+       mov  r1,*r0+
+       mov  r3,*r0
+       bl   @allocate_sprite
+       mov  r0,@book_sprite_2
+       li   r1,>7770
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp handler_books_4
+handler_books_1:
+       li   r6,2                       ; Number of darts to draw.
+       li   r7,book_sprite_1
+handler_books_2:
+       mov  *r7+,r8                    ; Get sprite pointer
+       mov  *r8,r1                     ; Get y and x
+       ab   @byte_01,r1                ; Move y position down.
+       cb   r1,@byte_80                ; Check for end of screen.
+       jl   handler_books_3
+       movb @byte_46,r1                ; Reset to left of screen if need be.
+handler_books_3:
+       mov  r1,*r8                     ; Write y and x
+       li   r0,>000f
+       c    r0,@pocket_1
+       jeq  handler_books_4
+       c    r0,@pocket_2
+       jeq  handler_books_4
+       li   r0,16
+       bl   @wally_hit_test
+       dec  r6
+       jne  handler_books_2
+handler_books_4:
        .endproc
+
+book_sprite_1:
+       data >0000
+book_sprite_2:
+       data >0000
+
 *// handler_books
 
 *********************************************************************

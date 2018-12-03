@@ -25,6 +25,10 @@ slow_animations:
 *
 start_room:
        equ  1
+pocket_1_start:
+       equ  0                          ; The Round Key
+pocket_2_start:
+       equ  1                          ; The Radio
 animation_speed:
        equ  4
 sprite_table_size:

@@ -21,9 +21,9 @@ animation_frame:
 *
 game_init_stats:
        .proc
-       li   r0,>0000                   ; The Round Key
+       li   r0,pocket_1_start
        mov  r0,@pocket_1
-       li   r0,>0001                   ; The Radio
+       li   r0,pocket_2_start
        mov  r0,@pocket_2
        li   r0,food_table              ; Reset active food
        mov  r0,@food_active_ptr
@@ -1227,10 +1227,11 @@ garbage_collect_1:
        mov  @max_sprite,r2
        inc  r2
 garbage_collect_2:
-       cb   *r0,@byte_c0
+       cb   *r0,@byte_c0               ; Check if used
        jeq  garbage_collect_3
+       inct r0
        clr  r1
-       movb *r0,@r1lb
+       movb *r0,@r1lb                  ; Get pattern
        srl  r1,2
        ai   r1,sprite_bitmap_map_alt
        clr  r3
@@ -1239,7 +1240,7 @@ garbage_collect_2:
        movb *r1,@sprite_pattern_map-sprite_pattern_map_alt(r1)
        movb *r3,@sprite_bitmap_map-sprite_bitmap_map_alt(r3)
 garbage_collect_3:
-       ai   r0,4
+       inct r0
        dec  r2
        jne  garbage_collect_2
        .endproc

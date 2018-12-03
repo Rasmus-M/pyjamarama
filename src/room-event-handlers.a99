@@ -887,10 +887,68 @@ savage_plant_sprite_2:
 
 *********************************************************************
 *
+* Handler for ballon help
+*
 handler_balloon_help:
        .proc
-;      TODO
+       movb @flag_baddy_init,r0
+       jne  handler_balloon_help_0
+       movb @byte_01,@flag_baddy_init
+       li   r0,>0073                   ; Top of balloon
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_08,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@balloon_sprite_1
+       li   r1,>8018
+       mov  r1,*r0+
+       mov  r3,*r0
+       li   r0,>0074                   ; Bottom of balloon
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_08,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@balloon_sprite_2
+       li   r1,>9018
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp handler_balloon_help_3
+handler_balloon_help_0:
+       li   r0,>1898                   ; Check to see if Wally is at position (18, 98), returning if false.
+       sb   @wally_x,r0
+       sb   @byte_01,r0
+       cb   r0,@byte_fe
+       jl   handler_balloon_help_3
+       cb   @wally_y,@r0lb
+       jne  handler_balloon_help_3
+       li   r0,>0011                   ; Check for carrying the scissors, returning if false.
+       c    r0,@pocket_1
+       jeq  handler_balloon_help_1
+       c    r0,@pocket_2
+       jne  handler_balloon_help_3
+handler_balloon_help_1:
+       movb @flag_balloon,r0
+       jne  handler_balloon_help_3
+       movb @byte_01,@flag_balloon
+       li   r2,>50
+handler_balloon_help_2:
+       bl   @animation_frame
+       li   r0,>0100
+       mov  @balloon_sprite_1,r1       ; Move balloon up
+       sb   r0,*r1
+       mov  @balloon_sprite_2,r1
+       sb   r0,*r1
+       sb   r0,@wally_y                ; Move Wally up
+       dec  r2
+       jne  handler_balloon_help_2
+handler_balloon_help_3:
        .endproc
+
+balloon_sprite_1:
+       data >0000
+balloon_sprite_2:
+       data >0000
+
 *// handler_balloon_help
 
 *********************************************************************
@@ -914,9 +972,9 @@ handler_books:
        li   r1,>7770
        mov  r1,*r0+
        mov  r3,*r0
-       jmp handler_books_4
+       jmp handler_books_5
 handler_books_1:
-       li   r6,2                       ; Number of darts to draw.
+       li   r6,2                       ; Number of books to draw.
        li   r7,book_sprite_1
 handler_books_2:
        mov  *r7+,r8                    ; Get sprite pointer
@@ -927,16 +985,17 @@ handler_books_2:
        movb @byte_46,r1                ; Reset to left of screen if need be.
 handler_books_3:
        mov  r1,*r8                     ; Write y and x
-       li   r0,>000f
+       li   r0,>000f                   ; Check for crash helmet
        c    r0,@pocket_1
        jeq  handler_books_4
        c    r0,@pocket_2
        jeq  handler_books_4
        li   r0,16
        bl   @wally_hit_test
+handler_books_4:
        dec  r6
        jne  handler_books_2
-handler_books_4:
+handler_books_5:
        .endproc
 
 book_sprite_1:

@@ -652,7 +652,6 @@ handler_chickens_8:
        mov  r1,*r8                     ; Write y and x
        dec  r6
        jne  handler_chickens_4
-
 handler_chickens_9:
        .endproc
 
@@ -671,8 +670,67 @@ chicken_sprite_2:
 *
 handler_darts:
        .proc
-;      TODO
+       movb @flag_baddy_init,r0        ; See if baddies need initializing.
+       jne  handler_darts_1
+       movb @byte_01,@flag_baddy_init
+       li   r0,>0090
+       mov  r0,@dart_frame
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_0d,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@dart_sprite_1
+       li   r1,>8808
+       mov  r1,*r0+
+       mov  r3,*r0
+       bl   @allocate_sprite
+       mov  r0,@dart_sprite_2
+       li   r1,>a878
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp handler_darts_6
+handler_darts_1:
+       mov  @dart_frame,r0
+       .ifeq slow_animations,1
+       mov  @frame,r1
+       andi r1,animation_speed-1
+       jne  handler_darts_2
+       .endif
+       inc  r0
+       ci   r0,>0093
+       jne  handler_darts_2
+       li   r0,>0090
+handler_darts_2:
+       mov  r0,@dart_frame
+       bl   @get_sprite_pattern
+       movb r1,r9
+handler_darts_3:
+       li   r6,2                       ; Number of darts to draw.
+       li   r7,dart_sprite_1
+handler_darts_4:
+       mov  *r7+,r8                    ; Get sprite pointer
+       movb r9,@sprite_pattern(r8)     ; Update pattern
+       mov  *r8,r1                     ; Get y and x
+       ai   r1,2                       ; Move x position two to the right.
+       cb   @r1lb,@byte_f0             ; Check for end of screen.
+       jl   handler_darts_5
+       movb @byte_08,@r1lb             ; Reset to left of screen if need be.
+handler_darts_5:
+       mov  r1,*r8                     ; Write y and x
+       li   r0,1
+       bl   @wally_hit_test
+       dec  r6
+       jne  handler_darts_4
+handler_darts_6:
        .endproc
+
+dart_sprite_1:
+       data >0000
+dart_sprite_2:
+       data >0000
+dart_frame:
+       data >0090
+
 *// handler_darts
 
 *********************************************************************

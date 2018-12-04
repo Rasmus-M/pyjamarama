@@ -1106,14 +1106,46 @@ handler_fire:
 *********************************************************************
 *
 * Handler for magnetic lock
+* Displays the closing / opening Magentic Lock Bars.
 *
 handler_mag_lock:
        .proc
-;      TODO
+       clr  r1
+       movb @flag_mag_lock,@r1lb
+       mov  @mag_lock_dir,r0           ; Check direction.
+       ci   r0,1
+       jne  handler_mag_lock_0
+       ci   r1,>00b7                   ; For closing, see if reached the bottom.
+       jeq  handler_mag_lock_2         ; If so then do nothing.
+       jmp  handler_mag_lock_1
+handler_mag_lock_0:
+       ci   r1,>0030                   ; For opening, see if reached the top.
+       jeq  handler_mag_lock_2         ; If so then do nothing.
+       dec  r1                         ; Move up.
+handler_mag_lock_1:
+       li   r0,136
+       bl   @screen_address            ; Convert Y position into an address on the screen.
+       mov  r6,r0
+*      Draw bars
+       li   r2,6
+       li   r3,>2c00
+       li   r4,mag_lock_bar_offsets
+handler_mag_lock_3:
+       a    *r4+,r0
+       bl   @vsbr
+       xor  r3,r1
+       bl   @vsbw
+       dec  r2
+       jne  handler_mag_lock_3
+*      Update y
+       ab    @mag_lock_dir+1,@flag_mag_lock
+handler_mag_lock_2:
        .endproc
 
 mag_lock_dir:
-       data >0000
+       data >0001
+mag_lock_bar_offsets:
+       data 0,8,16,24,16,8
 
 *// handler_mag_lock
 

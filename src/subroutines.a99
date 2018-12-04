@@ -34,6 +34,7 @@ game_init_stats_0:
        clr  *r0+
        dect r2
        jne  game_init_stats_0
+       bl   @room_init                 ; Added by Rasmus
 *      Reset object positions by filling in the object slots, for each room, with and object index in incremental steps
        li   r0,room_obj_slot_0_obj
        li   r2,>1e
@@ -338,6 +339,20 @@ milk_decrease_by_amount_1:
 *
 room_enter:
        .proc
+       bl   @room_init
+       bl   @deallocate_sprites
+       bl   @wally_erase
+       bl   @screen_clear_room         ; TODO: screen_clear_effect
+       bl   @room_draw
+       bl   @inventory_redraw
+       .endproc
+*// room_enter
+
+*********************************************************************
+*
+* Room init
+*
+room_init:
        clr  r0
        movb r0,@flag_baddy_init
        movb r0,@flag_food_drawn
@@ -350,13 +365,8 @@ room_enter:
        li   r0,>0028
        movb r0,@room_0_rock_count
        movb @byte_30,@flag_mag_lock
-       bl   @deallocate_sprites
-       bl   @wally_erase
-       bl   @screen_clear_room         ; TODO: screen_clear_effect
-       bl   @room_draw
-       bl   @inventory_redraw
-       .endproc
-*// room_enter
+       rt
+*// room_init
 
 *********************************************************************
 *
@@ -1496,9 +1506,8 @@ vrad:
 * R1   MSB of R1 set to byte from VDP RAM
 *
 vsbr:
-       swpb r0
-       movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
-       swpb r0
+       movb @r0lb,@vdpwa               ; Send low byte of VDP RAM write address
+       andi r0,>3fff
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
        movb @vdprd,r1                  ; Read byte from VDP RAM
        b    *r11
@@ -1514,9 +1523,7 @@ vsbr:
 * R0 is modified, but can be restored with: ANDI R0,>3FFF
 *
 vsbw:
-       swpb r0
-       movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
-       swpb r0
+       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
        movb r1,*15                     ; Write byte to VDP RAM
@@ -1534,9 +1541,8 @@ vsbw:
 * Modifies R0-R2
 *
 vmbr:
-       swpb r0
-       movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
-       swpb r0
+       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
+       andi r0,>3fff
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
 vmbr0:
        li   r0,vdprd

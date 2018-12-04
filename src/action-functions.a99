@@ -220,15 +220,28 @@ action0c_lift_lights_2:
        inc  r6
        ci   r6,4
        jlt  action0c_lift_lights_1
-       b    @room_test_events_endif
+       b    @room_test_events_then
 
 *********************************************************************
 *
-*
+* Unlocks magentic lock by coloring the platforms.
 *
 action0d_magnet_unlock:
-;      TODO
-       b    @room_test_events_endif
+       seto @mag_lock_dir
+       li   r0,action0d_platforms
+       li   r2,attr_45
+       li   r5,9
+action0d_magnet_unlock_1:
+       mov  *r0,r1
+       bl   @set_attribute
+       mov  *r0+,r1
+       inc  r1
+       bl   @set_attribute
+       dec  r5
+       jne  action0d_magnet_unlock_1
+       b    @room_test_events_then
+action0d_platforms:
+       data >140d,>130f,>1211,>1113,>1015,>1117,>1219,>131b,>141d
 
 *********************************************************************
 *

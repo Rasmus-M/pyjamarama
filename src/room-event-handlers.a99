@@ -1069,8 +1069,105 @@ animate_moving_floor_2:
 *
 handler_ghosts:
        .proc
+
 ;      TODO
+
+;EFF4	LD A,(Flag_BaddyInit)	See if ghosts are initialised.
+;EFF7	OR A
+;EFF8	JR NZ,Handler_Ghosts_0
+;Initialise
+;EFFA	LD A,$01	If not then set as initialised.
+;EFFC	LD (Flag_BaddyInit),A
+;EFFF	LD HL,$A064	See the position of each ghost and draw them.
+;F002	LD (Ghost1),HL
+;F005	LD (BitmapX),HL
+;F008	LD A,(Ghost_Bitmap)
+;F00B	CALL Bitmap16Draw
+;F00E	LD HL,$50DC
+;F011	LD (Ghost2),HL
+;F014	LD (BitmapX),HL
+;F017	CALL Bitmap16Draw
+;F01A	LD HL,$3A30
+;F01D	LD (Ghost3),HL
+;F020	LD (BitmapX),HL
+;F023	CALL Bitmap16Draw
+;F026	RET
+;Update
+;Handler_Ghosts_0
+;F027	LD A,(Ghost_Bitmap)	Update the bitmap by increasing its value.
+;F02A	INC A
+;F02B	CP $BF
+;F02D	JR NZ,Handler_Ghosts_1
+;F02F	LD A,$BB	Check for animation loop.
+;Handler_Ghosts_1
+;F031	LD C,A	Store animation rame.
+;F032	LD IX,Ghost1	Use pointer to update each ghost.
+;F036	LD B,$03	Number of ghosts to display.
+;Handler_Ghosts_2
+;F038	LD L,(IX+$00)	Get data on next ghost (X, Y, DirX, Dir Y)
+;F03B	LD H,(IX+$01)
+;F03E	LD E,(IX+$02)
+;F041	LD D,(IX+$03)
+;F044	INC IX	Point to next ghost ready.
+;F046	INC IX
+;F048	INC IX
+;F04A	INC IX
+;F04C	LD A,L
+;F04D	CP $08	See if X position is on the left wall.
+;F04F	JR NZ,Handler_Ghosts_4
+;Handler_Ghosts_3
+;F051	LD A,E	If it is change direction.
+;F052	NEG
+;F054	LD E,A
+;F055	JR Handler_Ghosts_5
+;Handler_Ghosts_4
+;F057	CP $E8	See if X position is on the right hand wall.
+;F059	JR Z,Handler_Ghosts_3	Change direction if so.
+;Handler_Ghosts_5
+;F05B	LD A,H	See if Y position is at the top.
+;F05C	CP $30
+;F05E	JR NZ,Handler_Ghosts_7
+;Handler_Ghosts_6
+;F060	LD A,D	Change direction if so.
+;F061	NEG
+;F063	LD D,A
+;F064	JR Handler_Ghosts_8
+;Handler_Ghosts_7
+;F066	CP $A8	See if Y position is at the bottom.
+;F068	JR Z,Handler_Ghosts_6	Change direction if so.
+;Handler_Ghosts_8
+;F06A	LD (BitmapX),HL	Erase image at current position.
+;F06D	LD A,(Ghost_Bitmap)
+;F070	CALL Bitmap16Draw
+;F073	LD A,L	Update X and Y positions based on directions.
+;F074	ADD A,E
+;F075	LD L,A
+;F076	LD A,H
+;F077	ADD A,D
+;F078	LD H,A
+;F079	LD (BitmapX),HL	Draw at new position.
+;F07C	LD A,C
+;F07D	CALL Bitmap16Draw
+;F080	LD (IX-$01),D	Store new position and directions.
+;F083	LD (IX-$02),E
+;F086	LD (IX-$03),H
+;F089	LD (IX-$04),L
+;F08C	PUSH BC	Check to see if hit wally, using 1 hit point if so.
+;F08D	LD B,$01
+;F08F	CALL Wally_HitTest
+;F092	POP BC	Next ghost.
+;F093	DJNZ Handler_Ghosts_2
+;F095	LD A,C
+;F096	LD (Ghost_Bitmap),A
+;F099	RET
+
        .endproc
+
+;Ghost1	EFE7	DEFB $64,$14,$FE,$FE	Ghost data [X, Y, DirX, DirY]
+;Ghost2	EFEB	DEFB $F0,$50,$02,$FE
+;Ghost3	EFEF	DEFB $30,$30,$02,$02
+;Ghost_Bitmap	EFF3	DEFB $BB
+
 *// handler_ghosts
 
 *********************************************************************
@@ -1079,8 +1176,68 @@ handler_ghosts:
 *
 handler_three_ton:
        .proc
+
 ;      TODO
+
+;EE00	LD A,(Flag_BaddyInit)	See if baddy has been initialised.
+;EE03	OR A
+;EE04	JR NZ,Handler_ThreeTon_0
+;Initialise
+;EE06	LD A,$01	Initialise
+;EE08	LD (Flag_BaddyInit),A
+;EE0B	LD A,$64	Set countdown before weight drops.
+;EE0D	LD (Weight_Count),A
+;EE10	LD A,$30
+;EE12	LD (Weight_Y),A
+;EE15	LD H,A	Position
+;EE16	LD L,$88
+;EE18	JR Weight_draw
+;Countdown
+;Handler_ThreeTon_0
+;EE1A	LD A,(Weight_Count)	Count down timer and return if not zero.
+;EE1D	OR A
+;EE1E	JR Z,Handler_ThreeTon_1
+;EE20	DEC A
+;EE21	LD (Weight_Count),A
+;EE24	RET
+;Drop Weight
+;Handler_ThreeTon_1
+;EE25	LD A,(Weight_Y)	Get Y positon,
+;EE28	LD H,A
+;EE29	LD L,$88	and fixed X position.
+;EE2B	CP $70	See if it has reached the table position.
+;EE2D	JR Z,Handler_ThreeTon_2
+;EE2F	LD (BitmapX),HL	Erase rope and weight at presvious position.
+;EE32	LD A,$7F
+;EE34	CALL Bitmap16Draw
+;EE37	LD A,H
+;EE38	ADD A,$10
+;EE3A	LD (BitmapY),A
+;EE3D	LD A,$80
+;EE3F	CALL Bitmap16Draw
+;EE42	INC H	Move weight down by two pixels and update.
+;EE43	INC H
+;EE44	LD A,H
+;EE45	LD (Weight_Y),A
+;Weight_draw
+;EE48	LD (BitmapX),HL	Draw string.
+;EE4B	LD A,$7F
+;EE4D	CALL Bitmap16Draw
+;EE50	LD A,H	Draw 3 Ton directly below.
+;EE51	ADD A,$10
+;EE53	LD H,A
+;EE54	LD (BitmapY),A
+;EE57	LD A,$80
+;EE59	CALL Bitmap16Draw
+;Handler_ThreeTon_2	EE5C	LD B,$02	Test for hitting Wally with 2 hit points.
+;EE5E	CALL Wally_HitTest
+;EE61	RET
+
        .endproc
+
+;Weight_Y	EDFE	DEFB $30	Y position of weight.
+;Weight_Count	EDFF	DEFB $64	Countdown before weight drops.
+
 *// handler_three_ton
 
 *********************************************************************
@@ -1090,7 +1247,73 @@ handler_three_ton:
 handler_falling_blocks:
        .proc
 ;      TODO
+;E838	LD A,(Flag_BaddyInit)	See if baddy is not initialised.
+;E83B	OR A
+;E83C	JR Z,Handler_FallingBlocks_2
+;Update
+;E83E	LD IX,Block_Data	Point to baddy array.
+;E842	LD B,$05	Number of baddies.
+;Handler_FallingBlocks_0
+;E844	LD L,(IX+$00)	Get Y position.
+;E847	LD H,(IX+$01)	Get X position.
+;E84A	LD C,(IX+$02)
+;E84D	PUSH BC	check for hitting Wally with a possible 2 points damage.
+;E84E	LD B,$02
+;E850	CALL Wally_HitTest
+;E853	POP BC
+;E854	INC IX	Next baddy data.
+;E856	INC IX
+;E858	INC IX
+;E85A	LD (BitmapX),HL	Erase previous frame.
+;E85D	LD A,$72
+;E85F	CALL Bitmap16Draw
+;E862	LD A,H	Move Y by velocty.
+;E863	ADD A,C
+;E864	CP $B0	Check for wrap around.
+;E866	JR C,Handler_FallingBlocks_1
+;E868	LD A,R	Use a random number for the speed of (1 or 2 pixels)
+;E86A	AND $01
+;E86C	INC A
+;E86D	LD C,A
+;E86E	LD A,$68	Reset Y position.
+;Handler_FallingBlocks_1
+;E870	LD (IX-$02),A	Store new position.
+;E873	LD (IX-$01),C	Store velocity in case it changed.
+;E876	LD (BitmapY),A
+;E879	LD A,$72	Draw Block of bricks.
+;E87B	CALL Bitmap16Draw
+;E87E	DJNZ Handler_FallingBlocks_0	Next.
+;E880	RET
+;Initialise
+;Handler_FallingBlocks_2
+;E881	LD A,$01	Set as initialised.
+;E883	LD (Flag_BaddyInit),A
+;E886	LD IX,Block_Data	start of baddy array.
+;E88A	LD B,$05	Number of baddies.
+;Handler_FallingBlocks_3
+;E88C	LD L,(IX+$00)	Get position.
+;E88F	LD H,(IX+$01)
+;E892	INC IX	Next baddy data.
+;E894	INC IX
+;E896	INC IX
+;E898	LD (BitmapX),HL	Draw baddy as a block.
+;E89B	LD A,$72
+;E89D	CALL Bitmap16Draw
+;E8A0	DJNZ Handler_FallingBlocks_3
+;E8A2	LD A,(Fire_Frame)
+;E8A5	LD HL,$98E0
+;E8A8	LD (BitmapX),HL
+;E8AB	CALL Bitmap16Draw
+;E8AE	RET
+
        .endproc
+
+;Block_Data	E829	DEFB $08,$68,$01	[Y, X, Velocity Y]
+;E82C	DEFB $38,$78,$02
+;E82F	DEFB $68,$68,$01
+;E832	DEFB $99,$6E,$02
+;E835	DEFB $C0,$78,$01
+
 *// handler_falling_blocks
 
 *********************************************************************
@@ -1100,7 +1323,31 @@ handler_falling_blocks:
 handler_fire:
        .proc
 ;      TODO
+;Handler_Fire
+;E8B0	LD A,(Pocket1)	See if Wally is carrying a fire extinguisher, if so have no fire.
+;E8B3	CP $0A
+;E8B5	RET Z
+;E8B6	LD A,(Pocket2)
+;E8B9	CP $0A
+;E8BB	RET Z
+;E8BC	LD A,(Fire_Frame)	Erase fire.
+;E8BF	LD HL,$98E0
+;E8C2	LD (BitmapX),HL
+;E8C5	CALL Bitmap16Draw
+;E8C8	INC A	Next frame.
+;E8C9	CP $86	Check for animation loop.
+;E8CB	JR NZ,Handler_Fire_0
+;E8CD	LD A,$81
+;Handler_Fire_0
+;E8CF	LD (Fire_Frame),A	Store frame.
+;E8D2	CALL Bitmap16Draw	Draw fire.
+;E8D5	LD B,$10	Check for hitting Wally with possible damage of 10 points.
+;E8D7	CALL Wally_HitTest
+;E8DA	RET
        .endproc
+
+;Fire_Frame	E8AF	DEFB $81
+
 *// handler_fire
 
 *********************************************************************

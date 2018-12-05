@@ -24,7 +24,7 @@ slow_animations:
 * Constants
 *
 start_room:
-       equ  >1
+       equ  >19
 pocket_1_start:
        equ  0                          ; The Round Key
 pocket_2_start:
@@ -367,6 +367,8 @@ byte_46:
        byte >46
 byte_38:
        byte >38
+byte_32:
+       byte >32
 byte_30:
        byte >30
 byte_20:

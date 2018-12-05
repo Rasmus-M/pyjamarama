@@ -1155,8 +1155,113 @@ mag_lock_bar_offsets:
 *
 handler_invaders:
        .proc
-;      TODO
+       movb @flag_laser_gun,r0         ; See if the gun is charged.
+       jeq  handler_invaders_1
+       li   r0,>000d                   ; See if gun is being carried.
+       c    r0,@pocket_1
+       jeq  handler_invaders_0
+       c    r0,@pocket_2
+       jne  handler_invaders_1
+handler_invaders_0:
+       li   r4,>3000                   ; Set position up high away from Wally.
+       jmp  handler_invaders_3
+handler_invaders_1:
+       cb   @obj_slot_19_obj,@byte_0d  ; If the laser is in the room and is charged
+       jne  handler_invaders_2
+       movb @flag_laser_gun,r0
+       jne  handler_invaders_0         ; Then set the invaders up high.
+handler_invaders_2:
+       li   r4,>7000                   ; Set position low down to block Wally.
+handler_invaders_3:
+       movb @flag_baddy_init,r0        ; See if invaders are intialised.
+       jne  handler_invaders_5
+*      Initialise
+       movb @byte_01,@flag_baddy_init
+       li   r0,>0099
+       mov  r0,@invaders_frame
+       bl   @get_sprite_pattern
+       movb @byte_0f,@r1lb
+       mov  r1,r5
+       li   r6,6
+       li   r7,invaders_sprites
+       li   r8,invaders_dir
+       li   r9,invaders_init
+handler_invaders_4:
+       bl   @allocate_sprite
+       mov  r0,*r7+                    ; Store sprite pointer
+       mov  r4,*r0                     ; Set y offset
+       a    *r9+,*r0+                  ; Add y and x init
+       mov  r5,*r0                     ; Set pattern and color
+       movb @byte_fe,*r8+              ; Set direction
+       dec  r6
+       jne  handler_invaders_4
+*      Update
+handler_invaders_5:
+       mov  @invaders_frame,r0         ; Get bitmap and increase to next frame.
+       .ifeq slow_animations,1
+       mov  @frame,r1
+       andi r1,animation_speed-1
+       jne  handler_invaders_6
+       .endif
+       inc  r0
+       ci   r0,>009b                   ; Check for animation loop.
+       jne  handler_invaders_6
+       li   r0,>0099                   ; Reset animation if required.
+handler_invaders_6:
+       mov  r0,@invaders_frame
+       bl   @get_sprite_pattern
+       mov  r1,r9
+       li   r6,6
+       li   r7,invaders_sprites
+       li   r8,invaders_dir
+handler_invaders_7:
+       mov  *r7+,r4
+       movb r9,@sprite_pattern(r4)
+       mov  *r4,r1
+       swpb r1
+       ab   *r8,r1
+       cb   r1,@byte_32
+       jh   handler_invaders_8
+       movb @byte_02,*r8
+       jmp  handler_invaders_9
+handler_invaders_8:
+       cb   r1,@byte_e9
+       jl   handler_invaders_9
+       movb @byte_fe,*r8
+handler_invaders_9:
+       swpb r1
+       mov  r1,*r4
+       li   r0,3
+       bl   @wally_hit_test
+       inc  r8
+       dec  r6
+       jne  handler_invaders_7
        .endproc
+
+invaders_sprites:
+       data >0000
+       data >0000
+       data >0000
+       data >0000
+       data >0000
+       data >0000
+invaders_dir:
+       byte >fe
+       byte >fe
+       byte >fe
+       byte >fe
+       byte >fe
+       byte >fe
+invaders_init:
+       byte >00,>dc                    ; Invaders initialise data
+       byte >00,>c4
+       byte >00,>ac
+       byte >18,>dc
+       byte >18,>c4
+       byte >18,>ac
+invaders_frame:
+       data >0099	                   ; Invaders bitmap
+
 *// handler_invaders
 
 *********************************************************************
@@ -1191,5 +1296,5 @@ Arcade_UpdateBombs:
 *
 Pause_Short:
        .proc
-;      TODO
+       bl   @vsync
        .endproc

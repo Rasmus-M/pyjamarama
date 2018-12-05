@@ -1322,31 +1322,42 @@ handler_falling_blocks:
 *
 handler_fire:
        .proc
-;      TODO
-;Handler_Fire
-;E8B0	LD A,(Pocket1)	See if Wally is carrying a fire extinguisher, if so have no fire.
-;E8B3	CP $0A
-;E8B5	RET Z
-;E8B6	LD A,(Pocket2)
-;E8B9	CP $0A
-;E8BB	RET Z
-;E8BC	LD A,(Fire_Frame)	Erase fire.
-;E8BF	LD HL,$98E0
-;E8C2	LD (BitmapX),HL
-;E8C5	CALL Bitmap16Draw
-;E8C8	INC A	Next frame.
-;E8C9	CP $86	Check for animation loop.
-;E8CB	JR NZ,Handler_Fire_0
-;E8CD	LD A,$81
-;Handler_Fire_0
-;E8CF	LD (Fire_Frame),A	Store frame.
-;E8D2	CALL Bitmap16Draw	Draw fire.
-;E8D5	LD B,$10	Check for hitting Wally with possible damage of 10 points.
-;E8D7	CALL Wally_HitTest
-;E8DA	RET
+       li   r0,>000a                   ; See if Wally is carrying a fire extinguisher, if so have no fire.
+       c    r0,@pocket_1
+       jeq  handler_fire_2
+       c    r0,@pocket_1
+       jeq  handler_fire_2
+       mov  @fire_frame,r0
+       li   r1,>0098
+       mov  r1,@bitmap_y
+       li   r1,>00e0
+       mov  r1,@bitmap_x
+       bl   @bitmap_16_draw            ; Draw fire.
+       li   r2,attr_46
+       li   r1,>131c
+       bl   @set_attribute
+       li   r1,>131d
+       bl   @set_attribute
+       mov  @fire_frame,r0
+       .ifeq slow_animations,1
+       mov  @frame,r1
+       andi r1,animation_speed-1
+       jne  handler_fire_1
+       .endif
+       inc  r0
+       ci   r0,>0086                   ; Check for animation loop.
+       jne  handler_fire_1
+       li   r0,>0081
+handler_fire_1:
+       mov  r0,@fire_frame             ; Store frame.
+       li   r0,>10                     ; Check for hitting Wally with possible damage of 10 points.
+       li   r1,>98e0
+       bl   @wally_hit_test
+handler_fire_2:
        .endproc
 
-;Fire_Frame	E8AF	DEFB $81
+fire_frame:
+       data >0081
 
 *// handler_fire
 

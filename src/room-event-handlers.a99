@@ -1176,67 +1176,55 @@ handler_ghosts:
 *
 handler_three_ton:
        .proc
-
-;      TODO
-
-;EE00	LD A,(Flag_BaddyInit)	See if baddy has been initialised.
-;EE03	OR A
-;EE04	JR NZ,Handler_ThreeTon_0
-;Initialise
-;EE06	LD A,$01	Initialise
-;EE08	LD (Flag_BaddyInit),A
-;EE0B	LD A,$64	Set countdown before weight drops.
-;EE0D	LD (Weight_Count),A
-;EE10	LD A,$30
-;EE12	LD (Weight_Y),A
-;EE15	LD H,A	Position
-;EE16	LD L,$88
-;EE18	JR Weight_draw
-;Countdown
-;Handler_ThreeTon_0
-;EE1A	LD A,(Weight_Count)	Count down timer and return if not zero.
-;EE1D	OR A
-;EE1E	JR Z,Handler_ThreeTon_1
-;EE20	DEC A
-;EE21	LD (Weight_Count),A
-;EE24	RET
-;Drop Weight
-;Handler_ThreeTon_1
-;EE25	LD A,(Weight_Y)	Get Y positon,
-;EE28	LD H,A
-;EE29	LD L,$88	and fixed X position.
-;EE2B	CP $70	See if it has reached the table position.
-;EE2D	JR Z,Handler_ThreeTon_2
-;EE2F	LD (BitmapX),HL	Erase rope and weight at presvious position.
-;EE32	LD A,$7F
-;EE34	CALL Bitmap16Draw
-;EE37	LD A,H
-;EE38	ADD A,$10
-;EE3A	LD (BitmapY),A
-;EE3D	LD A,$80
-;EE3F	CALL Bitmap16Draw
-;EE42	INC H	Move weight down by two pixels and update.
-;EE43	INC H
-;EE44	LD A,H
-;EE45	LD (Weight_Y),A
-;Weight_draw
-;EE48	LD (BitmapX),HL	Draw string.
-;EE4B	LD A,$7F
-;EE4D	CALL Bitmap16Draw
-;EE50	LD A,H	Draw 3 Ton directly below.
-;EE51	ADD A,$10
-;EE53	LD H,A
-;EE54	LD (BitmapY),A
-;EE57	LD A,$80
-;EE59	CALL Bitmap16Draw
-;Handler_ThreeTon_2	EE5C	LD B,$02	Test for hitting Wally with 2 hit points.
-;EE5E	CALL Wally_HitTest
-;EE61	RET
-
+       movb @flag_baddy_init,r0        ; See if baddy has been initialised.
+       jne  handler_three_ton_1
+       movb @byte_01,@flag_baddy_init
+       li   r0,>0064                   ; Set countdown before weight drops.
+       mov  r0,@weight_count
+       li   r0,>007f                   ; Top of weight
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_0f,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@weight_sprite_1
+       li   r1,>3088
+       mov  r1,*r0+
+       mov  r3,*r0
+       li   r0,>0080                   ; Bottom of weight
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_0e,@r3lb
+       bl   @allocate_sprite
+       mov  r0,@weight_sprite_2
+       li   r1,>4088
+       mov  r1,*r0+
+       mov  r3,*r0
+       jmp  handler_three_ton_4
+handler_three_ton_1:
+       mov  @weight_count,r0
+       jeq  handler_three_ton_2
+       dec  @weight_count
+       jmp  handler_three_ton_4
+handler_three_ton_2:
+       mov  @weight_sprite_1,r4
+       cb   *r4,@byte_70
+       jeq  handler_three_ton_3
+       ab   @byte_02,*r4
+       mov  @weight_sprite_2,r4
+       ab   @byte_02,*r4
+handler_three_ton_3:
+       li   r0,2
+       mov  *r4,r1
+       bl   @wally_hit_test
+handler_three_ton_4:
        .endproc
 
-;Weight_Y	EDFE	DEFB $30	Y position of weight.
-;Weight_Count	EDFF	DEFB $64	Countdown before weight drops.
+weight_sprite_1:
+       data >0000
+weight_sprite_2:
+       data >0000
+weight_count:
+       data >0064	                   ; Countdown before weight drops.
 
 *// handler_three_ton
 

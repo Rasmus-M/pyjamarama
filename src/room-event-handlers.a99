@@ -1069,104 +1069,98 @@ animate_moving_floor_2:
 *
 handler_ghosts:
        .proc
-
-;      TODO
-
-;EFF4	LD A,(Flag_BaddyInit)	See if ghosts are initialised.
-;EFF7	OR A
-;EFF8	JR NZ,Handler_Ghosts_0
-;Initialise
-;EFFA	LD A,$01	If not then set as initialised.
-;EFFC	LD (Flag_BaddyInit),A
-;EFFF	LD HL,$A064	See the position of each ghost and draw them.
-;F002	LD (Ghost1),HL
-;F005	LD (BitmapX),HL
-;F008	LD A,(Ghost_Bitmap)
-;F00B	CALL Bitmap16Draw
-;F00E	LD HL,$50DC
-;F011	LD (Ghost2),HL
-;F014	LD (BitmapX),HL
-;F017	CALL Bitmap16Draw
-;F01A	LD HL,$3A30
-;F01D	LD (Ghost3),HL
-;F020	LD (BitmapX),HL
-;F023	CALL Bitmap16Draw
-;F026	RET
-;Update
-;Handler_Ghosts_0
-;F027	LD A,(Ghost_Bitmap)	Update the bitmap by increasing its value.
-;F02A	INC A
-;F02B	CP $BF
-;F02D	JR NZ,Handler_Ghosts_1
-;F02F	LD A,$BB	Check for animation loop.
-;Handler_Ghosts_1
-;F031	LD C,A	Store animation rame.
-;F032	LD IX,Ghost1	Use pointer to update each ghost.
-;F036	LD B,$03	Number of ghosts to display.
-;Handler_Ghosts_2
-;F038	LD L,(IX+$00)	Get data on next ghost (X, Y, DirX, Dir Y)
-;F03B	LD H,(IX+$01)
-;F03E	LD E,(IX+$02)
-;F041	LD D,(IX+$03)
-;F044	INC IX	Point to next ghost ready.
-;F046	INC IX
-;F048	INC IX
-;F04A	INC IX
-;F04C	LD A,L
-;F04D	CP $08	See if X position is on the left wall.
-;F04F	JR NZ,Handler_Ghosts_4
-;Handler_Ghosts_3
-;F051	LD A,E	If it is change direction.
-;F052	NEG
-;F054	LD E,A
-;F055	JR Handler_Ghosts_5
-;Handler_Ghosts_4
-;F057	CP $E8	See if X position is on the right hand wall.
-;F059	JR Z,Handler_Ghosts_3	Change direction if so.
-;Handler_Ghosts_5
-;F05B	LD A,H	See if Y position is at the top.
-;F05C	CP $30
-;F05E	JR NZ,Handler_Ghosts_7
-;Handler_Ghosts_6
-;F060	LD A,D	Change direction if so.
-;F061	NEG
-;F063	LD D,A
-;F064	JR Handler_Ghosts_8
-;Handler_Ghosts_7
-;F066	CP $A8	See if Y position is at the bottom.
-;F068	JR Z,Handler_Ghosts_6	Change direction if so.
-;Handler_Ghosts_8
-;F06A	LD (BitmapX),HL	Erase image at current position.
-;F06D	LD A,(Ghost_Bitmap)
-;F070	CALL Bitmap16Draw
-;F073	LD A,L	Update X and Y positions based on directions.
-;F074	ADD A,E
-;F075	LD L,A
-;F076	LD A,H
-;F077	ADD A,D
-;F078	LD H,A
-;F079	LD (BitmapX),HL	Draw at new position.
-;F07C	LD A,C
-;F07D	CALL Bitmap16Draw
-;F080	LD (IX-$01),D	Store new position and directions.
-;F083	LD (IX-$02),E
-;F086	LD (IX-$03),H
-;F089	LD (IX-$04),L
-;F08C	PUSH BC	Check to see if hit wally, using 1 hit point if so.
-;F08D	LD B,$01
-;F08F	CALL Wally_HitTest
-;F092	POP BC	Next ghost.
-;F093	DJNZ Handler_Ghosts_2
-;F095	LD A,C
-;F096	LD (Ghost_Bitmap),A
-;F099	RET
-
+       movb @flag_baddy_init,r0        ; See if baddy has been initialised.
+       jne  handler_ghosts_2
+       movb @byte_01,@flag_baddy_init
+       li   r0,>00bb
+       mov  r0,@ghost_frame
+       bl   @get_sprite_pattern
+       movb @byte_04,@r1lb
+       mov  r1,r5
+       li   r6,3
+       li   r7,ghost_sprites
+       li   r9,ghost_init
+handler_ghosts_1:
+       bl   @allocate_sprite
+       mov  r0,*r7+                    ; Store sprite pointer
+       mov  *r9+,*r0+                  ; Set y and x
+       mov  r5,*r0                     ; Set pattern and color
+       dec  r6
+       jne  handler_ghosts_1
+*      Update
+handler_ghosts_2:
+       mov  @ghost_frame,r0            ; Get bitmap and increase to next frame.
+       .ifeq slow_animations,1
+       mov  @frame,r1
+       andi r1,animation_speed-1
+       jne  handler_ghosts_3
+       .endif
+       inc  r0
+       ci   r0,>00bf                   ; Check for animation loop.
+       jne  handler_ghosts_3
+       li   r0,>00bb                   ; Reset animation if required.
+handler_ghosts_3:
+       mov  r0,@ghost_frame
+       bl   @get_sprite_pattern
+       mov  r1,r9
+       li   r6,3
+       li   r7,ghost_sprites
+       li   r8,ghost_dir
+handler_ghosts_4:
+       mov  *r7+,r4                    ; Get sprite pointer
+       movb r9,@sprite_pattern(r4)     ; Set pattern
+       mov  *r4,r1                     ; Get position
+       ab   *r8,r1                     ; y = y + dy
+       cb   r1,@byte_30                ; Check for top
+       jh   handler_ghosts_6
+handler_ghosts_5:
+       clr  r0
+       movb *r8,@r0lb
+       neg  r0
+       movb @r0lb,*r8
+       jmp  handler_ghosts_7
+handler_ghosts_6:
+       cb   r1,@byte_a8                ; Cehck for bottom
+       jhe   handler_ghosts_5
+handler_ghosts_7:
+       swpb r1                         ; Swap x to MSB
+       inc  r8
+       ab   *r8,r1                     ; x = x + dx
+       cb   r1,@byte_08                ; Check for left side
+       jh   handler_ghosts_9
+handler_ghosts_8:
+       clr  r0                         ; Revert direction
+       movb *r8,@r0lb
+       neg  r0
+       movb @r0lb,*r8
+       jmp  handler_ghosts_10
+handler_ghosts_9:
+       cb   r1,@byte_e8                ; Check for right side
+       jhe  handler_ghosts_8
+handler_ghosts_10:
+       swpb r1                         ; Swap y to MSB
+       inc  r8
+       mov  r1,*r4                     ; Write position
+       li   r0,1
+       bl   @wally_hit_test
+       dec  r6
+       jne  handler_ghosts_4
        .endproc
 
-;Ghost1	EFE7	DEFB $64,$14,$FE,$FE	Ghost data [X, Y, DirX, DirY]
-;Ghost2	EFEB	DEFB $F0,$50,$02,$FE
-;Ghost3	EFEF	DEFB $30,$30,$02,$02
-;Ghost_Bitmap	EFF3	DEFB $BB
+ghost_sprites:
+       data >0000
+       data >0000
+       data >0000
+ghost_dir:
+       data >fefe
+       data >fe02
+       data >0202
+ghost_init:
+       data >a064
+       data >50dc
+       data >3a30
+ghost_frame:
+       data >00bb
 
 *// handler_ghosts
 

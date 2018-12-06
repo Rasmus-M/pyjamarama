@@ -1333,11 +1333,6 @@ handler_fire:
        li   r1,>00e0
        mov  r1,@bitmap_x
        bl   @bitmap_16_draw            ; Draw fire.
-       li   r2,attr_46
-       li   r1,>131c
-       bl   @set_attribute
-       li   r1,>131d
-       bl   @set_attribute
        mov  @fire_frame,r0
        .ifeq slow_animations,1
        mov  @frame,r1

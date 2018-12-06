@@ -388,16 +388,61 @@ action12_grab_rope_3:                  ; Slide down bannister
 
 *********************************************************************
 *
-*
+* Sets up the Arcade Room
 *
 action13_enter_arcade:
+
 ;      TODO
+;       LD HL,$9810                    Position Wally to the left.
+;F4F9	LD (Wally_X),HL
+;F4FC	CALL Wally_Reset	           Make sure Wally isn't jumping etc.
+;F4FF	CALL Invaders_Init_XPos
+;F502	CALL Invaders_Init_YPos
+;F505	CALL Invaders_Init
+;F508	LD SP,$0000
+;F50B	LD A,$01
+;F50D	LD (IsArcadeMode),A
+;F510	LD A,$FF
+;F512	LD (Inv_BulletX),A
+;F515	JP Invaders_Loop
+
        b    @room_test_events_endif
 
 *********************************************************************
 *
-*
+* Won the game
 *
 action14_win:
+
 ;      TODO
+;B610	CALL Wally_Erase
+;B613	LD A,$01
+;B615	LD (TempStoreA),A
+;B618	LD B,$19
+;Action14_Win_0
+;B61A	PUSH BC
+;B61B	LD BC,$020F	Ring the alarm clock.
+;B61E	LD DE,$1902
+;B621	LD HL,$6401
+;B624	CALL Beep_Effect
+;B627	CALL Pause_Short
+;B62A	LD BC,$050F
+;B62D	LD DE,$1902
+;B630	LD HL,$6401
+;B633	CALL Beep_Effect
+;B636	CALL Pause_Short
+;B639	POP BC
+;B63A	DJNZ Action14_Win_0
+;B63C	CALL ScreenClearEffect
+;B63F	LD HL,Furniture_FireworksBox	Draw the fireworks box.
+;B642	LD DE,$160E
+;B645	CALL FurnitureDraw
+;B648	LD B,$B8
+;Action14_Win_1
+;B64A	PUSH BC
+;B64B	CALL Fireworks
+;B64E	POP BC
+;B64F	DJNZ Action14_Win_1
+;B651	JP Screen_Congrats
+
        b    @room_test_events_endif

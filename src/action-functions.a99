@@ -350,10 +350,40 @@ action11_lift_off_from_moon:
 
 *********************************************************************
 *
-*
+* Grab rope and slide down bannister.
 *
 action12_grab_rope:
-;      TODO
+       .push r4
+       movb @byte_10,@wally_frame      ; Face Wally the correct way.
+action12_grab_rope_0:
+       sb   @byte_02,@wally_y          ; Move up two pixels.
+       cb   @wally_y,@byte_70          ; Check to see if reach the bannister.
+       jle  action12_grab_rope_1
+       bl   @animation_frame
+       jmp  action12_grab_rope_0
+action12_grab_rope_1:                  ; Move horizontally
+       ab   @byte_02,@wally_x
+       cb   @wally_x,@byte_e8
+       jhe  action12_grab_rope_2
+       bl   @animation_frame
+       jmp  action12_grab_rope_1
+action12_grab_rope_2:                  ; Change room
+       li   r0,>3038
+       mov  r0,@wally_y
+       li   r0,>000d
+       mov  r0,@wally_room_no
+       bl   @wally_reset
+       movb @byte_9b,@wally_frame
+       bl   @room_enter
+       li   r2,>44
+action12_grab_rope_3:                  ; Slide down bannister
+       ab   @byte_02,@wally_x
+       ab   @byte_01,@wally_y
+       bl   @animation_frame
+       dec  r2
+       jne  action12_grab_rope_3
+       movb @byte_10,@wally_frame      ; Face Wally the correct way.
+       .pop r4
        b    @room_test_events_endif
 
 *********************************************************************

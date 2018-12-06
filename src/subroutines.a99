@@ -123,7 +123,7 @@ wally_reset
        movb r0,@wally_jump_dir
        seto r0
        movb r0,@wally_last_dir
-       c    @wally_y,@byte_78
+       c    @wally_x,@byte_78
        jhe  wally_reset_0
        movb @byte_10,@wally_frame
        movb @byte_01,@wally_last_dir

@@ -363,6 +363,8 @@ byte_80:
        byte >80
 byte_78:
        byte >78
+byte_68:
+       byte >68
 byte_46:
        byte >46
 byte_38:

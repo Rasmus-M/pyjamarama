@@ -1246,73 +1246,68 @@ handler_three_ton:
 *
 handler_falling_blocks:
        .proc
-;      TODO
-;E838	LD A,(Flag_BaddyInit)	See if baddy is not initialised.
-;E83B	OR A
-;E83C	JR Z,Handler_FallingBlocks_2
-;Update
-;E83E	LD IX,Block_Data	Point to baddy array.
-;E842	LD B,$05	Number of baddies.
-;Handler_FallingBlocks_0
-;E844	LD L,(IX+$00)	Get Y position.
-;E847	LD H,(IX+$01)	Get X position.
-;E84A	LD C,(IX+$02)
-;E84D	PUSH BC	check for hitting Wally with a possible 2 points damage.
-;E84E	LD B,$02
-;E850	CALL Wally_HitTest
-;E853	POP BC
-;E854	INC IX	Next baddy data.
-;E856	INC IX
-;E858	INC IX
-;E85A	LD (BitmapX),HL	Erase previous frame.
-;E85D	LD A,$72
-;E85F	CALL Bitmap16Draw
-;E862	LD A,H	Move Y by velocty.
-;E863	ADD A,C
-;E864	CP $B0	Check for wrap around.
-;E866	JR C,Handler_FallingBlocks_1
-;E868	LD A,R	Use a random number for the speed of (1 or 2 pixels)
-;E86A	AND $01
-;E86C	INC A
-;E86D	LD C,A
-;E86E	LD A,$68	Reset Y position.
-;Handler_FallingBlocks_1
-;E870	LD (IX-$02),A	Store new position.
-;E873	LD (IX-$01),C	Store velocity in case it changed.
-;E876	LD (BitmapY),A
-;E879	LD A,$72	Draw Block of bricks.
-;E87B	CALL Bitmap16Draw
-;E87E	DJNZ Handler_FallingBlocks_0	Next.
-;E880	RET
-;Initialise
-;Handler_FallingBlocks_2
-;E881	LD A,$01	Set as initialised.
-;E883	LD (Flag_BaddyInit),A
-;E886	LD IX,Block_Data	start of baddy array.
-;E88A	LD B,$05	Number of baddies.
-;Handler_FallingBlocks_3
-;E88C	LD L,(IX+$00)	Get position.
-;E88F	LD H,(IX+$01)
-;E892	INC IX	Next baddy data.
-;E894	INC IX
-;E896	INC IX
-;E898	LD (BitmapX),HL	Draw baddy as a block.
-;E89B	LD A,$72
-;E89D	CALL Bitmap16Draw
-;E8A0	DJNZ Handler_FallingBlocks_3
-;E8A2	LD A,(Fire_Frame)
-;E8A5	LD HL,$98E0
-;E8A8	LD (BitmapX),HL
-;E8AB	CALL Bitmap16Draw
-;E8AE	RET
-
+       movb @flag_baddy_init,r0        ; See if invaders are intialised.
+       jne  handler_falling_blocks_2
+*      Initialise
+       movb @byte_01,@flag_baddy_init
+       li   r0,>0072
+       bl   @get_sprite_pattern
+       movb @byte_07,@r1lb
+       mov  r1,r5
+       li   r6,5
+       li   r7,falling_blocks_sprites
+       li   r8,falling_blocks_init
+handler_falling_blocks_1:
+       bl   @allocate_sprite
+       mov  r0,*r7+                    ; Store sprite pointer
+       mov  *r8+,*r0+                  ; y and x init
+       mov  r5,*r0                     ; Set pattern and color
+       dec  r6
+       jne  handler_falling_blocks_1
+handler_falling_blocks_2:
+       li   r6,5
+       li   r7,falling_blocks_sprites
+       li   r8,falling_blocks_dir
+handler_falling_blocks_3:
+       mov  *r7+,r4
+       mov  *r4,r2
+       ab   *r8,r2
+       cb   r2,@byte_b0
+       jl   handler_falling_blocks_4
+       movb @byte_68,r2
+       bl   @rand
+       andi r0,>0001
+       inc  r0
+       movb @r0lb,*r8
+handler_falling_blocks_4:
+       mov  r2,*r4
+       li   r0,2
+       mov  r2,r1
+       bl   @wally_hit_test
+       inc  r8
+       dec  r6
+       jne  handler_falling_blocks_3
        .endproc
 
-;Block_Data	E829	DEFB $08,$68,$01	[Y, X, Velocity Y]
-;E82C	DEFB $38,$78,$02
-;E82F	DEFB $68,$68,$01
-;E832	DEFB $99,$6E,$02
-;E835	DEFB $C0,$78,$01
+falling_blocks_sprites:
+       data >0000
+       data >0000
+       data >0000
+       data >0000
+       data >0000
+falling_blocks_dir:
+       byte >01
+       byte >02
+       byte >01
+       byte >02
+       byte >01
+       even
+falling_blocks_init:
+       byte >68,>08
+       byte >78,>38
+       byte >68,>68
+       byte >6E,>99
+       byte >78,>C0
 
 *// handler_falling_blocks
 

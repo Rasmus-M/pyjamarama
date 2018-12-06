@@ -178,8 +178,8 @@ LE6FB  .endproc
 update_room_19:
        .proc
 LE6FC  bl @handler_invaders
-LE6FF  bl @Pause_Short  
-LE702  bl @Pause_Short  
+LE6FF  bl @pause_short
+LE702  bl @pause_short
 LE705  .endproc  
 
 update_room_1a:
@@ -212,15 +212,15 @@ LE72D  .endproc
 
 update_room_1e:
        .proc
-LE72E  bl @Inv_Update
-LE731  bl @Inv_Update  
-LE734  bl @Inv_Update  
-LE737  bl @Inv_Update  
-LE73A  bl @Inv_Update  
-LE73D  bl @Inv_Update  
-LE740  bl @Arcade_UpdateExplosions  
-LE743  bl @Inv_BulletUpdate  
-LE746  bl @Arcade_UpdateBombs  
+LE72E  bl @inv_update
+LE731  bl @inv_update
+LE734  bl @inv_update
+LE737  bl @inv_update
+LE73A  bl @inv_update
+LE73D  bl @inv_update
+LE740  bl @arcade_update_explosions
+LE743  bl @inv_bullet_update
+LE746  bl @arcade_update_bombs
 LE749  .endproc  
 
 *********************************************************************
@@ -1381,7 +1381,7 @@ mag_lock_bar_offsets:
 
 *********************************************************************
 *
-* Handler for space invaders
+* Handler for space invaders (on moon - not arcade room)
 *
 handler_invaders:
        .proc
@@ -1496,35 +1496,45 @@ invaders_frame:
 
 *********************************************************************
 *
-Inv_Update:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
+* Short pause (for the moon)
 *
-Arcade_UpdateExplosions:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-Inv_BulletUpdate:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-Arcade_UpdateBombs:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-Pause_Short:
+pause_short:
        .proc
        bl   @vsync
+       .endproc
+
+*********************************************************************
+*
+* Draw invaders, drop bombs
+*
+inv_update:
+       .proc
+;      TODO
+       .endproc
+
+*********************************************************************
+*
+* Draw and update explosions in the Arcade Room
+*
+arcade_update_explosions:
+       .proc
+;      TODO
+       .endproc
+
+*********************************************************************
+*
+* Invaders: Bullet Update
+*
+inv_bullet_update:
+       .proc
+;      TODO
+       .endproc
+
+*********************************************************************
+*
+* Update and draw bombs for the Arcade room
+*
+arcade_update_bombs:
+       .proc
+;      TODO
        .endproc

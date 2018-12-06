@@ -1,0 +1,91 @@
+*********************************************************************
+*
+* Game loop for Invaders game room
+*
+invaders_loop:
+       bl   @vsync
+       bl   @wally_draw
+       bl   @wally_handler
+       bl   @wally_step_check
+       bl   @invaders_update
+       bl   @invaders_update
+       bl   @invaders_update
+       bl   @invaders_update
+       bl   @invaders_update
+       bl   @invaders_update
+       bl   @arcade_update_explosions
+       bl   @invaders_bullet_update
+       bl   @wally_check_for_death
+       bl   @game_exit_check
+       bl   @upload_sprites
+       jmp  invaders_loop
+
+*********************************************************************
+*
+* Initialise invaders
+*
+invaders_init:
+       .proc
+;      TODO
+       .endproc
+*// invaders_init
+
+*********************************************************************
+*
+* Initialise invaders x pos
+*
+invaders_init_x_pos:
+       .proc
+;      TODO
+       .endproc
+*// invaders_init_x_pos
+
+*********************************************************************
+*
+* Initialise invaders y pos
+*
+invaders_init_y_pos:
+       .proc
+;      TODO
+       .endproc
+*// invaders_init_y_pos
+
+*********************************************************************
+*
+* Draw invaders, drop bombs
+*
+invaders_update:
+       .proc
+;      TODO
+       .endproc
+*// invaders_update
+
+*********************************************************************
+*
+* Invaders: Bullet Update
+*
+invaders_bullet_update:
+       .proc
+;      TODO
+       .endproc
+*// invaders_bullet_update
+
+*********************************************************************
+*
+* Draw and update explosions in the Arcade Room
+*
+arcade_update_explosions:
+       .proc
+;      TODO
+       .endproc
+*// arcade_update_explosions
+
+*********************************************************************
+*
+* Update and draw bombs for the Arcade room
+*
+arcade_update_bombs:
+       .proc
+;      TODO
+       .endproc
+*// arcade_update_bombs

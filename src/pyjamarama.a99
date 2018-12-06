@@ -24,7 +24,7 @@ slow_animations:
 * Constants
 *
 start_room:
-       equ  1
+       equ  >15
 pocket_1_start:
        equ  0                          ; The Round Key
 pocket_2_start:
@@ -173,8 +173,12 @@ rand_no:
        equ  max_sprite+2
 frame:
        equ  rand_no+2
-pad_max:
+inv_bullet_x:
        equ  frame+2
+inv_bullet_y:
+       equ  inv_bullet_x+1
+pad_max:
+       equ  inv_bullet_y+1
 
 **
 * Macros
@@ -485,6 +489,7 @@ sprite_bitmap_map_alt:
        copy "bmp-tiles.a99"
        copy "roll-rock.a99"
        copy "wally-resurrect-table.a99"
+       copy "arcade_invaders.a99"
 
 attr_table:
        bss  >300

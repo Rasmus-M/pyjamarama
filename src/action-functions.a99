@@ -391,22 +391,17 @@ action12_grab_rope_3:                  ; Slide down bannister
 * Sets up the Arcade Room
 *
 action13_enter_arcade:
-
-;      TODO
-;       LD HL,$9810                    Position Wally to the left.
-;F4F9	LD (Wally_X),HL
-;F4FC	CALL Wally_Reset	           Make sure Wally isn't jumping etc.
-;F4FF	CALL Invaders_Init_XPos
-;F502	CALL Invaders_Init_YPos
-;F505	CALL Invaders_Init
-;F508	LD SP,$0000
-;F50B	LD A,$01
-;F50D	LD (IsArcadeMode),A
-;F510	LD A,$FF
-;F512	LD (Inv_BulletX),A
-;F515	JP Invaders_Loop
-
-       b    @room_test_events_endif
+       li   r0,>9810                   ; Position Wally to the left.
+       mov  r0,@wally_y
+       bl   @wally_reset               ; Make sure Wally isn't jumping etc.
+       bl   @deallocate_sprites
+       bl   @invaders_init_x_pos
+       bl   @invaders_init_y_pos
+       bl   @invaders_init
+       movb @byte_01,@is_arcade_mode
+       movb @byte_ff,@inv_bullet_x
+;      TODO: reset stack?
+       b    @invaders_loop
 
 *********************************************************************
 *

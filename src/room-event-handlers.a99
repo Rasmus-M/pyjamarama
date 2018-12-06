@@ -29,15 +29,7 @@ LE65D  data update_room_19
 LE65F  data update_room_1a  
 LE661  data update_room_1b  
 LE663  data update_room_1c  
-LE665  data update_room_1d  
-LE667  data update_room_1e  
-LE669  data update_room_1e  
-LE66B  data update_room_1e  
-LE66D  data update_room_1e  
-LE66F  data update_room_1e  
-LE671  data update_room_1e  
-LE673  data update_room_1e  
-LE675  data update_room_1e
+LE665  data update_room_1d
 
 update_room_00:
        .proc
@@ -209,19 +201,6 @@ LE724  bl @handler_mag_lock
 LE727  bl @handler_mag_lock
 LE72A  bl @handler_mag_lock
 LE72D  .endproc  
-
-update_room_1e:
-       .proc
-LE72E  bl @inv_update
-LE731  bl @inv_update
-LE734  bl @inv_update
-LE737  bl @inv_update
-LE73A  bl @inv_update
-LE73D  bl @inv_update
-LE740  bl @arcade_update_explosions
-LE743  bl @inv_bullet_update
-LE746  bl @arcade_update_bombs
-LE749  .endproc  
 
 *********************************************************************
 *
@@ -1408,14 +1387,14 @@ handler_invaders_3:
 *      Initialise
        movb @byte_01,@flag_baddy_init
        li   r0,>0099
-       mov  r0,@invaders_frame
+       mov  r0,@invad_frame
        bl   @get_sprite_pattern
        movb @byte_0f,@r1lb
        mov  r1,r5
        li   r6,6
-       li   r7,invaders_sprites
-       li   r8,invaders_dir
-       li   r9,invaders_init
+       li   r7,invad_sprites
+       li   r8,invad_dir
+       li   r9,invad_init
 handler_invaders_4:
        bl   @allocate_sprite
        mov  r0,*r7+                    ; Store sprite pointer
@@ -1427,7 +1406,7 @@ handler_invaders_4:
        jne  handler_invaders_4
 *      Update
 handler_invaders_5:
-       mov  @invaders_frame,r0         ; Get bitmap and increase to next frame.
+       mov  @invad_frame,r0         ; Get bitmap and increase to next frame.
        .ifeq slow_animations,1
        mov  @frame,r1
        andi r1,animation_speed-1
@@ -1438,12 +1417,12 @@ handler_invaders_5:
        jne  handler_invaders_6
        li   r0,>0099                   ; Reset animation if required.
 handler_invaders_6:
-       mov  r0,@invaders_frame
+       mov  r0,@invad_frame
        bl   @get_sprite_pattern
        mov  r1,r9
        li   r6,6
-       li   r7,invaders_sprites
-       li   r8,invaders_dir
+       li   r7,invad_sprites
+       li   r8,invad_dir
 handler_invaders_7:
        mov  *r7+,r4
        movb r9,@sprite_pattern(r4)
@@ -1468,28 +1447,28 @@ handler_invaders_9:
        jne  handler_invaders_7
        .endproc
 
-invaders_sprites:
+invad_sprites:
        data >0000
        data >0000
        data >0000
        data >0000
        data >0000
        data >0000
-invaders_dir:
+invad_dir:
        byte >fe
        byte >fe
        byte >fe
        byte >fe
        byte >fe
        byte >fe
-invaders_init:
+invad_init:
        byte >00,>dc                    ; Invaders initialise data
        byte >00,>c4
        byte >00,>ac
        byte >18,>dc
        byte >18,>c4
        byte >18,>ac
-invaders_frame:
+invad_frame:
        data >0099	                   ; Invaders bitmap
 
 *// handler_invaders
@@ -1501,40 +1480,4 @@ invaders_frame:
 pause_short:
        .proc
        bl   @vsync
-       .endproc
-
-*********************************************************************
-*
-* Draw invaders, drop bombs
-*
-inv_update:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-* Draw and update explosions in the Arcade Room
-*
-arcade_update_explosions:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-* Invaders: Bullet Update
-*
-inv_bullet_update:
-       .proc
-;      TODO
-       .endproc
-
-*********************************************************************
-*
-* Update and draw bombs for the Arcade room
-*
-arcade_update_bombs:
-       .proc
-;      TODO
        .endproc

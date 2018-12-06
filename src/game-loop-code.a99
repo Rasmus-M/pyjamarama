@@ -437,9 +437,9 @@ wally_resurrect_2:
        jhe  wally_resurrect_3
        .endproc
 wally_resurrect_3:
-;BED8	CALL Invaders_Init_YPos	For the special arcade room...
-;BEDB	CALL Invaders_Init
-;BEDE	JP Invaders_Loop
+       bl   @invaders_init_y_pos       ; For the special arcade room...
+       bl   @invaders_init
+       b    @invaders_loop
        .endproc
 *// wally_resurrect
 

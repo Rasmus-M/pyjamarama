@@ -47,6 +47,7 @@ wally_handler_4:
        li   r0,KEY_SP
        bl   @check_key
        jne  wally_jump
+* This entry point is used by the routine at wally_shoot_create
 wally_handler_5:
        movb @byte_00,@wally_dir
        abs  @input_flag
@@ -102,7 +103,8 @@ wally_handler_end:
 *
 wally_jump:
        mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
-;      jne  wally_shoot_create         ; TODO
+       jeq  wally_jump_demo_entry
+       b    @wally_shoot_create
 * This entry point is used by the routine at Demo.
 wally_jump_demo_entry:
        bl   @energy_countdown

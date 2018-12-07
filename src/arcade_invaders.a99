@@ -19,6 +19,28 @@ invaders_loop:
        bl   @game_exit_check
        bl   @upload_sprites
        jmp  invaders_loop
+*// invaders_loop
+
+
+*********************************************************************
+*
+* Create a 'bullet' if required
+*
+wally_shoot_create:
+;AD57	LD A,(Inv_BulletX)	See if a 'bullet' already exists.
+;AD5A	CP $FF
+;AD5C	JP NZ,Wally_Handler_5
+;AD5F	LD HL,(Wally_X)	If not, create one by placing it just above Wally.
+;AD62	LD A,H
+;AD63	SUB $08
+;AD65	LD H,A
+;AD66	LD (Inv_BulletX),HL
+;AD69	LD (BitmapX),HL	Draw 'bullet'.
+;AD6C	LD A,$BF	Knife and Fork
+;AD6E	CALL Bitmap16Draw
+       b    @wally_handler_5
+*// wally_shoot_create
+
 
 *********************************************************************
 *
@@ -27,6 +49,11 @@ invaders_loop:
 invaders_init:
        .proc
 ;      TODO
+       bl   @screen_clear_room
+       bl   @draw_ceiling_wall_floor
+       li   r0,>0f00
+       li   r1,LDC31
+       bl   @furniture_draw
        .endproc
 *// invaders_init
 

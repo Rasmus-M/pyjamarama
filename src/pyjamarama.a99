@@ -351,6 +351,8 @@ byte_aa:
        byte >aa
 byte_a8:
        byte >a8
+byte_a0:
+       byte >a0
 byte_9f:
        byte >9f
 byte_9d:

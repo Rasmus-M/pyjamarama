@@ -400,7 +400,7 @@ action13_enter_arcade:
        bl   @invaders_init
        movb @byte_01,@is_arcade_mode
        movb @byte_ff,@inv_bullet_x
-;      TODO: reset stack?
+       li   r10,stack+2                ; Reset stack
        b    @invaders_loop
 
 *********************************************************************

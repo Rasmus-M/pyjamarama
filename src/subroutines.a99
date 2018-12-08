@@ -902,13 +902,39 @@ get_attribute:
 *********************************************************************
 *
 * Erase 16x16 bitmap
+* (erases full characters only)
 *
 bitmap_16_erase:
        .proc
-       li   r0,200
-       bl   @bitmap_16_draw
+       mov  @bitmap_x,r0
+       mov  @bitmap_y,r1
+       li   r3,2                       ; Rows
+       li   r4,2                       ; Cols
+       li   r5,7
+       czc  r5,r0                      ; Check if char aligned
+       jeq  bitmap_16_erase_1
+       inc  r4                         ; One more column
+       andi r0,>00f8                   ; Align
+bitmap_16_erase_1:
+       czc  r5,r1                      ; Check if char aligned
+       jeq  bitmap_16_erase_2
+       inc  r3                         ; One more row
+bitmap_16_erase_2:
+       srl  r1,3                       ; Align
+       movb @r1lb,r0                   ; Screen address
+       sla  r4,3                       ; 8 bytes per column
+bitmap_16_erase_3:
+       bl   @vwad
+       mov  r4,r2
+bitmap_16_erase_4:
+       clr  *r15
+       dec  r2
+       jne  bitmap_16_erase_4
+       ai   r0,>0100
+       dec  r3
+       jne  bitmap_16_erase_3
        .endproc
-*// bitmap_16_erase
+*// bitmap_16_erase_fast
 
 *********************************************************************
 *

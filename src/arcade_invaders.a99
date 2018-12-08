@@ -13,34 +13,15 @@ invaders_loop:
        bl   @invaders_update
        bl   @invaders_update
        bl   @invaders_update
-       bl   @arcade_update_explosions
+       bl   @invaders_update_explosions
+       bl   @invaders_exit_check
        bl   @invaders_bullet_update
        bl   @wally_check_for_death
        bl   @game_exit_check
        bl   @upload_sprites
+       inc  @frame
        jmp  invaders_loop
 *// invaders_loop
-
-
-*********************************************************************
-*
-* Create a 'bullet' if required
-*
-wally_shoot_create:
-;AD57	LD A,(Inv_BulletX)	See if a 'bullet' already exists.
-;AD5A	CP $FF
-;AD5C	JP NZ,Wally_Handler_5
-;AD5F	LD HL,(Wally_X)	If not, create one by placing it just above Wally.
-;AD62	LD A,H
-;AD63	SUB $08
-;AD65	LD H,A
-;AD66	LD (Inv_BulletX),HL
-;AD69	LD (BitmapX),HL	Draw 'bullet'.
-;AD6C	LD A,$BF	Knife and Fork
-;AD6E	CALL Bitmap16Draw
-       b    @wally_handler_5
-*// wally_shoot_create
-
 
 *********************************************************************
 *
@@ -48,32 +29,103 @@ wally_shoot_create:
 *
 invaders_init:
        .proc
-;      TODO
+       mov  @invaders_type_ptr,r0
+       ai   r0,-invaders_first_type
+       srl  r0,1
+       ai   r0,>1d
+       mov  r0,@wally_room_no
        bl   @screen_clear_room
        bl   @draw_ceiling_wall_floor
        li   r0,>0f00
        li   r1,LDC31
        bl   @furniture_draw
+       li   r0,invaders_data
+       mov  r0,@invaders_data_ptr
+invaders_init_0:
+       mov  @invaders_data_ptr,r0
+       mov  *r0+,r1
+       ci   r1,>ffff
+       jeq  invaders_init_1
+       mov  r0,@invaders_data_ptr
+       movb r1,@bitmap_x+1
+       movb @r1lb,@bitmap_y+1
+       mov  @invaders_current_frame,r0
+       bl   @bitmap_16_draw
+       jmp  invaders_init_0
+invaders_init_1:
+       li   r0,invaders_data
+       mov  r0,@invaders_data_ptr
+;      TODO
+;F384	LD HL,Arcade_ExplosionSlots	Reset all explosion animations to 'not active'.
+;Invaders_Init_4
+;F387	LD A,(HL)	Check for end of data marker.
+;F388	CP $FE
+;F38A	JR Z,Invaders_Init_5
+;F38C	LD (HL),$FF
+;F38E	INC HL
+;F38F	INC HL
+;F390	INC HL
+;F391	JR Invaders_Init_4
+;Invaders_Init_5
+;F393	LD B,$03	Number of possible bombs.
+;F395	LD HL,Arcade_BombData	Reset all bombs to 'not active'.
+;Invaders_Init_6
+;F398	LD (HL),$FF
+;F39A	INC HL
+;F39B	INC HL
+;F39C	INC HL
+;F39D	DJNZ Invaders_Init_6
+
        .endproc
 *// invaders_init
 
 *********************************************************************
 *
-* Initialise invaders x pos
+* Initialise invaders x positions
 *
 invaders_init_x_pos:
        .proc
-;      TODO
+       li   r0,invaders_data           ; Start with top row, left hand column.
+       li   r1,>0a00                   ; Left hand position.
+       li   r2,8                       ; 8 columns.
+invaders_init_x_pos_0:
+       movb r1,*r0                     ; Top.
+       inct r0
+       movb r1,*r0                     ; Middle.
+       inct r0
+       movb r1,*r0                     ; Bottom.
+       inct r0
+       ai   r1,>1800                   ; Next column position.
+       dec  r2
+       jne  invaders_init_x_pos_0      ; Next column.
+       clr  @invaders_change_dir_flag
+       li   r0,1                       ; Reset direction to right.
+       mov  r0,@invaders_current_dir
+       li   r0,>0018
        .endproc
 *// invaders_init_x_pos
 
 *********************************************************************
 *
-* Initialise invaders y pos
+* Initialise invaders y positions
 *
 invaders_init_y_pos:
        .proc
 ;      TODO
+       li   r0,invaders_data+1	       ; Start with top row, left hand column for 8 columns.
+       li   r1,>3800
+       li   r3,>5800
+       li   r4,>7800
+       li   r2,8
+invaders_init_y_pos_0:
+       movb r1,*r0                     ; Top.
+       inct r0
+       movb r3,*r0                     ; Middle.
+       inct r0
+       movb r4,*r0                     ; Bottom.
+       inct r0
+       dec  r2
+       jne  invaders_init_y_pos_0      ; Next column.
        .endproc
 *// invaders_init_y_pos
 
@@ -84,8 +136,140 @@ invaders_init_y_pos:
 invaders_update:
        .proc
 ;      TODO
+       mov  @invaders_data_ptr,r4      ; Start of data.
+invaders_update_0:
+       mov  *r4+,r1                    ; Get x and y
+       cb   r1,@byte_fe                ; See if valid
+       jeq  invaders_update_0          ; If not valid, move onto next invader.
+invaders_update_1:
+       ci   r1,>ffff                   ; Check for end of data.
+       jne  invaders_update_3          ; If not the go on to handle invader.
+*      End of data
+       li   r4,invaders_data           ; Reset start of first invader.
+       mov  r4,@invaders_data_ptr
+       mov  @invaders_current_frame,r0 ; Update frame to the next one.
+       mov  r0,@invaders_next_frame
+       inc  r0                         ; Update to next frame.
+       c    r0,@invaders_end_frame     ; See if frame has reached end frame.
+       jne  invaders_update_2
+       mov  @invaders_start_frame,r0   ; Reset to start if so.
+invaders_update_2:
+       mov  r0,@invaders_current_frame ; Store updated frame.
+       mov  @invaders_change_dir_flag,r0
+       a    r0,r0
+       mov  r0,@invaders_flag
+       jeq  invaders_update_11         ; Return
+       clr  @invaders_change_dir_flag  ; Reset flag.
+       neg  @invaders_current_dir      ; Change direction.
+       jmp  invaders_update_11         ; Return
+*      Not end of data
+invaders_update_3:
+       mov  r4,@invaders_data_ptr      ; Set pointer to next invader.
+       dect r4                         ; Push address back to current invader.
+       movb r1,@bitmap_x+1             ; Set draw to position.
+       movb @r1lb,@bitmap_y+1
+       ab   @invaders_current_dir+1,r1 ; Get direction and update X position in direction.
+       cb   r1,@byte_e8                ; Check for right hand end of screen reached.
+       jne  invaders_update_5
+invaders_update_4:
+       li   r0,1                       ; If reached, change direction for all invaders.
+       mov  r0,@invaders_change_dir_flag
+       jmp  invaders_update_6
+invaders_update_5:
+       cb   r1,@byte_08                ; Check for left hand end of screen reached.
+       jeq  invaders_update_4          ; Change direction if so.
+invaders_update_6:
+       ab   @invaders_flag,@r0lb       ; Add flag? to y
+       cb   @r0lb,@byte_a0             ; Reached bottom?
+       jl   invaders_update_7
+       movb @byte_01,@death_flag       ; Die
+invaders_update_7:
+       mov  r1,*r4                     ; Save updated position
+*      Draw invader
+       .push r1
+       bl   @bitmap_16_erase            ; Erase invader from old position
+       .pop r1
+       mov  @invaders_next_frame,r0
+       movb r1,@bitmap_x+1             ; Draw invader at new position and new frame.
+       movb @r1lb,@bitmap_y+1
+       .push r1
+       bl   @bitmap_16_draw
+       .pop r1
+       swpb r1
+       li   r0,2                       ; Check for hitting Wally.
+       bl   @wally_hit_test
+
+;F42E	LD HL,(BitmapX)	Get position again.
+;F431	LD A,R	Create a random number.
+;F433	CP $08	If great or equal to 8 then end.
+;F435	RET NC
+;*      Drop a bomb.
+;F436	EX DE,HL
+;F437	LD B,$03	number of bombs.
+;F439	LD HL,Arcade_BombData	Start of bomb data.
+;*      Bombs, look for an empty slot.
+;invaders_update_8:
+;F43C	LD A,(HL)	Get x position.
+;F43D	CP $FF	See if bomb is active.
+;F43F	JR Z,invaders_update_9	If not, create one.
+;F441	INC HL	If so, move onto next bomb.
+;F442	INC HL
+;F443	INC HL
+;F444	DJNZ invaders_update_8
+;F446	RET
+;*      Bomb, empty slot found.
+;invaders_update_9:
+;F447	LD (HL),E	Store position.
+;F448	INC HL
+;F449	LD (HL),D
+;F44A	INC HL
+;F44B	EX DE,HL
+;F44C	LD HL,$F45D	Get the next bitmap within the range of ($c0 ~ $c6)
+;F44F	INC (HL)
+;F450	LD A,(HL)
+;F451	CP $C7
+;F453	JR NZ,invaders_update_10
+;F455	LD A,$C0
+;F457	LD (HL),A
+;invaders_update_10:
+;F458	LD (DE),A	Store the frame for this bomb.
+;F459	CALL Bitmap16Draw	Draw bomb.
+
+invaders_update_11:
        .endproc
 *// invaders_update
+
+*********************************************************************
+*
+* Draw and update explosions in the Arcade Room
+*
+invaders_update_explosions:
+       .proc
+;      TODO
+       .endproc
+*// invaders_update_explosions
+
+*********************************************************************
+*
+* Check to see if Wally has left the arcade room
+*
+invaders_exit_check:
+       .proc
+       movb @wally_x,r0                ; See if Wally is at the far left of the room.
+       sb   @byte_09,r0
+       cb   r0,@byte_fe
+       jl   invaders_exit_check_1      ; Do nothing if not.
+       li   r0,>0015
+       mov  r0,@wally_room_no          ; Move into the next room and update.
+       li   r0,>98d0
+       mov  r0,@wally_y
+       bl   @room_enter
+       li   r10,stack+2                ; Reset stack
+       movb @byte_00,@is_arcade_mode
+       b    @game_loop                 ; Go back to normal game play.
+invaders_exit_check_1:
+       .endproc
+*// invaders_exit_check
 
 *********************************************************************
 *
@@ -99,20 +283,142 @@ invaders_bullet_update:
 
 *********************************************************************
 *
-* Draw and update explosions in the Arcade Room
+* Update and draw bombs for the Arcade room
 *
-arcade_update_explosions:
+invaders_update_bombs:
        .proc
 ;      TODO
        .endproc
-*// arcade_update_explosions
+*// invaders_update_bombs
 
 *********************************************************************
 *
-* Update and draw bombs for the Arcade room
+* Create a 'bullet' if required
 *
-arcade_update_bombs:
+wally_shoot_create:
+;AD57 LD A,(Inv_BulletX) See if a 'bullet' already exists.
+;AD5A CP >FF
+;AD5C JP NZ,Wally_Handler_5
+;AD5F LD HL,(Wally_X) If not, create one by placing it just above Wally.
+;AD62 LD A,H
+;AD63 SUB >08
+;AD65 LD H,A
+;AD66 LD (Inv_BulletX),HL
+;AD69 LD (BitmapX),HL Draw 'bullet'.
+;AD6C LD A,>BF Knife and Fork
+;AD6E CALL Bitmap16Draw
+       b    @wally_handler_5
+*// wally_shoot_create
+
+*********************************************************************
+*
+* Reset everything for next stage.
+*
+invaders_next_stage:
        .proc
 ;      TODO
+;F46F	LD HL,(Inv_TypePtr)	See if reached the last stage.
+;F472	LD A,(HL)
+;F473	CP $FF	If not then reset invaders for next stage.
+;F475	JR NZ,Invaders_NextStage_1
+;F477	LD A,(WallyLives)	Cap the max number of lives, player ca only have upto three lives.
+;F47A	CP $03
+;F47C	JR Z,Invaders_NextStage_0
+;F47E	INC A	Increase the number of lives and update on screen.
+;F47F	LD (WallyLives),A
+;F482	CALL LifeDraw_Erase
+;Invaders_NextStage_0
+;F485	LD HL,Inv_FirstInvType	Go back to first stage again.
+;Invaders_NextStage_1
+;F488	LD A,(HL)	Reset invaders to current stage / animations.
+;F489	LD (Inv_CurrentFrame),A
+;F48C	LD (Inv_StartFrame),A
+;F48F	INC HL
+;F490	INC A
+;F491	LD (Inv_NextFrame),A
+;F494	LD A,(HL)
+;F495	LD (Inv_EndFrame),A
+;F498	INC HL	Point to the next stage ready for next time level is cleared.
+;F499	LD (Inv_TypePtr),HL
+;F49C	CALL Invaders_Init_XPos
+;F49F	CALL Invaders_Init_YPos
+;F4A2	CALL Invaders_Init
+;F4A5	RET
        .endproc
-*// arcade_update_bombs
+*// invaders_next_stage
+
+*********************************************************************
+
+invaders_data_ptr:
+       data invaders_data              ; Points to invader data.
+
+invaders_type_ptr:
+       data invaders_first_type+2      ; Points to address holding the current type of invader.
+
+invaders_current_frame:
+       data >0075                      ; Current bitmap frame of invaders.
+invaders_next_frame:
+       data >0076                      ; Next bitmap frame of invaders.
+invaders_start_frame:
+       data >0075                      ; Start frame of animation.
+invaders_end_frame:
+       data >007a                      ; End frame of animation.
+invaders_current_dir:
+       data >0001                      ; Current direction of invaders.
+invaders_change_dir_flag:
+       data >0000                      ; When set indicates change of direction.
+invaders_flag:
+       data >0000                      ; Current direction of invaders.
+invaders_bomb_frame:
+       data >00c0                      ; F45D
+
+invaders_first_type:
+       byte >75,>7a                    ; Venus Flytrap
+       byte >7B,>7F                    ; Roast Chicken
+       byte >93,>99                    ; Angel of Death
+       byte >99,>9B                    ; Space Invader
+       byte >AD,>B3                    ; Spooky Hand
+       byte >B3,>BB                    ; Spinning Axe
+       byte >BB,>BF                    ; Ghost
+       byte >FF,>FF                    ; End of data.
+
+invaders_data:
+       byte >0A,>38                    ; Column 1 [Y pos, X pos]
+       byte >0A,>58
+       byte >0A,>78
+       byte >22,>38                    ; Column 2..
+       byte >22,>58
+       byte >22,>78
+       byte >3A,>38
+       byte >3A,>58
+       byte >3A,>78
+       byte >52,>38
+       byte >52,>58
+       byte >52,>78
+       byte >6A,>38
+       byte >6A,>58
+       byte >6A,>78
+       byte >82,>38
+       byte >82,>58
+       byte >82,>78
+       byte >9A,>38
+       byte >9A,>58
+       byte >9A,>78
+       byte >B2,>38                    ; Column 8
+       byte >B2,>58
+       byte >B2,>78
+       byte >FF,>FF                    ; End of data.
+
+invaders_explosion_slots 
+       byte >FF,>00,>00,>00            ; Y, X, Bitmap
+       byte >FF,>00,>00,>00
+       byte >FF,>00,>00,>00
+       byte >FF,>00,>00,>00
+       byte >FF,>00,>00,>00
+       byte >FF,>00,>00,>00
+       byte >FE,>00                    ; End of data.
+
+invaders_bomb_data:                    ; Starting with 'FF' shows an empty slot.
+       byte >FF,>00,>00,>00	           ; X, Y, Bitmap
+       byte >FF,>00,>00,>00
+       byte >FF,>00,>00,>00

@@ -173,12 +173,8 @@ rand_no:
        equ  max_sprite+2
 frame:
        equ  rand_no+2
-inv_bullet_x:
-       equ  frame+2
-inv_bullet_y:
-       equ  inv_bullet_x+1
 pad_max:
-       equ  inv_bullet_y+1
+       equ  frame+2
 
 **
 * Macros

@@ -904,6 +904,8 @@ get_attribute:
 * Erase 16x16 bitmap
 * (erases full characters only)
 *
+* Modifies r0-r5
+*
 bitmap_16_erase:
        .proc
        mov  @bitmap_x,r0
@@ -1118,6 +1120,8 @@ allocate_sprite_3:
 *
 * Input:
 * r0: address of the allocated sprite
+*
+* Modifies r0
 *
 deallocate_sprite:
        .proc

@@ -399,7 +399,7 @@ action13_enter_arcade:
        bl   @invaders_init_y_pos
        bl   @invaders_init
        movb @byte_01,@is_arcade_mode
-       movb @byte_ff,@inv_bullet_x
+       clr  @invaders_bullet_sprite
        li   r10,stack+2                ; Reset stack
        b    @invaders_loop
 

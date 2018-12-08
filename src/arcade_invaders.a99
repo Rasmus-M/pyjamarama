@@ -7,15 +7,20 @@ invaders_loop:
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
+       mov  @invaders_left,r0
+       ci   r0,6
+       jl   invaders_loop_1
+       li   r0,6
+invaders_loop_1:
+       mov  r0,@invaders_updates
+invaders_loop_2:
        bl   @invaders_update
-       bl   @invaders_update
-       bl   @invaders_update
-       bl   @invaders_update
-       bl   @invaders_update
-       bl   @invaders_update
+       dec  @invaders_updates
+       jne  invaders_loop_2
        bl   @invaders_update_explosions
        bl   @invaders_exit_check
        bl   @invaders_bullet_update
+       bl   @invaders_update_bombs
        bl   @wally_check_for_death
        bl   @game_exit_check
        bl   @upload_sprites
@@ -102,6 +107,7 @@ invaders_init_x_pos_0:
        li   r0,1                       ; Reset direction to right.
        mov  r0,@invaders_current_dir
        li   r0,>0018
+       mov  r0,@invaders_left
        .endproc
 *// invaders_init_x_pos
 
@@ -278,6 +284,53 @@ invaders_exit_check_1:
 invaders_bullet_update:
        .proc
 ;      TODO
+       mov  @invaders_bullet_sprite,r4 ; See if a bullet exists, if not then do nothing.
+       jeq  invaders_bullet_update_4
+       li   r7,invaders_data           ; Run through the data of each invader.
+       li   r6,>18
+invaders_bullet_update_1:
+       mov  *r7+,r1                    ; Get x and y
+       cb   r1,@byte_fe                ; Only do anything if invader is active.
+       jne  invaders_bullet_update_3   ; If it is check for collision.
+invaders_bullet_update_2:
+       dec  r6
+       jne  invaders_bullet_update_1   ; Move onto next invaders.
+*      Update bullet
+       sb   @byte_03,*r4               ; Decrease Y pos by three pixels.
+       cb   *r4,@byte_30               ; See if at top of screen.
+       jhe  invaders_bullet_update_4   ; Return
+*      Disable bullet
+       mov  r4,r0
+       bl   @deallocate_sprite
+       clr  @invaders_bullet_sprite
+       jmp  invaders_bullet_update_4   ; Return
+*      Check collision with invader
+invaders_bullet_update_3:
+       mov  r1,r0                      ; Copy position of invader
+       swpb r0
+       sb   *r4,r0                     ; Check against Y position of bullet.
+       sb   @byte_10,r0
+       cb   r0,@byte_e0
+       jl   invaders_bullet_update_2   ; Next invader if not.
+       swpb r0
+       sb   @1(r4),r0                  ; Check against X position of bullet.
+       sb   @byte_10,r0
+       cb   r0,@byte_e0
+       jl   invaders_bullet_update_2   ; Next invader if not.
+*      Hit
+       mov  r4,r0
+       bl   @deallocate_sprite
+       clr  @invaders_bullet_sprite    ; Set bullet as disabled.
+       dect r7                         ; Back to current invader
+       movb @byte_fe,*r7               ; Set invader as disabled as well.
+       movb r1,@bitmap_x+1
+       movb @r1lb,@bitmap_y+1
+       bl   @bitmap_16_erase           ; Erase invader
+;       bl   @invaders_create_explosions    TODO
+       dec  @invaders_left
+       jne  invaders_bullet_update_4
+       bl   @invaders_next_stage
+invaders_bullet_update_4:
        .endproc
 *// invaders_bullet_update
 
@@ -296,17 +349,19 @@ invaders_update_bombs:
 * Create a 'bullet' if required
 *
 wally_shoot_create:
-;AD57 LD A,(Inv_BulletX) See if a 'bullet' already exists.
-;AD5A CP >FF
-;AD5C JP NZ,Wally_Handler_5
-;AD5F LD HL,(Wally_X) If not, create one by placing it just above Wally.
-;AD62 LD A,H
-;AD63 SUB >08
-;AD65 LD H,A
-;AD66 LD (Inv_BulletX),HL
-;AD69 LD (BitmapX),HL Draw 'bullet'.
-;AD6C LD A,>BF Knife and Fork
-;AD6E CALL Bitmap16Draw
+       mov  @invaders_bullet_sprite,r0 ; See if a 'bullet' already exists.
+       jne  wally_shoot_create_1
+       li   r0,>00bf                   ; Knife and Fork
+       bl   @get_sprite_pattern
+       movb @byte_0e,@r1lb
+       mov  r1,r3
+       mov  @wally_y,r4
+       sb   @byte_08,r4
+       bl   @allocate_sprite           ; If not, create one by placing it just above Wally.
+       mov  r0,@invaders_bullet_sprite
+       mov  r4,*r0+
+       mov  r3,*r0
+wally_shoot_create_1:
        b    @wally_handler_5
 *// wally_shoot_create
 
@@ -316,34 +371,28 @@ wally_shoot_create:
 *
 invaders_next_stage:
        .proc
-;      TODO
-;F46F	LD HL,(Inv_TypePtr)	See if reached the last stage.
-;F472	LD A,(HL)
-;F473	CP $FF	If not then reset invaders for next stage.
-;F475	JR NZ,Invaders_NextStage_1
-;F477	LD A,(WallyLives)	Cap the max number of lives, player ca only have upto three lives.
-;F47A	CP $03
-;F47C	JR Z,Invaders_NextStage_0
-;F47E	INC A	Increase the number of lives and update on screen.
-;F47F	LD (WallyLives),A
-;F482	CALL LifeDraw_Erase
-;Invaders_NextStage_0
-;F485	LD HL,Inv_FirstInvType	Go back to first stage again.
-;Invaders_NextStage_1
-;F488	LD A,(HL)	Reset invaders to current stage / animations.
-;F489	LD (Inv_CurrentFrame),A
-;F48C	LD (Inv_StartFrame),A
-;F48F	INC HL
-;F490	INC A
-;F491	LD (Inv_NextFrame),A
-;F494	LD A,(HL)
-;F495	LD (Inv_EndFrame),A
-;F498	INC HL	Point to the next stage ready for next time level is cleared.
-;F499	LD (Inv_TypePtr),HL
-;F49C	CALL Invaders_Init_XPos
-;F49F	CALL Invaders_Init_YPos
-;F4A2	CALL Invaders_Init
-;F4A5	RET
+       mov  @invaders_type_ptr,r0      ; See if reached the last stage.
+       cb   *r0,@byte_ff               ; If not then reset invaders for next stage.
+       jne  invaders_next_stage_1
+       mov  @wally_lives,r0
+       ci   r0,3                       ; Cap the max number of lives, player ca only have upto three lives.
+       jeq  invaders_next_stage_0
+       inc  r0                         ; Increase the number of lives and update on screen.
+       mov  r0,@wally_lives
+       bl   @life_draw_blit
+invaders_next_stage_0:
+       li   r0,invaders_first_type     ; Go back to first stage again.
+invaders_next_stage_1:
+       movb *r0+,r1                    ; Reset invaders to current stage / animations.
+       movb r1,@invaders_current_frame+1
+       movb r1,@invaders_start_frame+1
+       ab   @byte_01,r1
+       movb r1,@invaders_next_frame+1
+       movb *r0+,@invaders_end_frame+1 ; Reset invaders to current stage / animations.
+       mov  r0,@invaders_type_ptr      ; Point to the next stage ready for next time level is cleared.
+       bl   @invaders_init_x_pos
+       bl   @invaders_init_y_pos
+       bl   @invaders_init
        .endproc
 *// invaders_next_stage
 
@@ -351,10 +400,12 @@ invaders_next_stage:
 
 invaders_data_ptr:
        data invaders_data              ; Points to invader data.
-
 invaders_type_ptr:
        data invaders_first_type+2      ; Points to address holding the current type of invader.
-
+invaders_left:
+       data >0018
+invaders_updates:
+       data >0006
 invaders_current_frame:
        data >0075                      ; Current bitmap frame of invaders.
 invaders_next_frame:
@@ -383,7 +434,7 @@ invaders_first_type:
        byte >FF,>FF                    ; End of data.
 
 invaders_data:
-       byte >0A,>38                    ; Column 1 [Y pos, X pos]
+       byte >0A,>38                    ; Column 1 [X pos, Y pos]
        byte >0A,>58
        byte >0A,>78
        byte >22,>38                    ; Column 2..
@@ -422,3 +473,6 @@ invaders_bomb_data:                    ; Starting with 'FF' shows an empty slot.
        byte >FF,>00,>00,>00	           ; X, Y, Bitmap
        byte >FF,>00,>00,>00
        byte >FF,>00,>00,>00
+
+invaders_bullet_sprite:
+       data >0000

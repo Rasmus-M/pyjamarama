@@ -393,10 +393,12 @@ byte_0e:
        byte >0e
 byte_0d:
        byte >0d
-byte_0b:
-       byte >0b
 byte_0c:
        byte >0c
+byte_0b:
+       byte >0b
+byte_0a:
+       byte >0a
 byte_09:
        byte >09
 byte_08:

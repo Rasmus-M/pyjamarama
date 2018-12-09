@@ -325,8 +325,10 @@ invaders_bullet_update_3:
        movb @byte_fe,*r7               ; Set invader as disabled as well.
        movb r1,@bitmap_x+1
        movb @r1lb,@bitmap_y+1
+       .push r1
        bl   @bitmap_16_erase           ; Erase invader
-;       bl   @invaders_create_explosions    TODO
+       .pop r1
+       bl   @invaders_create_explosions
        dec  @invaders_left
        jne  invaders_bullet_update_4
        bl   @invaders_next_stage
@@ -364,6 +366,39 @@ wally_shoot_create:
 wally_shoot_create_1:
        b    @wally_handler_5
 *// wally_shoot_create
+
+*********************************************************************
+*
+* Create an explosion in the Arcade room
+*
+* r1: position x MSB, y LSB
+*
+invaders_create_explosions:
+       .proc
+       mov  r1,r4
+       li   r5,invaders_explosion_slots
+invaders_create_explosions_0:
+       mov  *r5,r0
+       jeq  invaders_create_explosions_1
+       ci   r0,>ffff
+       jeq  invaders_create_explosions_2
+       ai   r5,4
+       jmp  invaders_create_explosions_0
+invaders_create_explosions_1:
+       li   r0,>009f                   ; Bitmap frame
+       mov  r0,@2(r5)                  ; Store it
+       bl   @get_sprite_pattern
+       mov  r1,r3                      ; Pattern
+       movb @byte_0b,@r3lb             ; Color yellow
+       bl   @allocate_sprite
+       mov  r0,*r5
+       jeq  invaders_create_explosions_2
+       swpb r4                         ; Swap x and y
+       mov  r4,*r0+                    ; Set sprite position
+       mov  r3,*r0                     ; set sprite pattern and color
+invaders_create_explosions_2:
+       .endproc
+*// invaders_create_explosions
 
 *********************************************************************
 *
@@ -460,14 +495,14 @@ invaders_data:
        byte >B2,>78
        byte >FF,>FF                    ; End of data.
 
-invaders_explosion_slots 
-       byte >FF,>00,>00,>00            ; Y, X, Bitmap
-       byte >FF,>00,>00,>00
-       byte >FF,>00,>00,>00
-       byte >FF,>00,>00,>00
-       byte >FF,>00,>00,>00
-       byte >FF,>00,>00,>00
-       byte >FE,>00                    ; End of data.
+invaders_explosion_slots
+       data >0000,>0000                ; Sprite, Frame
+       data >0000,>0000
+       data >0000,>0000
+       data >0000,>0000
+       data >0000,>0000
+       data >0000,>0000
+       data >ffff                      ; End of data.
 
 invaders_bomb_data:                    ; Starting with 'FF' shows an empty slot.
        byte >FF,>00,>00,>00	           ; X, Y, Bitmap

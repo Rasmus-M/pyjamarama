@@ -4,13 +4,18 @@
 *
 invaders_loop:
        bl   @vsync
+       mov  @invaders_left,r0
+       ci   r0,3
+       jgt  invaders_loop_0
+       bl   @vsync
+invaders_loop_0:
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
        mov  @invaders_left,r0
-       ci   r0,6
+       ci   r0,4
        jl   invaders_loop_1
-       li   r0,6
+       li   r0,4
 invaders_loop_1:
        mov  r0,@invaders_updates
 invaders_loop_2:
@@ -93,7 +98,7 @@ invaders_init_5:
 invaders_init_x_pos:
        .proc
        li   r0,invaders_data           ; Start with top row, left hand column.
-       li   r1,>0a00                   ; Left hand position.
+       li   r1,>1000                   ; Left hand position.
        li   r2,8                       ; 8 columns.
 invaders_init_x_pos_0:
        movb r1,*r0                     ; Top.
@@ -182,7 +187,7 @@ invaders_update_4:
        mov  r0,@invaders_change_dir_flag
        jmp  invaders_update_6
 invaders_update_5:
-       cb   r1,@byte_08                ; Check for left hand end of screen reached.
+       cb   r1,@byte_10                ; Check for left hand end of screen reached.
        jeq  invaders_update_4          ; Change direction if so.
 invaders_update_6:
        ab   @invaders_flag+1,@r1lb     ; Add flag? to y

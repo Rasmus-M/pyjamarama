@@ -247,11 +247,32 @@ invaders_update_11:
 
 *********************************************************************
 *
-* Draw and update explosions in the Arcade Room
+* Update explosions in the Arcade Room
 *
 invaders_update_explosions:
        .proc
-;      TODO
+       li   r5,invaders_explosion_slots
+invaders_update_explosions_0:
+       mov  *r5,r4
+       jeq  invaders_update_explosions_1
+       ci   r4,>ffff
+       jeq  invaders_update_explosions_2
+       mov  @2(r5),r0                  ; Get animationn frame
+       inc  r0
+       ci   r0,>00a5
+       jeq  invaders_update_explosions_3
+       mov  r0,@2(r5)
+       bl   @get_sprite_pattern
+       movb r1,@sprite_pattern(r4)
+       jmp  invaders_update_explosions_1
+invaders_update_explosions_3:
+       mov  r4,r0
+       bl   @deallocate_sprite
+       clr  *r5
+invaders_update_explosions_1:
+       ai   r5,4
+       jmp  invaders_update_explosions_0
+invaders_update_explosions_2:
        .endproc
 *// invaders_update_explosions
 
@@ -428,6 +449,7 @@ invaders_next_stage_1:
        bl   @invaders_init_x_pos
        bl   @invaders_init_y_pos
        bl   @invaders_init
+       bl   @deallocate_sprites
        .endproc
 *// invaders_next_stage
 

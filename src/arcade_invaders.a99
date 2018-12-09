@@ -49,9 +49,11 @@ invaders_init:
 invaders_init_0:
        mov  @invaders_data_ptr,r0
        mov  *r0+,r1
+       mov  r0,@invaders_data_ptr
+       cb   r1,@byte_fe
+       jeq  invaders_init_0
        ci   r1,>ffff
        jeq  invaders_init_1
-       mov  r0,@invaders_data_ptr
        movb r1,@bitmap_x+1
        movb @r1lb,@bitmap_y+1
        mov  @invaders_current_frame,r0

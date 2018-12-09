@@ -60,27 +60,27 @@ invaders_init_0:
 invaders_init_1:
        li   r0,invaders_data
        mov  r0,@invaders_data_ptr
-;      TODO
-;F384	LD HL,Arcade_ExplosionSlots	Reset all explosion animations to 'not active'.
-;Invaders_Init_4
-;F387	LD A,(HL)	Check for end of data marker.
-;F388	CP $FE
-;F38A	JR Z,Invaders_Init_5
-;F38C	LD (HL),$FF
-;F38E	INC HL
-;F38F	INC HL
-;F390	INC HL
-;F391	JR Invaders_Init_4
-;Invaders_Init_5
-;F393	LD B,$03	Number of possible bombs.
-;F395	LD HL,Arcade_BombData	Reset all bombs to 'not active'.
-;Invaders_Init_6
-;F398	LD (HL),$FF
-;F39A	INC HL
-;F39B	INC HL
-;F39C	INC HL
-;F39D	DJNZ Invaders_Init_6
-
+*      Reset explosions
+       li   r5,invaders_explosion_slots
+invaders_init_2:
+       mov  *r5,r0
+       ci   r0,>ffff
+       jeq  invaders_init_3
+       clr  *r5
+       ai   r5,4
+       jmp  invaders_init_2
+invaders_init_3:
+*      Reset bombs
+       li   r5,invaders_bomb_data
+invaders_init_4:
+       mov  *r5,r0
+       ci   r0,>ffff
+       jeq  invaders_init_5
+       clr  *r5
+       ai   r5,4
+       jmp  invaders_init_4
+invaders_init_5:
+       bl   @deallocate_sprites
        .endproc
 *// invaders_init
 
@@ -117,7 +117,6 @@ invaders_init_x_pos_0:
 *
 invaders_init_y_pos:
        .proc
-;      TODO
        li   r0,invaders_data+1	       ; Start with top row, left hand column for 8 columns.
        li   r1,>3800
        li   r3,>5800
@@ -141,7 +140,6 @@ invaders_init_y_pos_0:
 *
 invaders_update:
        .proc
-;      TODO
        mov  @invaders_data_ptr,r4      ; Start of data.
 invaders_update_0:
        mov  *r4+,r1                    ; Get x and y
@@ -185,8 +183,8 @@ invaders_update_5:
        cb   r1,@byte_08                ; Check for left hand end of screen reached.
        jeq  invaders_update_4          ; Change direction if so.
 invaders_update_6:
-       ab   @invaders_flag,@r0lb       ; Add flag? to y
-       cb   @r0lb,@byte_a0             ; Reached bottom?
+       ab   @invaders_flag+1,@r1lb     ; Add flag? to y
+       cb   @r1lb,@byte_a0             ; Reached bottom?
        jl   invaders_update_7
        movb @byte_01,@death_flag       ; Die
 invaders_update_7:
@@ -202,45 +200,40 @@ invaders_update_7:
        bl   @bitmap_16_draw
        .pop r1
        swpb r1
+       .push r1
        li   r0,2                       ; Check for hitting Wally.
        bl   @wally_hit_test
-
-;F42E	LD HL,(BitmapX)	Get position again.
-;F431	LD A,R	Create a random number.
-;F433	CP $08	If great or equal to 8 then end.
-;F435	RET NC
-;*      Drop a bomb.
-;F436	EX DE,HL
-;F437	LD B,$03	number of bombs.
-;F439	LD HL,Arcade_BombData	Start of bomb data.
-;*      Bombs, look for an empty slot.
-;invaders_update_8:
-;F43C	LD A,(HL)	Get x position.
-;F43D	CP $FF	See if bomb is active.
-;F43F	JR Z,invaders_update_9	If not, create one.
-;F441	INC HL	If so, move onto next bomb.
-;F442	INC HL
-;F443	INC HL
-;F444	DJNZ invaders_update_8
-;F446	RET
-;*      Bomb, empty slot found.
-;invaders_update_9:
-;F447	LD (HL),E	Store position.
-;F448	INC HL
-;F449	LD (HL),D
-;F44A	INC HL
-;F44B	EX DE,HL
-;F44C	LD HL,$F45D	Get the next bitmap within the range of ($c0 ~ $c6)
-;F44F	INC (HL)
-;F450	LD A,(HL)
-;F451	CP $C7
-;F453	JR NZ,invaders_update_10
-;F455	LD A,$C0
-;F457	LD (HL),A
-;invaders_update_10:
-;F458	LD (DE),A	Store the frame for this bomb.
-;F459	CALL Bitmap16Draw	Draw bomb.
-
+*      Manage bombs
+       bl   @rand                      ; Create a random number.
+       .pop r4                         ; Position
+       ci   r0,>0800                   ; Test random number
+       jhe  invaders_update_11         ; Return
+*      Drop a bomb.
+       li   r5,invaders_bomb_data
+invaders_update_8:
+       mov  *r5,r6                     ; Get sprite
+       jeq  invaders_update_9          ; Found empty slot
+       ci   r6,>ffff                   ; End marker
+       jeq  invaders_update_11         ; Return
+       ai   r5,4
+       jmp  invaders_update_8
+*      Bomb, empty slot found.
+invaders_update_9:
+       mov  @invaders_bomb_frame,r0    ; Get the next bitmap within the range of ($c0 ~ $c6)
+       inc  r0
+       ci   r0,>00c7
+       jl   invaders_update_10
+       li   r0,>00c0
+invaders_update_10:
+       mov  r0,@invaders_bomb_frame
+       bl   @get_sprite_pattern
+       mov  r1,r3
+       movb @byte_07,@r3lb
+       bl   @allocate_sprite
+       mov  r0,*r5
+       jeq  invaders_update_11
+       mov  r4,*r0+
+       mov  r3,*r0
 invaders_update_11:
        .endproc
 *// invaders_update
@@ -304,7 +297,6 @@ invaders_exit_check_1:
 *
 invaders_bullet_update:
        .proc
-;      TODO
        mov  @invaders_bullet_sprite,r4 ; See if a bullet exists, if not then do nothing.
        jeq  invaders_bullet_update_4
        li   r7,invaders_data           ; Run through the data of each invader.
@@ -363,7 +355,28 @@ invaders_bullet_update_4:
 *
 invaders_update_bombs:
        .proc
-;      TODO
+       li   r7,invaders_bomb_data
+invaders_update_bombs_1:
+       mov  *r7,r6                     ; Get sprite
+       jeq  invaders_update_bombs_2
+       ci   r6,>ffff
+       jeq  invaders_update_bombs_4
+       mov  *r6,r1                     ; Get y and x
+       ab   @byte_02,r1
+       cb   r1,@byte_a8
+       jhe  invaders_update_bombs_3
+       mov  r1,*r6
+       li   r0,2
+       bl   @wally_hit_test
+       jmp  invaders_update_bombs_2
+invaders_update_bombs_3:
+       mov  r6,r0
+       bl   @deallocate_sprite
+       clr  *r7
+invaders_update_bombs_2:
+       ai   r7,4
+       jmp  invaders_update_bombs_1
+invaders_update_bombs_4:
        .endproc
 *// invaders_update_bombs
 
@@ -382,6 +395,7 @@ wally_shoot_create:
        sb   @byte_08,r4
        bl   @allocate_sprite           ; If not, create one by placing it just above Wally.
        mov  r0,@invaders_bullet_sprite
+       jeq  wally_shoot_create_1
        mov  r4,*r0+
        mov  r3,*r0
 wally_shoot_create_1:
@@ -449,7 +463,6 @@ invaders_next_stage_1:
        bl   @invaders_init_x_pos
        bl   @invaders_init_y_pos
        bl   @invaders_init
-       bl   @deallocate_sprites
        .endproc
 *// invaders_next_stage
 
@@ -517,8 +530,8 @@ invaders_data:
        byte >B2,>78
        byte >FF,>FF                    ; End of data.
 
-invaders_explosion_slots
-       data >0000,>0000                ; Sprite, Frame
+invaders_explosion_slots:
+       data >0000,>0000                ; Sprite (0=empty), Frame
        data >0000,>0000
        data >0000,>0000
        data >0000,>0000
@@ -526,10 +539,11 @@ invaders_explosion_slots
        data >0000,>0000
        data >ffff                      ; End of data.
 
-invaders_bomb_data:                    ; Starting with 'FF' shows an empty slot.
-       byte >FF,>00,>00,>00	           ; X, Y, Bitmap
-       byte >FF,>00,>00,>00
-       byte >FF,>00,>00,>00
+invaders_bomb_data:
+       data >0000,>0000                ; Sprite (0=empty), Frame
+       data >0000,>0000
+       data >0000,>0000
+       data >ffff                      ; End of data.
 
 invaders_bullet_sprite:
        data >0000

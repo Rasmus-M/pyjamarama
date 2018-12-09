@@ -1835,6 +1835,7 @@ any_key_4:
 rand:
        li   r0,28643                   ; A prime number to multiply by
        mpy  @rand_no,r0
+       mov  r1,r0
        ai   r0,31873                   ; Add a prime number
        src  r0,7                       ; Shift to break odd/even pattern
        mov  r0,@rand_no

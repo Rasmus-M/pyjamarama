@@ -30,6 +30,13 @@ LE65F  data update_room_1a
 LE661  data update_room_1b  
 LE663  data update_room_1c  
 LE665  data update_room_1d
+       data update_room_1e
+       data update_room_1e
+       data update_room_1e
+       data update_room_1e
+       data update_room_1e
+       data update_room_1e
+       data update_room_1e
 
 update_room_00:
        .proc
@@ -201,6 +208,9 @@ LE724  bl @handler_mag_lock
 LE727  bl @handler_mag_lock
 LE72A  bl @handler_mag_lock
 LE72D  .endproc  
+
+update_room_1e:
+       rt
 
 *********************************************************************
 *

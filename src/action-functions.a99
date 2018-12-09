@@ -394,7 +394,6 @@ action13_enter_arcade:
        li   r0,>9810                   ; Position Wally to the left.
        mov  r0,@wally_y
        bl   @wally_reset               ; Make sure Wally isn't jumping etc.
-       bl   @deallocate_sprites
        bl   @invaders_init_x_pos
        bl   @invaders_init_y_pos
        bl   @invaders_init

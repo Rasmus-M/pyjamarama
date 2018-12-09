@@ -785,11 +785,11 @@ life_draw_blit:
 tile_draw:
        .proc
 *      Draw color
-       bl   @set_attribute
+       bl   @set_attribute             ; r3 contains VDP address
 *      Draw tile
        clr  r1
        movb r0,@r1lb                   ; Tile number
-       sla  r1,3                       ; x8
+       sla  r1,3                       ; *8
        a    @tile_start_ptr,r1         ; Add base address
        movb @r3lb,@vdpwa               ; Send low byte of VDP RAM write address
        ai   r3,>4000
@@ -843,22 +843,16 @@ tile_draw_2:
 * Modifies r1
 *
 set_attribute:
-*      Update attribute table
-       mov  r1,r3
-       sla  r3,3
-       movb r1,r3
-       srl  r3,3
-       movb r2,@attr_table(r3)
 *      Bitmap screen position
-       mov  r1,r3                      ; x and y positions
-       andi r3,>001f                   ; x position
-       sla  r3,3                       ; x8
-       andi r1,>1f00                   ; y position
+       mov  r1,r3                      ; 000yyyyy000xxxxx
+       andi r3,>001f                   ; 00000000000xxxxx
+       sla  r3,3                       ; 00000000xxxxx000
+       andi r1,>1f00                   ; 000yyyyy00000000
        abs  @tile_flip_vertical
        jeq  !
-       neg  r1                         ; Invert y
-       ai   r1,>1C00
-!      movb r1,r3
+       neg  r1                         ; -y
+       ai   r1,>1C00                   ; 28-y
+!      movb r1,r3                      ; 000yyyyyxxxxx000
 *      Draw color
        mov  r3,r1
        movb @r1lb,@vdpwa               ; Send low byte of VDP RAM write address
@@ -872,6 +866,10 @@ set_attribute:
        movb r2,*r15
        movb r2,*r15
        movb r2,*r15
+*      Update attribute table
+       mov  r3,r1                      ; 000yyyyyxxxxx000
+       srl  r1,3                       ; 000000yyyyyxxxxx
+       movb r2,@attr_table(r1)
        rt
 *// set_attribute
 

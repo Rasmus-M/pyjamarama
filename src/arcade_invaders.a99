@@ -159,8 +159,8 @@ invaders_update_1:
 invaders_update_2:
        mov  r0,@invaders_current_frame ; Store updated frame.
        mov  @invaders_change_dir_flag,r0
-       a    r0,r0
-       mov  r0,@invaders_flag
+       sla  r0,1
+       mov  r0,@invaders_y_offset
        jeq  invaders_update_11         ; Return
        clr  @invaders_change_dir_flag  ; Reset flag.
        neg  @invaders_current_dir      ; Change direction.
@@ -182,7 +182,7 @@ invaders_update_5:
        cb   r1,@byte_10                ; Check for left hand end of screen reached.
        jeq  invaders_update_4          ; Change direction if so.
 invaders_update_6:
-       ab   @invaders_flag+1,@r1lb     ; Add flag? to y
+       a    @invaders_y_offset,r1      ; Add offset to y
        cb   @r1lb,@byte_a0             ; Reached bottom?
        jl   invaders_update_7
        movb @byte_01,@death_flag       ; Die
@@ -484,8 +484,8 @@ invaders_current_dir:
        data >0001                      ; Current direction of invaders.
 invaders_change_dir_flag:
        data >0000                      ; When set indicates change of direction.
-invaders_flag:
-       data >0000                      ; Current direction of invaders.
+invaders_y_offset:
+       data >0000                      ; Invaders offset from top.
 invaders_bomb_frame:
        data >00c0                      ; F45D
 

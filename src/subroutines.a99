@@ -61,6 +61,15 @@ game_init_stats_3:
        movb r1,*r0+
        dec  r2
        jne  game_init_stats_3
+*      Arcade invaders
+       li   r0,invaders_first_type+2
+       mov  r0,@invaders_type_ptr
+       li   r0,>0075
+       mov  r0,@invaders_start_frame
+       mov  r0,@invaders_current_frame
+       inc  r0
+       mov  r0,@invaders_next_frame
+       clr  @invaders_y_offset
 *      Clear frame counter
        clr  @frame
        .endproc

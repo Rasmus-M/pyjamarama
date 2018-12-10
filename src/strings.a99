@@ -1,0 +1,119 @@
+str_main_menu:
+       equ  $
+LB4CE  byte >FE
+LB4CF  text "DKEY:-   1.SINCLAIR JOYSTICK"
+LB4EB  byte >FC
+LB4EC  byte >E5
+LB4ED  byte >05
+LB4EE  text "KEY:-   2.KEMPSTON JOYSTICK"
+LB509  byte >FC
+LB50A  byte >E5
+LB50B  byte >05
+LB50C  text "KEY:-   3.DEFINE KEYS"
+LB521  byte >FE
+LB522  text "F"
+LB523  byte >FC
+LB524  byte >EC
+LB525  byte >05
+LB526  text "LEFT="
+LB52B  byte >FC
+LB52C  byte >0C
+LB52D  byte >00
+LB52E  text "RIGHT="
+LB534  byte >FC
+LB535  byte >EF
+LB536  byte >03
+LB537  text "JUMP/FIRE="
+LB541  byte >FC
+LB542  byte >F2
+LB543  byte >04
+LB544  byte >FE
+LB545  byte >07
+LB546  text "PRESS ENTER TO START"
+LB55A  byte >FF
+
+str_lose:
+       equ  $
+LB0DA  byte >FE
+LB0DB  text "FYOU DIPSTICK! BECAUSE YOU DIDN'T"
+LB0FC  byte >FC
+LB0FD  byte >E0
+LB0FE  byte >03
+LB0FF  text "WAKE WALLY FOR WORK,  HIS GAFFER"
+LB11F  byte >FC
+LB120  byte >E0
+LB121  byte >03
+LB122  text "HAS GIVEN HIM THE ELBOW!"
+LB13A  byte >FC
+LB13B  byte >E8
+LB13C  byte >05
+LB13D  byte >FE
+LB13E  text "DIT'S ALL YOUR FAULT."
+LB153  byte >FC
+LB154  byte >EC
+LB155  byte >05
+LB156  byte >FE
+LB157  text "CYOU'D  BETTER  HAVE ANOTHER  GO,"
+LB178  byte >FC
+LB179  byte >E0
+LB17A  byte >03
+LB17B  text "AND MAKE  SURE THAT YOU WAKE HIM"
+LB19B  byte >FC
+LB19C  byte >E0
+LB19D  byte >03
+LB19E  text "UP THIS TIME."
+LB1AB  byte >FF
+
+str_congrats:
+       equ  $
+LB017  byte >FE
+LB018  text "F C O N G R A T U L A T I O N S !"
+LB039  byte >FC
+LB03A  byte >E1
+LB03B  byte >05
+LB03C  byte >FE
+LB03D  text "CWALLY'S WOKEN UP. FOR THE FIRST"
+LB05D  byte >FC
+LB05E  byte >E1
+LB05F  byte >04
+LB060  text "TIME  IN  HIS LIFE HE  WILL  BE"
+LB07F  byte >FC
+LB080  byte >E1
+LB081  byte >04
+LB082  text "EARLY FOR WORK."
+LB091  byte >FC
+LB092  byte >F8
+LB093  byte >05
+LB094  byte >FE
+LB095  text "DNOW WATCH OUT FOR"
+LB0A7  byte >FC
+LB0A8  byte >F0
+LB0A9  byte >04
+LB0AA  byte >FE
+LB0AB  text "E'LIFE OF WALLY'"
+LB0BB  byte >FF
+
+str_final_score:
+       equ  $
+LB1CF  byte >FE
+LB1D0  text "CWALLY HAS WALKED"
+LB1E1  byte >FC
+LB1E2  byte >F9
+LB1E3  byte >05
+LB1E4  text "PACES"
+LB1E9  byte >FC
+LB1EA  byte >F2
+LB1EB  byte >05
+LB1EC  text "AND  HAS  SOLVED"
+LB1FC  byte >FC
+LB1FD  byte >F9
+LB1FE  byte >04
+LB1FF  byte >FE
+LB200  text "G%"
+LB202  byte >FE
+LB203  text "C"
+LB204  byte >FC
+LB205  byte >F6
+LB206  byte >04
+LB207  text "OF THE ADVENTURE"
+       byte >FF

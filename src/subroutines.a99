@@ -773,6 +773,45 @@ life_draw_blit:
 
 *********************************************************************
 *
+* Display a string using double height characters
+*
+* Input:
+* r0: Pointer to string
+* r1 MSB: y position (chars)
+* r1 LSB: x position (chars)
+*
+string_draw_double:
+       .proc
+       mov  r0,r4                      ; String pointer
+       mov  r1,r5                      ; Position
+string_draw_double_1:
+       movb *r4+,r0                    ; Get next character in string.
+       jgt  string_draw_double_3       ; Bytes below $80 just get drawn.
+       cb   r0,@byte_ff                ; End of string.
+       jeq  string_draw_double_4
+       cb   r0,@byte_fe                ; Character code for change colour.
+       jne  string_draw_double_2
+       movb *r4+,r0                    ; Get colour from next byte in string.
+       bl   @ti_color                  ; Convert to TI color
+       mov  r1,r2
+       jmp  string_draw_double_1
+string_draw_double_2:
+       cb   r0,@byte_fc                ; Character code for offset position.
+       jne  string_draw_double_3
+       ab   *r4+,@r5lb                 ; Offset X position by 2nd byte.
+       ab   *r4+,r5                    ; Offset Y position by 3rd byte.
+       jmp  string_draw_double_1
+string_draw_double_3:
+       mov  r5,r1                      ; Position
+       bl   @tile_draw_double_height   ; Draw character and move onto next column.
+       inc  r5
+       jmp  string_draw_double_1
+string_draw_double_4:
+       .endproc
+*// string_draw_double
+
+*********************************************************************
+*
 * Draw tile and color attribute
 *
 * Input:
@@ -780,7 +819,8 @@ life_draw_blit:
 * r1 MSB: y position (chars)
 * r1 LSB: x position (chars)
 * r2 MSB: color
-* Modifies r0,r1,r3
+*
+* Modifies r1,r3
 *
 tile_draw:
        .proc
@@ -792,7 +832,7 @@ tile_draw:
        sla  r1,3                       ; *8
        a    @tile_start_ptr,r1         ; Add base address
        movb @r3lb,@vdpwa               ; Send low byte of VDP RAM write address
-       ai   r3,>4000
+       ori  r3,>4000
        movb r3,@vdpwa                  ; Send high byte of VDP RAM write address
        abs  @tile_flip_vertical
        jne  tile_draw_1
@@ -828,6 +868,51 @@ tile_draw_1:
 tile_draw_2:
        .endproc
 *// tile_draw
+
+*********************************************************************
+*
+* Draw double height tile and color attributes
+*
+* Input:
+* r0 MSB: Tile number
+* r1 MSB: y position (chars)
+* r1 LSB: x position (chars)
+* r2 MSB: color
+*
+* Modifies r0,r1,r3
+*
+tile_draw_double_height:
+       .proc
+*      Draw color
+       .push r1
+       bl   @set_attribute
+       .pop r1
+       ab   @byte_01,r1
+       bl   @set_attribute             ; r3 contains VDP address
+       ai   r3,->0100
+*      Draw tile
+       clr  r1
+       movb r0,@r1lb                   ; Tile number
+       sla  r1,3                       ; *8
+       a    @tile_start_ptr,r1         ; Add base address
+       li   r0,2
+tile_draw_double_height_1:
+       movb @r3lb,@vdpwa               ; Send low byte of VDP RAM write address
+       ori   r3,>4000
+       movb r3,@vdpwa                  ; Send high byte of VDP RAM write address
+       movb *r1,*r15
+       movb *r1+,*r15
+       movb *r1,*r15
+       movb *r1+,*r15
+       movb *r1,*r15
+       movb *r1+,*r15
+       movb *r1,*r15
+       movb *r1+,*r15
+       ai   r3,>0100
+       dec  r0
+       jne  tile_draw_double_height_1
+       .endproc
+*// tile_draw_double_height
 
 *********************************************************************
 *

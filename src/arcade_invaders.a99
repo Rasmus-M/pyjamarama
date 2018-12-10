@@ -191,11 +191,10 @@ invaders_update_7:
 *      Draw invader
        .push r1
        bl   @bitmap_16_erase            ; Erase invader from old position
-       .pop r1
+       .peek r1
        mov  @invaders_next_frame,r0
        movb r1,@bitmap_x+1             ; Draw invader at new position and new frame.
        movb @r1lb,@bitmap_y+1
-       .push r1
        bl   @bitmap_16_draw
        .pop r1
        swpb r1

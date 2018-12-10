@@ -198,6 +198,10 @@ pad_max:
        mov  *r10,#1
        .endm
 
+       .defm peek
+       mov  @-2(r10),#1
+       .endm
+
 *********************************************************************
 *
 * Main program
@@ -490,6 +494,7 @@ sprite_bitmap_map_alt:
        copy "roll-rock.a99"
        copy "wally-resurrect-table.a99"
        copy "arcade_invaders.a99"
+       copy "strings.a99"
 
 attr_table:
        bss  >300

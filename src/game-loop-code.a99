@@ -462,7 +462,7 @@ screen_you_lost:
        li   r0,str_final_score
        li   r1,>0208
        bl   @string_draw_double
-;       bl   @display_final_score
+       bl   @display_final_score
        bl   @wait_key
        b    @main                      ; TODO
 *// screen_you_lost

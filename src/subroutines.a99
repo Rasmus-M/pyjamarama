@@ -379,6 +379,98 @@ room_init:
 
 *********************************************************************
 *
+* Display final score
+*
+display_final_score:
+       .proc
+       mov  @steps_counter,r0
+       li   r1,>070f
+       li   r2,attr_46
+       clr  r3
+       bl   @display_number
+       bl   @calculate_score
+       mov  r3,r0
+       li   r1,>100f
+       li   r2,attr_47
+       li   r3,2
+       bl   @display_number
+       .endproc
+*// display_final_score
+
+*********************************************************************
+*
+* Calculates the overall percentage score using how many rooms visited
+* and which objects collected.
+*
+* r3: holds the total score on exit.
+*
+calculate_score:
+       .proc
+       li   r1,object_found_table      ; Table holding which objects collected and percentage values of each object
+       li   r2,>20                     ; Number of objects
+       clr  r3                         ; Total percent
+calculate_score_0:
+       mov  *r1+,r0
+       cb   r0,@byte_01                ; See if objects has been picked up
+       jne  calculate_score_1          ; Skip object (if not marked as carried)
+       andi r0,>00ff
+       a    r0,r3                      ; If it has, then add value of object to total percentage.
+calculate_score_1:
+       dec  r2
+       jne  calculate_score_0
+       li   r1,rooms_visited_table
+       li   r2,>001e
+       clr  r0
+calculate_score_2:
+       movb *r1+,@r0lb
+       a    r0,r3
+       dec  r2
+       jne  calculate_score_2
+       .endproc
+*// calculate_score
+
+*********************************************************************
+*
+* Draw a decimal number
+*
+* Input:
+* r0: number to display
+* r1: MSB: y position (chars)
+* r1: LSB: x position (chars)
+* r2: MSB: color
+* r3: Width
+*
+display_number:
+       .proc
+       mov  r0,r4                      ; Number
+       mov  r1,r5                      ; Position
+       mov  r3,r6                      ; Width
+display_number_1:
+       clr  r3                         ; MSB
+       li   r1,10                      ; Divisor
+       div  r1,r3                      ; Divide r3-r4 by 10
+       mov  r4,r0                      ; Remainder
+       mov  r3,r4
+       ai   r0,>30                     ; Add tile number for zero
+       swpb r0
+       mov  r5,r1                      ; Position
+       bl   @tile_draw_double_height
+       mov  r6,r6
+       jne  display_number_2
+       mov  r4,r4
+       jeq  display_number_3
+       dec  r5
+       jmp  display_number_1
+display_number_2:
+       dec  r5
+       dec  r6
+       jne  display_number_1
+display_number_3:
+       .endproc
+*// display_number
+
+*********************************************************************
+*
 * Redraw inventory area
 *
 inventory_redraw:

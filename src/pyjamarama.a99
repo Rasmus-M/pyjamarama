@@ -247,6 +247,9 @@ one_time_init_1:
        clr  @ignore_energy
        li   r0,>012c
        mov  r0,@energy_counter
+*      Tile start pointer
+       li   r0,bmp_tiles
+       mov  r0,@tile_start_ptr
        .endproc
 *// one_time_init
 

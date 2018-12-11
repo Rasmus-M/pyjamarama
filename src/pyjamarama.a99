@@ -212,13 +212,8 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @one_time_init
-loop:  bl   @game_start
-       mov  @start_room_no,r0
-       inc  r0
-       ci   r0,30
-       jlt  !
-       clr  r0
-!      mov  r0,@start_room_no
+loop:  bl   @main_menu
+       bl   @game_start
        jmp  loop
 
 *********************************************************************
@@ -241,17 +236,32 @@ one_time_init_1:
 *      Set start room
        li   r0,start_room
        mov  r0,@start_room_no
-*      Choose joystick
-       seto @input_flag
-*      Don't ignore energy
-       clr  @ignore_energy
-       li   r0,>012c
-       mov  r0,@energy_counter
 *      Tile start pointer
        li   r0,bmp_tiles
        mov  r0,@tile_start_ptr
        .endproc
 *// one_time_init
+
+*********************************************************************
+*
+* Display main menu
+*
+main_menu:
+       .proc
+*      Don't ignore energy
+       clr  @ignore_energy
+       li   r0,>012c
+       mov  r0,@energy_counter
+*      Display screen
+       li   r0,str_main_menu
+       li   r1,>0003
+       bl   @string_draw_double
+*      Wait key
+       bl   @wait_key
+*      Choose joystick
+       seto @input_flag
+       .endproc
+*// main_menu
 
 *********************************************************************
 *
@@ -281,15 +291,13 @@ game_loop:
        bl   @wally_test_obj_slots
        bl   @wally_percent_update
        bl   @room_event_caller
-       bl   @game_exit_check
        bl   @food_check_pickup
        bl   @room_test_events
        bl   @upload_sprites
        inc  @frame
-       li   r0,KEY_SH
-       bl   @check_key
+       bl   @game_exit_check
+       mov  r0,r0
        jeq  game_loop
-game_end:
        .endproc
 *// game_start
 

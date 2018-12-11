@@ -519,11 +519,23 @@ room_event_caller:
 
 *********************************************************************
 *
-* Check for SHIFT + BREAK to exit current game.
+* Check for Fctn + = to quit
+* or Ctrl + Q to exit current game.
 *
 game_exit_check:
        .proc
        bl   @check_quit
+       li   r0,KEY_CT
+       bl   @check_key
+       jeq  game_exit_check_1
+       li   r0,KEY_Q
+       bl   @check_key
+       jeq  game_exit_check_1
+       seto r0
+       jmp  game_exit_check_2
+game_exit_check_1:
+       clr  r0
+game_exit_check_2:
        .endproc
 *// game_exit_check
 

@@ -19,10 +19,12 @@ invaders_loop:
        bl   @invaders_bullet_update
        bl   @invaders_update_bombs
        bl   @wally_check_for_death
-       bl   @game_exit_check
        bl   @upload_sprites
        inc  @frame
-       jmp  invaders_loop
+       bl   @game_exit_check
+       mov  r0,r0
+       jeq  invaders_loop
+       b    @main
 *// invaders_loop
 
 *********************************************************************

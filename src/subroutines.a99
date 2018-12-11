@@ -35,6 +35,7 @@ game_init_stats_0:
        dect r2
        jne  game_init_stats_0
        bl   @room_init                 ; Added by Rasmus
+       movb @byte_ff,@wally_last_dir   ; Added by Rasmus
 *      Reset object positions by filling in the object slots, for each room, with and object index in incremental steps
        li   r0,room_obj_slot_0_obj
        li   r2,>1e

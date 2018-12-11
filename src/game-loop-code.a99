@@ -90,7 +90,7 @@ wally_check_fall:
        cb   r0,@byte_attr_45           ; Cyan
        jne  wally_check_fall_0
 wally_check_attr_solid:
-       mov  @wally_char_aligned,r0      See if Wally is aligned with a character cell.
+       mov  @wally_char_aligned,r0     ; See if Wally is aligned with a character cell.
        jne  wally_check_fall_0         ; If not then let him fall regardless of colour.
        movb @byte_00,@wally_falling
        jmp  wally_handler_end

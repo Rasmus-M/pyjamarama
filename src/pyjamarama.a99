@@ -106,7 +106,8 @@ r6lb   equ  wrksp+13
 r7lb   equ  wrksp+15
 r8lb   equ  wrksp+17
 r9lb   equ  wrksp+19
-stack  equ  pad+>20                    ; Stack (grows up)
+sndws  equ  wrksp+>20
+stack  equ  sndws+>20                    ; Stack (grows up)
 padvar equ  stack+>20                  ; Start of pad variables
 *
 * PAD variables
@@ -615,6 +616,7 @@ sprite_bitmap_map_alt:
        copy "roll-rock.a99"                ; Read
        copy "wally-resurrect-table.a99"    ; Read
        copy "strings.a99"                  ; Read
+*      copy "tiplayersfx.a99"
 
 attr_table:
        bss  >300                           ; Read-write

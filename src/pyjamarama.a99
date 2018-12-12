@@ -294,10 +294,6 @@ one_time_init_1:
 *
 main_menu:
        .proc
-*      Don't ignore energy
-       clr  @ignore_energy
-       li   r0,>012c
-       mov  r0,@energy_counter
 *      Display screen
        bl   @screen_clear
        li   r0,str_main_menu
@@ -347,6 +343,71 @@ game_loop:
        jeq  game_loop
        .endproc
 *// game_start
+
+*********************************************************************
+*
+* Initialize game data
+*
+game_init_stats:
+       .proc
+*      Don't ignore energy
+       clr  @ignore_energy
+       li   r0,>012c
+       mov  r0,@energy_counter
+*      Init pockets
+       li   r0,pocket_1_start
+       mov  r0,@pocket_1
+       li   r0,pocket_2_start
+       mov  r0,@pocket_2
+       li   r0,food_table              ; Reset active food
+       mov  r0,@food_active_ptr
+*      Clear all the object flags
+       li   r2,>16                      .
+       li   r0,lift_count
+game_init_stats_0:
+       clr  *r0+
+       dect r2
+       jne  game_init_stats_0
+*      Reset object positions by filling in the object slots, for each room,
+*      with and object index in incremental steps
+       li   r0,room_obj_slot_0_obj
+       li   r2,>1e
+       li   r1,>0200
+game_init_stats_1:
+       movb r1,*r0+
+       inct r0
+       ai   r1,>0100
+       dec  r2
+       jne  game_init_stats_1
+*      Clear all object found markers
+       li   r0,object_found_table      ;
+       li   r2,>20
+       clr  r1
+game_init_stats_2:
+       movb r1,*r0
+       inct r0
+       dec  r2
+       jne  game_init_stats_2
+*      Clear all rooms visited
+       li   r0,rooms_visited_table
+       li   r2,>23
+game_init_stats_3:
+       movb r1,*r0+
+       dec  r2
+       jne  game_init_stats_3
+*      Arcade invaders
+       li   r0,invaders_first_type+2
+       mov  r0,@invaders_type_ptr
+       li   r0,>0075
+       mov  r0,@invaders_start_frame
+       mov  r0,@invaders_current_frame
+       inc  r0
+       mov  r0,@invaders_next_frame
+       clr  @invaders_y_offset
+*      Clear frame counter
+       clr  @frame
+       .endproc
+*// game_init_stats
 
 *********************************************************************
 *

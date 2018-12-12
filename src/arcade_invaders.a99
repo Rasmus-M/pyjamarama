@@ -449,7 +449,7 @@ invaders_next_stage:
        jeq  invaders_next_stage_0
        inc  r0                         ; Increase the number of lives and update on screen.
        mov  r0,@wally_lives
-       bl   @life_draw_blit
+       bl   @life_draw
 invaders_next_stage_0:
        li   r0,invaders_first_type     ; Go back to first stage again.
 invaders_next_stage_1:

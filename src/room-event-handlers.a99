@@ -231,7 +231,7 @@ update_rolling_rock_1:
        li   r6,>0e00                   ; Y position of rock.
        movb @flag_rolling_rock,@r6lb   ; Use flag as X position of rock.
        bl   @rolling_rock_draw
-       ab   @byte_01,@flag_rolling_rock         ; Move position for next frame.
+       ab   r13,@flag_rolling_rock         ; Move position for next frame.
        movb @wally_x,r0
        srl  r0,3
        cb   r0,@flag_rolling_rock
@@ -245,7 +245,7 @@ update_rolling_rock_3:
        clr  r0
        movb r0,@rolling_rock_draw
        movb r0,@flag_baddy_init
-       movb @byte_01,@death_flag
+       movb r13,@death_flag
        li   r0,>00c8
        mov  r0,@room_0_rock_count
        bl   @screen_clear_room
@@ -270,10 +270,10 @@ rolling_rock_draw_1:
        li   r2,attr_45                 ; Colour rock cyan.
        bl   @tile_draw
 rolling_rock_draw_2:
-       ab   @byte_01,r6                ; Next tile position down.
+       ab   r13,r6                ; Next tile position down.
        dec  r8
        jne  rolling_rock_draw_1
-       sb   @byte_01,@r6lb             ; Next column to the left!
+       sb   r13,@r6lb             ; Next column to the left!
        sb   @byte_07,r6                ; Back to top
        dec  r7
        jne  rolling_rock_draw_0
@@ -294,7 +294,7 @@ update_roll_ball:
        .proc
        movb @flag_baddy_init,r0
        jne  update_roll_ball_0
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        bl   @allocate_sprite
        mov  r0,@roll_ball_sprite
        mov  r0,r4
@@ -345,7 +345,7 @@ update_roll_ball_3:
        ab   @byte_02,@r0lb             ; Move right
        cb   @r2lb,@byte_1a
        jl   update_roll_ball_1
-       ab   @byte_01,r0                ; Move slanted
+       ab   r13,r0                ; Move slanted
        jmp  update_roll_ball_1
 update_roll_ball_4:
        .endproc
@@ -366,7 +366,7 @@ handler_angels:
        movb @flag_baddy_init,r0        ; See if angels have been intialised.
        jne  handler_angels_0
 *      Initialize
-       movb @byte_01,@flag_baddy_init  ; Set as initialised.
+       movb r13,@flag_baddy_init       ; Set as initialised.
        li   r0,>0002
        mov  r0,@angel1_direction       ; Set directions all the same.
        mov  r0,@angel2_direction
@@ -456,7 +456,7 @@ handler_food:
        .proc
        movb @flag_food_drawn,r0
        jne  handler_food_1
-       movb @byte_01,@flag_food_drawn
+       movb r13,@flag_food_drawn
        mov  @food_active_ptr,r1        ; Get info of currently active food.
        movb @wally_room_no+1,r0
        cb   r0,*r1                     ; See if is same room as Wally, returning if not.
@@ -565,7 +565,7 @@ handler_chickens:
        .proc
        movb @flag_baddy_init,r0
        jne  handler_chickens_1
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>007b
        mov  r0,@chicken_frame
        bl   @get_sprite_pattern
@@ -661,7 +661,7 @@ handler_darts:
        .proc
        movb @flag_baddy_init,r0        ; See if baddies need initializing.
        jne  handler_darts_1
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0090
        mov  r0,@dart_frame
        bl   @get_sprite_pattern
@@ -743,7 +743,7 @@ handler_bouncing_axe:
        mov  r3,*r0
        li   r0,>0004
        mov  r0,@axe_velocity_y
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        jmp  handler_bouncing_axe_7
 *      Update
 handler_bouncing_axe_0:
@@ -809,7 +809,7 @@ handler_savage_plant:
        .proc
        movb @flag_baddy_init,r0
        jne  handler_savage_plant_0
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0075
        mov  r0,@savage_plant_frame
        bl   @get_sprite_pattern
@@ -882,7 +882,7 @@ handler_balloon_help:
        .proc
        movb @flag_baddy_init,r0
        jne  handler_balloon_help_0
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0073                   ; Top of balloon
        bl   @get_sprite_pattern
        mov  r1,r3
@@ -905,7 +905,7 @@ handler_balloon_help:
 handler_balloon_help_0:
        li   r0,>1898                   ; Check to see if Wally is at position (18, 98), returning if false.
        sb   @wally_x,r0
-       sb   @byte_01,r0
+       sb   r13,r0
        cb   r0,@byte_fe
        jl   handler_balloon_help_3
        cb   @wally_y,@r0lb
@@ -918,7 +918,7 @@ handler_balloon_help_0:
 handler_balloon_help_1:
        movb @flag_balloon,r0
        jne  handler_balloon_help_3
-       movb @byte_01,@flag_balloon
+       movb r13,@flag_balloon
        li   r2,>50
 handler_balloon_help_2:
        bl   @animation_frame
@@ -946,7 +946,7 @@ handler_books:
        .proc
        movb @flag_baddy_init,r0        ; See if baddies need initializing.
        jne  handler_books_1
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>007a
        bl   @get_sprite_pattern
        mov  r1,r3
@@ -968,7 +968,7 @@ handler_books_1:
 handler_books_2:
        mov  *r7+,r8                    ; Get sprite pointer
        mov  *r8,r1                     ; Get y and x
-       ab   @byte_01,r1                ; Move y position down.
+       ab   r13,r1                ; Move y position down.
        cb   r1,@byte_80                ; Check for end of screen.
        jl   handler_books_3
        movb @byte_46,r1                ; Reset to left of screen if need be.
@@ -1026,7 +1026,7 @@ animate_moving_floor:
        jeq  animate_moving_floor_2
        cb   @pocket_2+1,@byte_12
        jeq  animate_moving_floor_2
-       cb   @death_flag,@byte_01
+       cb   @death_flag,r13
        jeq  animate_moving_floor_2
        li   r0,>1700
        bl   @vsbr
@@ -1060,7 +1060,7 @@ handler_ghosts:
        .proc
        movb @flag_baddy_init,r0        ; See if baddy has been initialised.
        jne  handler_ghosts_2
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>00bb
        mov  r0,@ghost_frame
        bl   @get_sprite_pattern
@@ -1161,7 +1161,7 @@ handler_three_ton:
        .proc
        movb @flag_baddy_init,r0        ; See if baddy has been initialised.
        jne  handler_three_ton_1
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0064                   ; Set countdown before weight drops.
        mov  r0,@weight_count
        li   r0,>007f                   ; Top of weight
@@ -1220,7 +1220,7 @@ handler_falling_blocks:
        movb @flag_baddy_init,r0        ; See if invaders are intialised.
        jne  handler_falling_blocks_2
 *      Initialise
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0072
        bl   @get_sprite_pattern
        movb @byte_07,@r1lb
@@ -1395,7 +1395,7 @@ handler_invaders_3:
        movb @flag_baddy_init,r0        ; See if invaders are intialised.
        jne  handler_invaders_5
 *      Initialise
-       movb @byte_01,@flag_baddy_init
+       movb r13,@flag_baddy_init
        li   r0,>0099
        mov  r0,@invad_frame
        bl   @get_sprite_pattern

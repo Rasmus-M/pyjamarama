@@ -30,7 +30,7 @@ wally_handler_2:
        jeq  wally_handler_3
        cb   r0,@byte_attr_42           ; Red
        jeq  wally_handler_3
-       movb @byte_01,@wally_falling
+       movb r13,@wally_falling
        jmp  wally_check_fall
 *      Check user's input
 wally_handler_3:
@@ -49,7 +49,7 @@ wally_handler_4:
        jne  wally_jump
 * This entry point is used by the routine at wally_shoot_create
 wally_handler_5:
-       movb @byte_00,@wally_dir
+       szcb r14,@wally_dir
        abs  @input_flag
        jeq  wally_handler_6
        li   r0,JOY_RT
@@ -92,7 +92,7 @@ wally_check_fall:
 wally_check_attr_solid:
        mov  @wally_char_aligned,r0     ; See if Wally is aligned with a character cell.
        jne  wally_check_fall_0         ; If not then let him fall regardless of colour.
-       movb @byte_00,@wally_falling
+       szcb r14,@wally_falling
        jmp  wally_handler_end
 wally_check_fall_0:
        ab   @byte_04,@wally_y
@@ -114,14 +114,14 @@ wally_jump_demo_entry:
        movb r0,@wally_dir
 wally_jump_0:
        movb r0,@wally_jump_dir
-       movb @byte_00,@wally_jump_count
+       szcb r14,@wally_jump_count
 * This entry point is used by the routines at Wally_Handler and Demo.
 wally_jump_handler_entry:
        movb @wally_dir,r0              ; Check for jumping to the right.
-       cb   r0,@byte_01
+       cb   r0,r13
        jeq  wally_jump_5
 * Jumping Left.
-       movb @byte_00,@wally_head_turned
+       szcb r14,@wally_head_turned
        clr  r0
        movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
        mov  r0,r3
@@ -131,7 +131,7 @@ wally_jump_handler_entry:
        movb *r3+,@r1lb                 ; X offset.
        movb *r3+,r1                    ; Y offset.
        movb *r3,r2                     ; Sprite frame index.
-       sb   @byte_01,r1
+       sb   r13,r1
        jlt  wally_jump_2               ; See if jump direction is up or falling.
        movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
        cb   r0,@byte_attr_42
@@ -156,18 +156,18 @@ wally_jump_3:
 wally_jump_4:
        ab   @byte_20,r2                ; Update sprite.
        movb r2,@wally_frame
-       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       ab   r13,@wally_jump_count      ; Increase the counter and check for end of jump.
        movb @wally_jump_count,r0
        cb   r0,@byte_0c
        jne  wally_jump_left_end
-       movb  @byte_00,@wally_dir       ; Jump has ended, reset the flags.
-       movb  @byte_00,@wally_jump_dir
+       szcb r14,@wally_dir             ; Jump has ended, reset the flags.
+       szcb r14,@wally_jump_dir
        bl   @wally_steps_incr
 wally_jump_left_end:
        .endproc
 * Jumping right.
 wally_jump_5:
-       movb @byte_00,@wally_head_turned
+       szcb r14,@wally_head_turned
        clr  r0
        movb @wally_jump_count,@r0lb    ; Get translation for next frame in jump.
        mov  r0,r3
@@ -177,7 +177,7 @@ wally_jump_5:
        movb *r3+,@r1lb                 ; X offset.
        movb *r3+,r1                    ; Y offset.
        movb *r3,r2                     ; Sprite frame index.
-       sb   @byte_01,r1
+       sb   r13,r1
        jlt  wally_jump_7               ; See if jump direction is up or falling.
        movb @wally_attr,r0             ; If falling test to see if Wally lands on anything.
        cb   r0,@byte_attr_42
@@ -202,12 +202,12 @@ wally_jump_8:
 wally_jump_9:
        ab   @byte_30,r2                ; Update sprite.
        movb r2,@wally_frame
-       ab   @byte_01,@wally_jump_count ; Increase the counter and check for end of jump.
+       ab   r13,@wally_jump_count      ; Increase the counter and check for end of jump.
        movb @wally_jump_count,r0
        cb   r0,@byte_0c
        jne  wally_jump_right_end
-       movb @byte_00,@wally_dir       ; Jump has ended, reset the flags.
-       movb @byte_00,@wally_jump_dir
+       szcb r14,@wally_dir             ; Jump has ended, reset the flags.
+       szcb r14,@wally_jump_dir
        bl   @wally_steps_incr
 wally_jump_right_end:
        .endproc
@@ -217,7 +217,7 @@ wally_jump_right_end:
 wally_move:
        bl   @energy_countdown
        movb @wally_dir,r0
-       cb   r0,@byte_01
+       cb   r0,r13
        jeq  wally_move_right
 *      Wally Move Left
 wally_move_left:
@@ -226,8 +226,8 @@ wally_move_left:
        cb   r0,@byte_00
        jhe  wally_move_1
 wally_move_0:
-       movb @byte_00,@wally_head_turned ; Clear head turn flag (1)
-       movb @byte_00,r0
+       szcb r14,@wally_head_turned     ; Clear head turn flag (1)
+       szcb r14,r0
        jmp  wally_move_2
 wally_move_1:
        .ifeq slow_animations,1
@@ -255,7 +255,7 @@ wally_move_right:
        cb   r0,@byte_10
        jhe  wally_move_5
 wally_move_4:
-       movb @byte_00,@wally_head_turned ; Clear head turn flag (2)
+       szcb r14,@wally_head_turned     ; Clear head turn flag (2)
        movb @byte_10,r0
        jmp  wally_move_6
 wally_move_5:
@@ -298,11 +298,11 @@ wally_turn_head:
        jeq  wally_turn_head_1
        cb   r0,@byte_1c
        jeq  wally_turn_head_1
-       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       movb @wally_head_countdown,r0   ; If counter is greater than zero, skip onto just counting down.
        jne  wally_turn_head_3
        jmp  wally_turn_head_4
 wally_turn_head_1:
-       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       movb @wally_head_countdown,r0   ; If counter is greater than zero, skip onto just counting down.
        jne  wally_turn_head_3
        movb r0,@wally_head_turned      ; Clear Wally's head turn flag(2).
        bl   @rand                      ; Set a random value (0 ~ 1F) into countdown.
@@ -310,12 +310,12 @@ wally_turn_head_1:
        movb r0,@wally_head_countdown
        jmp  wally_turn_head_4
 wally_turn_head_2
-       movb @wally_head_countdown,r0  ; If counter is greater than zero, skip onto just counting down.
+       movb @wally_head_countdown,r0   ; If counter is greater than zero, skip onto just counting down.
        jne  wally_turn_head_3
-       movb @byte_01,@wally_head_turned
+       movb r13,@wally_head_turned
        jmp  wally_turn_head_4
 wally_turn_head_3:
-       sb   @byte_01,r0
+       sb   r13,r0
        movb r0,@wally_head_countdown
 wally_turn_head_4:
        .pop r0
@@ -331,12 +331,12 @@ wally_step_check:
        movb @wally_frame,r0
        andi r0,7
        jeq  wally_step_check_0
-       movb @byte_00,@wally_step_flag
+       szcb r14,@wally_step_flag
        jmp  wally_step_check_1
 wally_step_check_0:
        movb @wally_step_flag,r0
        jne  wally_step_check_1
-       movb @byte_01,@wally_step_flag
+       movb r13,@wally_step_flag
        bl   @wally_steps_incr
 wally_step_check_1:
        .endproc
@@ -392,7 +392,7 @@ wally_death_3:                         ; Now float lying down Wally graphic up t
        cb   @wally_y,@byte_30
        jh   wally_death_3
        swpb @wally_feet_dy             ; Change to horizontal Wally
-       movb @byte_00,@wally_frame
+       szcb r14,@wally_frame
        bl   @wally_resurrect
 wally_check_for_death_2:
        .endproc
@@ -404,7 +404,7 @@ wally_check_for_death_2:
 *
 wally_resurrect:
        .proc
-       movb @byte_00,@milk_level
+       szcb r14,@milk_level
        bl   @milk_draw_full
        mov  @wally_lives,r0            ; Lose one life and update the scoreboard.
        dec  r0
@@ -427,12 +427,12 @@ wally_resurrect_1:
 wally_resurrect_2:
        bl   @animation_frame
        bl   @animation_frame
-       ab   @byte_01,@wally_frame
+       ab   r13,@wally_frame
        dec  r2
        jne  wally_resurrect_2
        inc  @wally_feet_frame_offset
        movb @byte_10,@wally_frame
-       movb @byte_00,@death_flag
+       szcb r14,@death_flag
        bl   @wally_reset
        mov  @wally_room_no,r0
        ci   r0,>001e
@@ -496,7 +496,7 @@ wally_test_obj_slots:
        sb   @byte_06,r0
        cb   r0,@byte_f4
        jhe  wally_test_obj_slot_0
-       movb @byte_00,@obj_event_pause
+       szcb r14,@obj_event_pause
 wally_test_obj_slot_0:
        .endproc
 *// wally_test_obj_slots
@@ -570,7 +570,7 @@ food_check_pickup_0:
        inc  r1
        movb @wally_x,r0                ; Check to see if Wally is on the same X plane as the food.
        sb   *r1,r0
-       sb   @byte_01,r0
+       sb   r13,r0
        cb   r0,@byte_fe
        jl   food_check_pickup_end
        cb   @wally_y,@byte_98          ; Make sure he is also on the same Y position, which is fixed to $98.
@@ -584,7 +584,7 @@ food_check_pickup_0:
 *      Update pointer
        mov  @food_active_ptr,r1        ; Set the next food in line as active, to replace the one just eaten.
        ai   r1,3
-       cb   *r1,@byte_ff               ; Check for end of group, if so wrap around to start of table again.
+       cb   *r1,r14                    ; Check for end of group, if so wrap around to start of table again.
        jne  food_check_pickup_1
        li   r1,food_table
 food_check_pickup_1:
@@ -606,7 +606,7 @@ room_test_events:
        mov  @table_room_logic_ptr(r4),r4
 room_test_events_next_cmd:
        movb *r4+,r0
-       cb   r0,@byte_ff                ; END
+       cb   r0,r14                     ; END
        jeq  room_test_events_end
        cb   r0,@byte_fd                ; THEN
        jeq  room_test_events_then

@@ -74,7 +74,7 @@ wally_init:
        mov  r0,@wally_feet_dy
        li   r0,>0001
        mov  r0,@wally_feet_frame_offset
-       movb @byte_ff,@wally_last_dir   ; Added by Rasmus
+       movb r14,@wally_last_dir   ; Added by Rasmus
        .endproc
 *// wally_init
 
@@ -90,11 +90,11 @@ wally_reset
        movb r0,@wally_falling
        movb r0,@wally_dir
        movb r0,@wally_jump_dir
-       movb @byte_ff,@wally_last_dir
+       movb r14,@wally_last_dir
        c    @wally_x,@byte_78
        jhe  wally_reset_0
        movb @byte_10,@wally_frame
-       movb @byte_01,@wally_last_dir
+       movb r13,@wally_last_dir
 wally_reset_0:
        .endproc
 *// wally_reset
@@ -175,7 +175,7 @@ wally_erase:
 *
 wally_knocked_down:
        .proc
-       movb @byte_00,@wally_head_turned
+       szcb r14,@wally_head_turned
        mov  @wally_room_no,r1          ; Workout the position of the bottom floor in room.
        movb @wally_resurrect_y(r1),r2
 wally_knocked_down_0:
@@ -292,7 +292,7 @@ milk_decrease_by_amount:
        ci   r2,32
        jlt  milk_decrease_by_amount_1
        li   r2,32
-       movb @byte_01,@death_flag
+       movb r13,@death_flag
 milk_decrease_by_amount_1:
        movb  @r2lb,@milk_level
        li   r0,13*8                    ; Destination
@@ -375,7 +375,7 @@ calculate_score:
        clr  r3                         ; Total percent
 calculate_score_0:
        mov  *r1+,r0
-       cb   r0,@byte_01                ; See if objects has been picked up
+       cb   r0,r13                ; See if objects has been picked up
        jne  calculate_score_1          ; Skip object (if not marked as carried)
        andi r0,>00ff
        a    r0,r3                      ; If it has, then add value of object to total percentage.
@@ -506,7 +506,7 @@ inventory_draw_text:
 inventory_draw_text_7:
        movb *r4+,r0
        jgt  inventory_draw_text_0
-       cb   r0,@byte_ff
+       cb   r0,r14
        jeq  inventory_draw_text_1
        cb   r0,@byte_fc
        jne  inventory_draw_text_0
@@ -579,7 +579,7 @@ room_draw:
 *      Draw furniture
 room_draw_1:
        movb *r4+,r0
-       cb   r0,@byte_ff
+       cb   r0,r14
        jeq  room_draw_5                ; End marker
        cb   r0,@byte_f4
        jne  room_draw_2
@@ -644,7 +644,7 @@ furniture_draw_6:
        movb *r5+,r0                    ; Get next byte in string.
        jgt  furniture_draw_4           ; Test for normal tile.
        jeq  furniture_draw_4
-       cb   r0,@byte_ff                ; Test for END OF STRING value.
+       cb   r0,r14                ; Test for END OF STRING value.
        jeq  furniture_draw_5
        cb   r0,@byte_fe                ; Test for code.
        jne  furniture_draw_0
@@ -731,7 +731,7 @@ draw_ceiling_wall_floor_3:
        li   r0,>0200
        mov  r6,r1
        bl   @tile_draw
-       ab   @byte_01,r6
+       ab   r13,r6
        dec  r8
        jne  draw_ceiling_wall_floor_3
 *      Right wall
@@ -741,7 +741,7 @@ draw_ceiling_wall_floor_4:
        li   r0,>0200
        mov  r6,r1
        bl   @tile_draw
-       ab   @byte_01,r6
+       ab   r13,r6
        dec  r8
        jne  draw_ceiling_wall_floor_4
        .endproc
@@ -833,7 +833,7 @@ string_draw_double:
 string_draw_double_1:
        movb *r4+,r0                    ; Get next character in string.
        jgt  string_draw_double_3       ; Bytes below $80 just get drawn.
-       cb   r0,@byte_ff                ; End of string.
+       cb   r0,r14                ; End of string.
        jeq  string_draw_double_4
        cb   r0,@byte_fe                ; Character code for change colour.
        jne  string_draw_double_2
@@ -933,7 +933,7 @@ tile_draw_double_height:
        .push r1
        bl   @set_attribute
        .pop r1
-       ab   @byte_01,r1
+       ab   r13,r1
        bl   @set_attribute             ; r3 contains VDP address
        ai   r3,->0100
 *      Draw tile
@@ -1232,7 +1232,7 @@ allocate_sprite_1:
        clr  r0
        jmp  allocate_sprite_3
 allocate_sprite_2:
-       movb @byte_00,*r0
+       szcb r14,*r0
        mov  r0,r1
        ai   r1,-sprite_table
        srl  r1,2
@@ -1332,7 +1332,7 @@ get_sprite_pattern:
 get_sprite_pattern_0:
        mov  r0,r3
        movb @sprite_pattern_map(r3),r1
-       cb   r1,@byte_ff
+       cb   r1,r14
        jne  get_sprite_pattern_5
        li   r0,sprite_bitmap_map
        li   r2,sprite_bitmap_map_size

@@ -269,6 +269,8 @@ loop:  bl   @main_menu
 one_time_init:
        .proc
        mov  @rndsd,@rand_no            ; Save random number seed
+       li   r13,>0100                  ; Constant 1
+       li   r14,>ff00                  ; Constart -1
        li   r15,vdpwd                  ; Do not change
 *      Graphics mode
        bl   @bitmap_mode

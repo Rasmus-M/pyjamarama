@@ -187,7 +187,7 @@ invaders_update_6:
        a    @invaders_y_offset,r1      ; Add offset to y
        cb   @r1lb,@byte_a0             ; Reached bottom?
        jl   invaders_update_7
-       movb @byte_01,@death_flag       ; Die
+       movb r13,@death_flag       ; Die
 invaders_update_7:
        mov  r1,*r4                     ; Save updated position
 *      Draw invader
@@ -285,7 +285,7 @@ invaders_exit_check:
        mov  r0,@wally_y
        bl   @room_enter
        li   r10,stack+2                ; Reset stack
-       movb @byte_00,@is_arcade_mode
+       szcb r14,@is_arcade_mode
        b    @game_loop                 ; Go back to normal game play.
 invaders_exit_check_1:
        .endproc
@@ -442,7 +442,7 @@ invaders_create_explosions_2:
 invaders_next_stage:
        .proc
        mov  @invaders_type_ptr,r0      ; See if reached the last stage.
-       cb   *r0,@byte_ff               ; If not then reset invaders for next stage.
+       cb   *r0,r14               ; If not then reset invaders for next stage.
        jne  invaders_next_stage_1
        mov  @wally_lives,r0
        ci   r0,3                       ; Cap the max number of lives, player ca only have upto three lives.
@@ -456,7 +456,7 @@ invaders_next_stage_1:
        movb *r0+,r1                    ; Reset invaders to current stage / animations.
        movb r1,@invaders_current_frame+1
        movb r1,@invaders_start_frame+1
-       ab   @byte_01,r1
+       ab   r13,r1
        movb r1,@invaders_next_frame+1
        movb *r0+,@invaders_end_frame+1 ; Reset invaders to current stage / animations.
        mov  r0,@invaders_type_ptr      ; Point to the next stage ready for next time level is cleared.

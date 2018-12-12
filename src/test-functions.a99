@@ -153,13 +153,13 @@ test08_boxing_glove_safe_1:
        jne  test08_boxing_glove_safe_0          ; False, next command / test.
        mov  @boxing_trap_next_ptr,r0   ; Move the trap onto the next room in the list.
        movb *r0+,@boxing_trap_room+1   ; Value for next time
-       cb   *r0,@byte_ff               ; If we reach the end of the list, then reset back to start of list.
+       cb   *r0,r14               ; If we reach the end of the list, then reset back to start of list.
        jne  test08_boxing_glove_safe_2
        li   r0,boxing_trap_rooms
 test08_boxing_glove_safe_2:
        .push r4
        mov  r0,@boxing_trap_next_ptr
-       movb @byte_01,@death_flag       ; Die
+       movb r13,@death_flag       ; Die
        li   r0,>00e8
        mov  r0,@bitmap_x
        li   r0,>0098
@@ -198,7 +198,7 @@ test08_boxing_glove_safe_5:
        bl   @wally_draw
        li   r0,5
        bl   @milk_decrease_by_amount
-       movb @byte_01,@death_flag
+       movb r13,@death_flag
        li   r2,10
 test08_boxing_glove_safe_6:
        .push r2
@@ -207,7 +207,7 @@ test08_boxing_glove_safe_6:
        .pop r2
        dec  r2
        jne  test08_boxing_glove_safe_6
-       movb @byte_00,@death_flag
+       szcb r14,@death_flag
        .pop r4
        b    @room_test_events_end
 

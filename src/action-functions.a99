@@ -28,7 +28,7 @@ L824B  data action14_win
 * Swap objects.
 *
 action00_swap_obj:
-       movb @byte_01,@obj_event_pause
+       movb r13,@obj_event_pause
        movb *r4+,r0                    ; Get index of object required.
        li   r1,pocket_1+1
        cb   r0,*r1                     ; Check to see if its in pocket 1. If not assumes its in pocket 2.
@@ -62,7 +62,7 @@ action00_swap_obj_1:
 * Picks up object in current room.
 *
 action01_pick_up:
-       movb @byte_01,@obj_event_pause  ; Stop continous swapping of objects
+       movb r13,@obj_event_pause  ; Stop continous swapping of objects
        mov  @wally_room_no,r3
        sla  r3,1                       ; x2
        a    @wally_room_no,r3          ; x3
@@ -106,7 +106,7 @@ action02_enter_room:
 action03_fill_bucket:
        movb @flag_water_bucket,r0      ; Don't bother if the bucket is already full.
        jne  action03_fill_bucket_1
-       movb @byte_01,@flag_water_bucket
+       movb r13,@flag_water_bucket
        .push r4
        bl   @inventory_redraw
        .pop r4
@@ -120,7 +120,7 @@ action03_fill_bucket_1:
 action04_charge_laser:
        movb @flag_laser_gun,r0         ; Don't bother if the gun is already charged.
        jne  action04_charge_laser_1
-       movb @byte_01,@flag_laser_gun   ; Charge the gun.
+       movb r13,@flag_laser_gun        ; Charge the gun.
        .push r4
        bl   @inventory_redraw          ; Update the inventory on screen.
        .pop r4
@@ -132,7 +132,7 @@ action04_charge_laser_1:
 * Discharges the laser.
 *
 action05_discharge_laser:
-       movb @byte_00,@flag_laser_gun
+       szcb r14,@flag_laser_gun
        b    @room_test_events_then
 
 *********************************************************************
@@ -140,7 +140,7 @@ action05_discharge_laser:
 * Empties the Bucket.
 *
 action06_empty_bucket:
-       movb @byte_00,@flag_water_bucket
+       szcb r14,@flag_water_bucket
        b    @room_test_events_then
 
 *********************************************************************
@@ -150,7 +150,7 @@ action06_empty_bucket:
 action07_fill_fuel_can:
        movb @flag_fuel_can,r0          ; Don't bother if the can is already full.
        jne  action07_fill_fuel_can_1
-       movb @byte_01,@flag_fuel_can    ; Fill the Fuel Can.
+       movb r13,@flag_fuel_can    ; Fill the Fuel Can.
        .push r4
        bl   @inventory_redraw          ; Update the inventory on screen.
        .pop r4
@@ -162,7 +162,7 @@ action07_fill_fuel_can_1:
 * Empties the Fuel Can.
 *
 action08_empty_fuel_can:
-       movb @byte_00,@flag_fuel_can
+       szcb r14,@flag_fuel_can
        b    @room_test_events_then
 
 *********************************************************************
@@ -195,7 +195,7 @@ action0a_move_lift:
 * Decrease lift count by one.
 *
 action0b_lift_dec:
-       sb   @byte_01,@lift_count
+       sb   r13,@lift_count
        b    @room_test_events_then
 
 *********************************************************************
@@ -248,7 +248,7 @@ action0d_platforms:
 * Switches the help on.
 *
 action0e_help_on:
-       movb @byte_01,@flag_help_switch ; Switch on.
+       movb r13,@flag_help_switch ; Switch on.
        li   r1,>78
        li   r2,>60
        b    @action_update
@@ -258,7 +258,7 @@ action0e_help_on:
 * Switch help off.
 *
 action0f_help_off:
-       movb @byte_00,@flag_help_switch
+       szcb r14,@flag_help_switch
        b    @room_test_events_then
 
 *********************************************************************
@@ -378,7 +378,7 @@ action12_grab_rope_2:                  ; Change room
        li   r2,>44
 action12_grab_rope_3:                  ; Slide down bannister
        ab   @byte_02,@wally_x
-       ab   @byte_01,@wally_y
+       ab   r13,@wally_y
        bl   @animation_frame
        dec  r2
        jne  action12_grab_rope_3
@@ -397,7 +397,7 @@ action13_enter_arcade:
        bl   @invaders_init_x_pos
        bl   @invaders_init_y_pos
        bl   @invaders_init
-       movb @byte_01,@is_arcade_mode
+       movb r13,@is_arcade_mode
        clr  @invaders_bullet_sprite
        li   r10,stack+2                ; Reset stack
        b    @invaders_loop

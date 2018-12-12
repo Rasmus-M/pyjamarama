@@ -464,7 +464,23 @@ screen_you_lost:
        bl   @string_draw_double
        bl   @display_final_score
        bl   @wait_key
-       b    @main                      ; TODO
+       b    @main
+*// screen_you_lost
+
+*********************************************************************
+*
+* Sets up and displays the congratulations screen.
+*
+screen_congrats:
+       li   r0,spratb
+       li   r1,>d000
+       bl   @vsbw
+       bl   @screen_clear
+       li   r0,str_congrats
+       clr  r1
+       bl   @string_draw_double
+       bl   @wait_key
+       b    @main
 *// screen_you_lost
 
 *********************************************************************

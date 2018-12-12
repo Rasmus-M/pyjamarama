@@ -458,12 +458,7 @@ screen_you_lost:
        clr  r1
        bl   @string_draw_double
        bl   @wait_key
-       bl   @screen_clear
-       li   r0,str_final_score
-       li   r1,>0208
-       bl   @string_draw_double
        bl   @display_final_score
-       bl   @wait_key
        b    @main
 *// screen_you_lost
 
@@ -480,6 +475,7 @@ screen_congrats:
        clr  r1
        bl   @string_draw_double
        bl   @wait_key
+       bl   @display_final_score
        b    @main
 *// screen_you_lost
 

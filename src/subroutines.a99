@@ -384,6 +384,10 @@ room_init:
 *
 display_final_score:
        .proc
+       bl   @screen_clear
+       li   r0,str_final_score
+       li   r1,>0208
+       bl   @string_draw_double
        mov  @steps_counter,r0
        li   r1,>070f
        li   r2,attr_46
@@ -395,6 +399,7 @@ display_final_score:
        li   r2,attr_47
        li   r3,2
        bl   @display_number
+       bl   @wait_key
        .endproc
 *// display_final_score
 

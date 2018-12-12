@@ -253,6 +253,7 @@ main_menu:
        li   r0,>012c
        mov  r0,@energy_counter
 *      Display screen
+       bl   @screen_clear
        li   r0,str_main_menu
        li   r1,>0003
        bl   @string_draw_double

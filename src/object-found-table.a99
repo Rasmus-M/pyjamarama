@@ -1,6 +1,7 @@
 * Each two bytes represents an object.
 * The first byte marks the object as 'found' by setting to '1' when picked up by player.
 * The second byte holds the percent value of object if collected.
+       even
 object_found_table:
        equ  $
 L8491  byte >00,>00  

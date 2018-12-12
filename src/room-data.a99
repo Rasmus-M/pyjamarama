@@ -59,7 +59,7 @@ room_04:
 L8DC8  byte >F5,>03,>09,>25,>0C,>09,>25,>15
 L8DD0  byte >09,>25,>09,>06,>22,>0E,>10,>33
 L8DD8  byte >1B,>12,>0D,>04,>0E,>31,>14,>0E
-L8DE0  byte >31,>00,>0F,>32,>DE,LF177,(LF177&>ff00)/256,>0F
+L8DE0  byte >31,>00,>0F,>32,>DE,lift_count,(lift_count&>ff00)/256,>0F
 L8DE8  byte >11,>3B,>FF
 room_05:
        equ  $
@@ -90,7 +90,7 @@ room_09:
 L8E4D  byte >F5  [DRAW WALLS]
 L8E4E  byte >00,>0F,>3A,>0D,>12,>0D,>1B,>12  Draw items
 L8E56  byte >0D,>05,>0B,>10,>0E,>0B,>10
-L8E5D  byte >DE,LF178,(LF178&>ff00)/256  [FLAG] (>f178) Help switch.
+L8E5D  byte >DE,flag_help_switch,(flag_help_switch&>ff00)/256  [FLAG] (>f178) Help switch.
 L8E60  byte >17,>0C,>15  Draw items (if flag set)
 L8E63  byte >FF  [END]
 room_0a:
@@ -145,7 +145,7 @@ room_12:
 L8F25  byte >F5,>00,>0D,>03,>1E,>0D,>05
 L8F2C  byte >16,>0F,>34,>05,>06,>00,>12,>11
 L8F34  byte >08,>16,>06,>00,>05,>12,>07,>08
-L8F3C  byte >0E,>28,>0E,>0B,>3C,>DE,LF178,(LF178&>ff00)/256
+L8F3C  byte >0E,>28,>0E,>0B,>3C,>DE,flag_help_switch,(flag_help_switch&>ff00)/256
 L8F44  byte >0F,>0C,>3B,>FF
 room_13:
        equ  $

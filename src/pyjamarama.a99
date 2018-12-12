@@ -5,7 +5,7 @@
 *
 * Based on a ZX Spectrum disassembly found at http://www.luny.co.uk/
 *
-* November 2018
+* November-December 2018
 * Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
 *
 *********************************************************************
@@ -151,8 +151,54 @@ wally_head_countdown:
        equ  wally_last_dir+1
 wally_step_flag:
        equ  wally_head_countdown+1
+available_byte:
+       equ  wally_step_flag+1
+lift_count:                            ; Lift counter. Everytime Wally leaves the lift this counts down. When it is at zero Wally cannot use the life until he turns it on again.
+       equ  available_byte+1
+flag_help_switch:                      ; Flag for the Help Switch.
+       equ  lift_count+1
+flag_laser_gun:                        ; '0D' Laser gun, Full/Empty
+       equ  flag_help_switch+1
+flag_water_bucket:                     ; '10' Water bucket, Full/Empty
+       equ  flag_laser_gun+1
+flag_mag_lock:                         ; Stores the position of the MagLock when drawing.
+       equ  flag_water_bucket+1
+flag_baddy_init:                       ; When zero the baddies need initialising.
+       equ  flag_mag_lock+1
+obj_event_pause:                       ; Stops any picking up when set.
+       equ  flag_baddy_init+1
+flag_fuel_can:                         ; '08' Fuel can, Full/Empty
+       equ  obj_event_pause+1
+milk_level:                            ; Milk Level. Holds the screen row of the milk level.
+       equ  flag_fuel_can+1
+death_flag:                            ; Set to one to trigger death.
+       equ  milk_level+1
+lift_floor_no:                         ; Stores values representing each floor level: (1,3),(2,1),(3,0),(4,2).
+       equ  death_flag+1
+wally_dir:                             ; Sets current direction when moving. (FF - left, 01 - right)
+       equ  lift_floor_no+1
+wally_jump_dir:                        ; Copy of last direction when jumping.
+       equ  wally_dir+1
+wally_frame:                           ; Index to bitmap representing Wally's current frame.
+       equ  wally_jump_dir+1
+wally_falling:                         ; Set when Wally is falling
+       equ  wally_frame+1
+wally_jump_count:                      ; Counter for jumping. (0x0C means end of jump.)
+       equ  wally_falling+1
+is_arcade_mode:                        ; Set to 1 when game is in arcade mode for the Space Invaders room.
+       equ  wally_jump_count+1
+byte_at_f188:                          ; Copy of wally_head_turned?
+       equ  is_arcade_mode+1
+wally_head_turned:                     ; Wally turns head when set.
+       equ  byte_at_f188+1
+flag_rolling_rock:                     ; Flag used for x position of rolling rock
+       equ  wally_head_turned+1
+flag_balloon:                          ; Flag used for balloon
+       equ  flag_rolling_rock+1
+flag_food_drawn:                       ; Determines if the food requires drawing if set to 0. A 1 means the food has been drawn.
+       equ  flag_balloon+1
 input_flag:
-       equ  wally_step_flag+2
+       equ  flag_food_drawn+1
 pocket_1:
        equ  input_flag+2
 pocket_2:
@@ -309,6 +355,8 @@ game_loop:
        copy "game-loop-code.a99"
        copy "test-functions.a99"
        copy "action-functions.a99"
+       copy "room-event-handlers.a99"
+       copy "arcade_invaders.a99"
        copy "subroutines.a99"
 
 *********************************************************************
@@ -460,7 +508,7 @@ byte_attr_47:                          ; White
 * 2: y, x, 04, c <- max_sprite=2
 *
 sprite_table:
-       bss  sprite_table_size*sprite_size
+       bss  sprite_table_size*sprite_size  ; Read-write
 
 * One entry for each bitmap.
 * Value is the VDP pattern no (0, 4, 8, ... fc), or >ff if pattern not uploaded.
@@ -473,7 +521,7 @@ sprite_table:
 * ...
 * 199: ff
 sprite_pattern_map:
-       bss  sprite_pattern_map_size
+       bss  sprite_pattern_map_size        ; Read-write
 
 * One entry for each of the 64 VDP pattern slots.
 * Value is the bitmap no (0, 1, 2, ... 199), or >ff if unoccupied.
@@ -485,45 +533,42 @@ sprite_pattern_map:
 * ...
 * 63: ff
 sprite_bitmap_map:
-       bss  sprite_bitmap_map_size
+       bss  sprite_bitmap_map_size         ; Read-write
 
 * For garbage collection
        even
 sprite_pattern_map_alt:
-       bss  sprite_pattern_map_size
+       bss  sprite_pattern_map_size        ; Read-write
 sprite_bitmap_map_alt:
-       bss  sprite_bitmap_map_size
+       bss  sprite_bitmap_map_size         ; Read-write
 
-       copy "room-event-handlers.a99"
-       copy "room-logic.a99"
-       copy "room-object-slots.a99"
-       copy "furniture.a99"
-       copy "scoreboard-item.a99"
-       copy "object-flags.a99"
-       copy "object-found-table.a99"
-       copy "food-table.a99"
-       copy "bmp-tiles.a99"
-       copy "roll-rock.a99"
-       copy "wally-resurrect-table.a99"
-       copy "arcade_invaders.a99"
-       copy "strings.a99"
+       copy "room-logic.a99"               ; Read
+       copy "room-object-slots.a99"        ; Read-write
+       copy "furniture.a99"                ; Read
+       copy "scoreboard-item.a99"          ; Read
+       copy "object-found-table.a99"       ; Read-write
+       copy "food-table.a99"               ; Read-write
+       copy "bmp-tiles.a99"                ; Read
+       copy "roll-rock.a99"                ; Read
+       copy "wally-resurrect-table.a99"    ; Read
+       copy "strings.a99"                  ; Read
 
 attr_table:
-       bss  >300
+       bss  >300                           ; Read-write
 
 rooms_visited_table:
-       bss  30
+       bss  30                             ; Read-write
 
        data -1
 
        aorg >2000
 
-       copy "bmp-milk.a99"
-       copy "bmp-wally.a99"
-       copy "bmp-objects.a99"
-       copy "object-text.a99"
-       copy "room-data.a99"
-       copy "room-color-table.a99"
-       copy "wally-jump-table.a99"
+       copy "bmp-milk.a99"                 ; Read
+       copy "bmp-wally.a99"                ; Read
+       copy "bmp-objects.a99"              ; Read
+       copy "object-text.a99"              ; Read
+       copy "room-data.a99"                ; Read
+       copy "room-color-table.a99"         ; Read
+       copy "wally-jump-table.a99"         ; Read
 
        end  main

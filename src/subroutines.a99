@@ -1582,12 +1582,12 @@ screen_clear:
        li   r0,ptrntb
        li   r1,>0000
        li   r2,>500
-       bl   @vdpwr
+       bl   @vsmw
 *      Colors
        li   r0,colrtb
        li   r1,attr_46
        li   r2,>500
-       bl   @vdpwr
+       bl   @vsmw
 *      Attributes
        li   r0,attr_table
        li   r1,attr_46
@@ -1610,14 +1610,14 @@ screen_clear_room:
        li   r0,ptrntb+>500
        li   r1,>0000
        li   r2,>1800->500
-       bl   @vdpwr
+       bl   @vsmw
 *      Colors
        mov  @wally_room_no,r1
        movb @room_color_table(r1),r0
        bl   @ti_color
        li   r0,colrtb+>500
        li   r2,>1800->500
-       bl   @vdpwr
+       bl   @vsmw
 *      Attributes
        li   r0,attr_table+(5*32)
        li   r2,>300-(5*32)
@@ -1752,6 +1752,27 @@ vsbw:
 
 *********************************************************************
 *
+* VDP Single Byte Multiple Write
+*
+* R0: Write address in VDP RAM
+* R1: MSB of R1 sent to VDP RAM
+* R2: Number of bytes to write to VDP RAM
+*
+* R0 is modified, but can be restored with: ANDI R0,>3FFF
+*
+vsmw:
+       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
+       ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
+       movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
+vsmw_1:
+       movb r1,*15                     ; Write byte to VDP RAM
+       dec  r2                         ; Byte counter
+       jne  vsmw_1
+       b    *r11
+*// vsmw
+
+*********************************************************************
+*
 * VDP Multiple Byte Read
 *
 * R0: Starting read address in VDP RAM
@@ -1764,95 +1785,13 @@ vmbr:
        movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
        andi r0,>3fff
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-vmbr0:
        li   r0,vdprd
-vmbr1:
+vmbr_1:
        movb *r0,*r1+                   ; Read byte from VDP RAM
        dec  r2                         ; Byte counter
-       jne  vmbr1                      ; Check if finished
+       jne  vmbr_1                     ; Check if finished
        b    *r11
 *// vmbr
-
-*********************************************************************
-*
-* Fast CPU to VDP copy, replaces VMBW
-*
-* R0: Destination address
-* R1: Source address
-* R2: Number of bytes to copy
-*
-* Modifies r0-r3
-*
-vdpcp:
-       swpb r0
-       movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
-       swpb r0
-       ori  r0,>4000                   ; Set the two MSbits to 01 for write
-       movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-vdpcp0:
-       mov  r2,r3
-       srl  r3,3                       ; Number of groups of 8
-       jeq  vdpcp2
-vdpcp1:
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       dec  r3
-       jne  vdpcp1
-       andi r2,>0007                   ; Isolate number of remaining bytes
-       jeq  vdpcp3
-vdpcp2:
-       movb *r1+,*r15
-       dec  r2
-       jne  vdpcp2
-vdpcp3:
-       rt
-*// vdpcp
-
-*********************************************************************
-*
-* Fast CPU to VDP write, replaces VSMW
-*
-* R0: Destination address
-* R1: Byte to write in MSB
-* R2: Number of bytes to copy
-*
-* Modifies r0-r3
-*
-vdpwr:
-       swpb r0
-       movb r0,@vdpwa                  ; Send low byte of VDP RAM write address
-       swpb r0
-       ori  r0,>4000                   ; Set the two MSbits to 01 for write
-       movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       mov  r2,r3
-       srl  r3,3                       ; Number of groups of 8
-       jeq  vdpwr2
-vdpwr1:
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       movb r1,*r15
-       dec  r3
-       jne  vdpwr1
-       andi r2,>0007                   ; Isolate number of remaining bytes
-       jeq  vdpwr3
-vdpwr2:
-       movb r1, *r15
-       dec  r2
-       jne  vdpwr2
-vdpwr3:
-       rt
-*// vdpwr
 
 *********************************************************************
 *

@@ -31,8 +31,8 @@ game_loop:
 wally_handler:
        .proc
        mov  @wally_y,r0                ; Get current position, shift to 1 cell across and 4 rows down. Under the feet of Wally.
-       ab   @byte_08,@r0lb
-       ab   @byte_20,r0
+       li   r1,>2008
+       a    r1,r0
        bl   @get_attribute             ; Get the background colour at that point and store.
        movb r0,@wally_attr
        abs  @wally_char_aligned        ; See if Wally is aligned with the character cell row at current position.
@@ -109,6 +109,8 @@ Wally_Handler_10:
        b    @wally_move
 
 *      Check to see if Wally is standing on solid ground
+wally_check_fall_demo_entry:
+       .proc
 wally_check_fall:
        movb @wally_attr,r0
        cb   r0,@byte_attr_42           ; Red
@@ -129,10 +131,12 @@ wally_handler_end:
 *
 wally_jump:
        mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
-       jeq  wally_jump_demo_entry
+       jeq  wally_jump_10
        b    @wally_shoot_create
 * This entry point is used by the routine at Demo.
 wally_jump_demo_entry:
+       .proc
+wally_jump_10:
        bl   @energy_countdown
        movb @wally_dir,r0              ; Either use the current direction if moving...
        jne  wally_jump_0
@@ -141,7 +145,10 @@ wally_jump_demo_entry:
 wally_jump_0:
        movb r0,@wally_jump_dir
        szcb r14,@wally_jump_count
+       jmp  wally_jump_handler_entry
 * This entry point is used by the routines at Wally_Handler and Demo.
+wally_jump_handler_demo_entry:
+       .proc
 wally_jump_handler_entry:
        movb @wally_dir,r0              ; Check for jumping to the right.
        cb   r0,r13
@@ -245,7 +252,10 @@ wally_move:
        movb @wally_dir,r0
        cb   r0,r13
        jeq  wally_move_right
+       jmp  wally_move_left
 *      Wally Move Left
+wally_move_left_demo_entry:            ; Called from demo
+       .proc
 wally_move_left:
        movb @wally_frame,r0
        bl   @wally_turn_head
@@ -275,6 +285,8 @@ wally_move_3:
        movb r0,@wally_x
        jmp  wally_move_8
 *      Wally Move Right.
+wally_move_right_demo_entry:
+       .proc
 wally_move_right:
        movb @wally_frame,r0
        bl   @wally_turn_head

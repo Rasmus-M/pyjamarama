@@ -233,7 +233,7 @@ wally_hit_test_1:
 *
 energy_countdown:
        .proc
-       abs  @ignore_energy             ; Skip countdown?
+       abs  @demo_flag             ; Skip countdown?
        jne  energy_countdown_end
        dec  @energy_counter
        jne  energy_countdown_end
@@ -567,7 +567,7 @@ txt_empty:
 room_draw:
        .proc
        li   r0,>01a2                   ; Screen off
-;       bl   @vwtr
+       bl   @vwtr
        mov  @wally_room_no,r4          ; Get room number.
        sla  r4,1                       ; Work out address of room pointer.
        mov  @room_data(r4),r4          ; Get address to room description data.
@@ -1277,6 +1277,7 @@ deallocate_sprites:
        li   r1,>c000
        mov  @max_sprite,r2
        dec  r2
+       jlt  deallocate_sprites_2
        jeq  deallocate_sprites_2
 deallocate_sprites_1:
        mov  r1,*r0+

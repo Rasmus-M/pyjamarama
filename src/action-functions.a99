@@ -334,10 +334,10 @@ lift_off_6:
        jne  lift_off_8
 lift_off_9:
        .pop r4
-       abs  @ignore_energy
+       abs  @demo_flag
        jne  !
        b    @room_test_events_then
-!      b    @room_test_events_then     ; TODO: jump to demo
+!      b    @demo_10
 
 *********************************************************************
 *

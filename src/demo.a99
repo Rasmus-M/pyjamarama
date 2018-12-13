@@ -1,0 +1,214 @@
+*********************************************************************
+*
+* Run the demo
+*
+demo:
+       .proc
+       bl   @screen_clear
+       li   r0,0001
+       li   r1,scoreboard_item
+       bl   @furniture_draw
+       bl   @lives_reset
+       bl   @milk_draw_full
+       bl   @init_sprites
+       bl   @wally_init
+       movb r13,@death_flag
+       movb r13,@demo_flag
+       li   r4,demo_data
+       mov  r4,@demo_next_ptr
+demo_loop:
+       mov  @demo_next_ptr,r4
+       movb *r4+,r5
+       cb   r5,r14
+       jne  demo_0
+       movb *r4+,r5
+       cb   r5,r14
+       jeq  demo_11                    ; End of demo.
+       clr  @wally_room_no
+       movb r5,@wally_room_no+1        ; Start a new room based on data.
+       movb *r4+,@wally_x
+       movb *r4+,@wally_y
+       mov  r4,@demo_next_ptr
+       bl   @wally_reset
+       bl   @room_enter
+       jmp  demo_10
+demo_0:
+       mov  @wally_y,r0                ; Get current position, shift to 1 cell across and 4 rows down. Under the feet of Wally.
+       li   r1,>2008
+       a    r1,r0
+       bl   @get_attribute             ; Get the background colour at that point and store.
+       movb r0,@wally_attr
+       abs  @wally_char_aligned        ; See if Wally is aligned with the character cell row at current position.
+       jne  demo_1
+       ai   r1,-32                     ; One row up
+       movb *r1,@wally_attr_alt
+       jmp  demo_2
+demo_1:
+       movb r0,@wally_attr_alt         ; Store this for both flags.
+demo_2:
+       movb @wally_jump_dir,r0
+       jne  demo_3
+       movb @wally_attr,r0             ; See if Wally is not on a platform and needs to start falling.
+       cb   r0,@byte_attr_45           ; Cyan
+       jeq  demo_3
+       cb   r0,@byte_attr_42           ; Red
+       jeq  demo_3
+       movb r13,@wally_falling
+demo_3:
+       movb @wally_falling,r0
+       jeq  demo_4
+       bl   @wally_check_fall_demo_entry
+       jmp  demo_10
+demo_4:
+       movb @wally_jump_dir,r0
+       jne  demo_9
+       mov  r4,@demo_next_ptr
+       movb r5,r5                      ; =0?
+       jne  demo_5
+       sb   r13,r5                     ; dir=-1
+       movb r5,@wally_dir
+       bl   @wally_move_left_demo_entry
+       jmp  demo_10
+demo_5:
+       cb   r5,r13                     ; =1?
+       jne  demo_6
+       movb r5,@wally_dir              ; dir=1
+       bl   @wally_move_right_demo_entry
+       jmp  demo_10
+demo_6:
+       cb   r5,@byte_fe                ; =-2?
+       jne  demo_7
+       b    @action10_lift_off_from_earth
+demo_7:
+       cb   r5,@byte_fd                ; =-3?
+       jne  demo_8
+       b    @action11_lift_off_from_moon
+demo_8:
+       bl   @wally_jump_demo_entry
+       jmp  demo_10
+demo_9:
+       bl   @wally_jump_handler_demo_entry
+       movb @wally_jump_dir,r0
+       jne  demo_10
+       inc  @demo_next_ptr
+* This entry point is used by the routine at Action_LiftRocket.
+demo_10:
+       bl   @animation_frame
+       bl   @any_key
+       jeq  demo_loop
+demo_11:
+       .endproc
+*// demo
+
+demo_data:   
+       equ  $
+F913   byte >FF,>01   Set Wally to room 1.
+F915   byte >08,>48   and start position.
+F917   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F91F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F927   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F92F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F937   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F93F   byte >01,>02,>01,>01,>01,>01,>01,>01   
+F947   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F94F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F957   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F95F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F967   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F96F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F977   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F97F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F987   byte >01,>01,>01,>01,>01,>01,>01,>01   
+F98F   byte >FF,>03,>E8,>98,>00,>00,>00,>00   
+F997   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F99F   byte >02,>00,>00,>00,>00,>00,>00,>00   
+F9A7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9AF   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9B7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9BF   byte >00,>02,>00,>00,>00,>00,>00,>00   
+F9C7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9CF   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9D7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9DF   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9E7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+F9EF   byte >00,>00,>00,>00,>00,>00,>00,>FF   
+F9F7   byte >06,>08,>98,>01,>01,>01,>01,>01   
+F9FF   byte >01,>01,>01,>01,>01,>02,>01,>01   
+FA07   byte >01,>01,>01,>01,>02,>01,>01,>01   
+FA0F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA17   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA1F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA27   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA2F   byte >02,>01,>01,>01,>01,>01,>01,>01   
+FA37   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA3F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA47   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA4F   byte >01,>FF,>07,>08,>48,>01,>01,>01   
+FA57   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA5F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA67   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA6F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA77   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA7F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA87   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA8F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA97   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FA9F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FAA7   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FAAF   byte >01,>01,>01,>FE,>FF,>19,>28,>88   
+FAB7   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FABF   byte >01,>01,>01,>01,>01,>02,>01,>01   
+FAC7   byte >01,>01,>00,>00,>00,>00,>00,>02   
+FACF   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FAD7   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FADF   byte >00,>00,>00,>00,>00,>00,>00,>FD   
+FAE7   byte >FF,>07,>C8,>98,>01,>01,>01,>01   
+FAEF   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FAF7   byte >01,>01,>01,>01,>01,>FF,>16,>08   
+FAFF   byte >98,>01,>01,>01,>01,>01,>01,>01   
+FB07   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB0F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB17   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB1F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB27   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB2F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB37   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB3F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB47   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB4F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB57   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB5F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB67   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB6F   byte >01,>01,>01,>FF,>17,>10,>98,>01   
+FB77   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB7F   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB87   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FB8F   byte >01,>01,>01,>02,>01,>01,>01,>01   
+FB97   byte >01,>01,>01,>01,>02,>01,>01,>01   
+FB9F   byte >01,>02,>01,>02,>01,>01,>01,>01   
+FBA7   byte >01,>01,>01,>01,>01,>01,>01,>FF   
+FBAF   byte >18,>10,>70,>01,>01,>01,>01,>01   
+FBB7   byte >01,>01,>01,>01,>01,>01,>01,>02   
+FBBF   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBC7   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBCF   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBD7   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBDF   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBE7   byte >02,>02,>01,>01,>01,>01,>01,>01   
+FBEF   byte >01,>01,>01,>01,>01,>01,>01,>01   
+FBF7   byte >01,>01,>01,>01,>01,>01,>01,>02   
+FBFF   byte >01,>01,>FF,>13,>E8,>98,>00,>00   
+FC07   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC0F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC17   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC1F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC27   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC2F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC37   byte >00,>00,>02,>00,>00,>00,>00,>00   
+FC3F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC47   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC4F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC57   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC5F   byte >00,>00,>00,>00,>00,>00,>00,>00   
+FC67   byte >00,>00,>00,>00,>00   
+FC6C   byte >FF,>FF

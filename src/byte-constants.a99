@@ -1,0 +1,140 @@
+byte_ff:
+       byte >ff
+byte_fe:
+       byte >fe
+byte_fd:
+       byte >fd
+byte_fc:
+       byte >fc
+byte_fb:
+       byte >fb
+byte_fa:
+       byte >fa
+byte_f5:
+       byte >f5
+byte_f4:
+       byte >f4
+byte_f3:
+       byte >f3
+byte_f0:
+       byte >f0
+byte_ef:
+       byte >ef
+byte_e9:
+       byte >e9
+byte_e8:
+       byte >e8
+byte_e6:
+       byte >e6
+byte_e0:
+       byte >e0
+byte_de:
+       byte >de
+byte_d6:
+       byte >d6
+byte_d0:
+       byte >d0
+byte_c8:
+       byte >c8
+byte_c0:
+       byte >c0
+byte_bf:
+       byte >bf
+byte_b0:
+       byte >b0
+byte_aa:
+       byte >aa
+byte_a8:
+       byte >a8
+byte_a0:
+       byte >a0
+byte_9f:
+       byte >9f
+byte_9d:
+       byte >9d
+byte_9b:
+       byte >9b
+byte_98:
+       byte >98
+byte_91:
+       byte >91
+byte_82:
+       byte >82
+byte_80:
+       byte >80
+byte_78:
+       byte >78
+byte_70:
+       byte >70
+byte_68:
+       byte >68
+byte_47:
+       byte >47
+byte_46:
+       byte >46
+byte_44:
+       byte >44
+byte_38:
+       byte >38
+byte_32:
+       byte >32
+byte_30:
+       byte >30
+byte_20:
+       byte >20
+byte_1c:
+       byte >1c
+byte_1a:
+       byte >1a
+byte_12:
+       byte >12
+byte_10:
+       byte >10
+byte_0f:
+       byte >0f
+byte_0e:
+       byte >0e
+byte_0d:
+       byte >0d
+byte_0c:
+       byte >0c
+byte_0b:
+       byte >0b
+byte_0a:
+       byte >0a
+byte_09:
+       byte >09
+byte_08:
+       byte >08
+byte_07:
+       byte >07
+byte_06:
+       byte >06
+byte_04:
+       byte >04
+byte_03:
+       byte >03
+byte_02:
+       byte >02
+byte_01:
+       byte >01
+byte_00:
+       byte >00
+byte_attr_40:                          ; Black
+       byte attr_40/256
+byte_attr_41:                          ; Blue
+       byte attr_41/256
+byte_attr_42:                          ; Red
+       byte attr_42/256
+byte_attr_43:                          ; Magenta
+       byte attr_43/256
+byte_attr_44:                          ; Green
+       byte attr_44/256
+byte_attr_45:                          ; Cyan
+       byte attr_45/256
+byte_attr_46:                          ; Yellow
+       byte attr_46/256
+byte_attr_47:                          ; White
+       byte attr_47/256
+
+       even

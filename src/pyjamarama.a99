@@ -118,10 +118,10 @@ wally_room_no:
        equ  start_room_no+2
 wally_lives:
        equ  wally_room_no+2
-ignore_energy:
+demo_flag:
        equ  wally_lives+2
 energy_counter:
-       equ  ignore_energy+2
+       equ  demo_flag+2
 steps_counter:
        equ  energy_counter+2
 wally_y:
@@ -220,8 +220,10 @@ rand_no:
        equ  max_sprite+2
 frame:
        equ  rand_no+2
-pad_max:
+demo_next_ptr:
        equ  frame+2
+pad_max:
+       equ  demo_next_ptr+2
 
 **
 * Macros
@@ -299,14 +301,17 @@ one_time_init_1:
 *
 main_menu:
        .proc
+main_menu_5:
        bl   @screen_clear
 *      Display screen
 main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
        bl   @string_draw_double
-*      Check keys
+       clr  @frame
 main_menu_0:
+       bl   @vsync
+*      Check keys
        li   r0,KEY_1
        bl   @check_key
        jeq  main_menu_1
@@ -323,6 +328,13 @@ main_menu_1:
        movb @byte_47,@str_main_keyboard_color
        jmp  main_menu_3
 main_menu_2:
+       inc  @frame
+       mov  @frame,r0
+       ci   r0,240
+       jne  main_menu_4
+       bl   @demo
+       jmp  main_menu_5
+main_menu_4
        li   r0,KEY_EN
        bl   @check_key
        jeq  main_menu_0
@@ -337,7 +349,6 @@ game_start:
        .proc
        mov  @start_room_no,@wally_room_no
        bl   @screen_clear
-       bl   @init_sprites
        bl   @game_init_stats
        bl   @room_draw
        li   r0,>0001
@@ -346,6 +357,7 @@ game_start:
        bl   @inventory_redraw
        bl   @lives_reset
        bl   @milk_draw_full
+       bl   @init_sprites
        bl   @wally_init
        bl   @do_game_loop
        .endproc
@@ -358,7 +370,7 @@ game_start:
 game_init_stats:
        .proc
 *      Don't ignore energy
-       clr  @ignore_energy
+       clr  @demo_flag
        li   r0,>012c
        mov  r0,@energy_counter
 *      Init pockets
@@ -424,154 +436,30 @@ game_init_stats_3:
        copy "test-functions.a99"
        copy "action-functions.a99"
        copy "room-event-handlers.a99"
-       copy "arcade_invaders.a99"
        copy "subroutines.a99"
+       copy "arcade_invaders.a99"
+       copy "demo.a99"
 
 *********************************************************************
 *
 * Data
 *
-byte_ff:
-       byte >ff
-byte_fe:
-       byte >fe
-byte_fd:
-       byte >fd
-byte_fc:
-       byte >fc
-byte_fb:
-       byte >fb
-byte_fa:
-       byte >fa
-byte_f5:
-       byte >f5
-byte_f4:
-       byte >f4
-byte_f3:
-       byte >f3
-byte_f0:
-       byte >f0
-byte_ef:
-       byte >ef
-byte_e9:
-       byte >e9
-byte_e8:
-       byte >e8
-byte_e6:
-       byte >e6
-byte_e0:
-       byte >e0
-byte_de:
-       byte >de
-byte_d6:
-       byte >d6
-byte_d0:
-       byte >d0
-byte_c8:
-       byte >c8
-byte_c0:
-       byte >c0
-byte_bf:
-       byte >bf
-byte_b0:
-       byte >b0
-byte_aa:
-       byte >aa
-byte_a8:
-       byte >a8
-byte_a0:
-       byte >a0
-byte_9f:
-       byte >9f
-byte_9d:
-       byte >9d
-byte_9b:
-       byte >9b
-byte_98:
-       byte >98
-byte_91:
-       byte >91
-byte_82:
-       byte >82
-byte_80:
-       byte >80
-byte_78:
-       byte >78
-byte_70:
-       byte >70
-byte_68:
-       byte >68
-byte_47:
-       byte >47
-byte_46:
-       byte >46
-byte_44:
-       byte >44
-byte_38:
-       byte >38
-byte_32:
-       byte >32
-byte_30:
-       byte >30
-byte_20:
-       byte >20
-byte_1c:
-       byte >1c
-byte_1a:
-       byte >1a
-byte_12:
-       byte >12
-byte_10:
-       byte >10
-byte_0f:
-       byte >0f
-byte_0e:
-       byte >0e
-byte_0d:
-       byte >0d
-byte_0c:
-       byte >0c
-byte_0b:
-       byte >0b
-byte_0a:
-       byte >0a
-byte_09:
-       byte >09
-byte_08:
-       byte >08
-byte_07:
-       byte >07
-byte_06:
-       byte >06
-byte_04:
-       byte >04
-byte_03:
-       byte >03
-byte_02:
-       byte >02
-byte_01:
-       byte >01
-byte_00:
-       byte >00
-byte_attr_40:                          ; Black
-       byte attr_40/256
-byte_attr_41:                          ; Blue
-       byte attr_41/256
-byte_attr_42:                          ; Red
-       byte attr_42/256
-byte_attr_43:                          ; Magenta
-       byte attr_43/256
-byte_attr_44:                          ; Green
-       byte attr_44/256
-byte_attr_45:                          ; Cyan
-       byte attr_45/256
-byte_attr_46:                          ; Yellow
-       byte attr_46/256
-byte_attr_47:                          ; White
-       byte attr_47/256
+       copy "byte-constants.a99"
+       copy "room-logic.a99"               ; Read
+       copy "room-object-slots.a99"        ; Read-write
+       copy "furniture.a99"                ; Read
+       copy "scoreboard-item.a99"          ; Read
+       copy "object-found-table.a99"       ; Read-write
+       copy "food-table.a99"               ; Read-write
+       copy "bmp-tiles.a99"                ; Read
+       copy "roll-rock.a99"                ; Read
+       copy "wally-resurrect-table.a99"    ; Read
+       copy "strings.a99"                  ; Read
+*      copy "tiplayersfx.a99"
 
-       even
-
+**
+* Sprite tables
+*
 * One entry (4 bytes) for each possible sprite
 * y, x, pattern no, color
 *
@@ -607,32 +495,21 @@ sprite_pattern_map:
 sprite_bitmap_map:
        bss  sprite_bitmap_map_size         ; Read-write
 
-* For garbage collection
+* For garbage collection of sprite tables
        even
 sprite_pattern_map_alt:
        bss  sprite_pattern_map_size        ; Read-write
 sprite_bitmap_map_alt:
        bss  sprite_bitmap_map_size         ; Read-write
 
-       copy "room-logic.a99"               ; Read
-       copy "room-object-slots.a99"        ; Read-write
-       copy "furniture.a99"                ; Read
-       copy "scoreboard-item.a99"          ; Read
-       copy "object-found-table.a99"       ; Read-write
-       copy "food-table.a99"               ; Read-write
-       copy "bmp-tiles.a99"                ; Read
-       copy "roll-rock.a99"                ; Read
-       copy "wally-resurrect-table.a99"    ; Read
-       copy "strings.a99"                  ; Read
-*      copy "tiplayersfx.a99"
-
 attr_table:
        bss  >300                           ; Read-write
 
-rooms_visited_table:
-       bss  30                             ; Read-write
-
        data -1
+
+**
+* Lower memory
+*
 
        aorg >2000
 
@@ -644,4 +521,8 @@ rooms_visited_table:
        copy "room-color-table.a99"         ; Read
        copy "wally-jump-table.a99"         ; Read
 
+rooms_visited_table:
+       bss  30                             ; Read-write
+
+       data -1
        end  main

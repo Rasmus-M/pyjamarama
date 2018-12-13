@@ -288,6 +288,8 @@ one_time_init_1:
 *      Tile start pointer
        li   r0,bmp_tiles
        mov  r0,@tile_start_ptr
+*      Choose joystick
+       seto @input_flag
        .endproc
 *// one_time_init
 
@@ -299,13 +301,31 @@ main_menu:
        .proc
 *      Display screen
        bl   @screen_clear
+main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
        bl   @string_draw_double
-*      Wait key
-       bl   @wait_key
-*      Choose joystick
+*      Check keys
+main_menu_0:
+       li   r0,KEY_1
+       bl   @check_key
+       jeq  main_menu_1
        seto @input_flag
+       movb @byte_47,@str_main_joystick_color
+       movb @byte_44,@str_main_keyboard_color
+       jmp  main_menu_3
+main_menu_1:
+       li   r0,KEY_2
+       bl   @check_key
+       jeq  main_menu_2
+       clr  @input_flag
+       movb @byte_44,@str_main_joystick_color
+       movb @byte_47,@str_main_keyboard_color
+       jmp  main_menu_3
+main_menu_2:
+       li   r0,KEY_EN
+       bl   @check_key
+       jeq  main_menu_0
        .endproc
 *// main_menu
 
@@ -497,8 +517,12 @@ byte_70:
        byte >70
 byte_68:
        byte >68
+byte_47:
+       byte >47
 byte_46:
        byte >46
+byte_44:
+       byte >44
 byte_38:
        byte >38
 byte_32:

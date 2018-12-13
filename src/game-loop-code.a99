@@ -57,7 +57,7 @@ wally_handler_5:
        jne  wally_handler_7
        jmp  wally_handler_8
 Wally_Handler_6:
-       li   r0,KEY_D
+       li   r0,KEY_P
        bl   @check_key
        jeq  wally_handler_8
 Wally_Handler_7:
@@ -73,7 +73,7 @@ Wally_Handler_8:
        jne  wally_handler_10
        jmp  wally_handler_end
 Wally_Handler_9:
-       li   r0,KEY_S
+       li   r0,KEY_O
        bl   @check_key
        jeq  wally_handler_end
 Wally_Handler_10:

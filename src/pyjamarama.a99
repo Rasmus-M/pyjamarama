@@ -299,8 +299,8 @@ one_time_init_1:
 *
 main_menu:
        .proc
-*      Display screen
        bl   @screen_clear
+*      Display screen
 main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
@@ -347,23 +347,7 @@ game_start:
        bl   @lives_reset
        bl   @milk_draw_full
        bl   @wally_init
-game_loop:
-       bl   @vsync
-       bl   @vsync
-       bl   @wally_draw
-       bl   @wally_handler
-       bl   @wally_step_check
-       bl   @wally_check_for_death
-       bl   @wally_test_obj_slots
-       bl   @wally_percent_update
-       bl   @room_event_caller
-       bl   @food_check_pickup
-       bl   @room_test_events
-       bl   @upload_sprites
-       inc  @frame
-       bl   @game_exit_check
-       mov  r0,r0
-       jeq  game_loop
+       bl   @do_game_loop
        .endproc
 *// game_start
 
@@ -434,7 +418,7 @@ game_init_stats_3:
 
 *********************************************************************
 *
-* Code
+* Included code
 *
        copy "game-loop-code.a99"
        copy "test-functions.a99"

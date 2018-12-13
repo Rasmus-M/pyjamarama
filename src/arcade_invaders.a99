@@ -284,7 +284,7 @@ invaders_exit_check:
        li   r0,>98d0
        mov  r0,@wally_y
        bl   @room_enter
-       li   r10,stack+2                ; Reset stack
+       li   r10,stack+4                ; Reset stack
        szcb r14,@is_arcade_mode
        b    @game_loop                 ; Go back to normal game play.
 invaders_exit_check_1:

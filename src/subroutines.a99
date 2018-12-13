@@ -1517,6 +1517,10 @@ vsync_1:
 *
 screen_clear:
        .proc
+*      Sprites
+       li   r0,spratb
+       li   r1,>d000
+       bl   @vsbw
 *      Patterns
        li   r0,ptrntb
        li   r1,>0000

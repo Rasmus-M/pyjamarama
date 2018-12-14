@@ -152,10 +152,10 @@ wally_head_countdown:
        equ  wally_last_dir+1
 wally_step_flag:
        equ  wally_head_countdown+1
-available_byte:
+demo_byte:
        equ  wally_step_flag+1
 lift_count:                            ; Lift counter. Everytime Wally leaves the lift this counts down. When it is at zero Wally cannot use the life until he turns it on again.
-       equ  available_byte+1
+       equ  demo_byte+1
 flag_help_switch:                      ; Flag for the Help Switch.
        equ  lift_count+1
 flag_laser_gun:                        ; '0D' Laser gun, Full/Empty
@@ -222,8 +222,10 @@ frame:
        equ  rand_no+2
 demo_next_ptr:
        equ  frame+2
-pad_max:
+demo_run_count:
        equ  demo_next_ptr+2
+pad_max:
+       equ  demo_run_count+2
 
 **
 * Macros

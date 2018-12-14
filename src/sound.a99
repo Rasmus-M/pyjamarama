@@ -1,0 +1,188 @@
+*********************************************************************
+*
+* Mute sound
+*
+mute_sound:
+       li   r0,mute_table              ; Mute all
+       li   r2,4
+mute_sound_1:
+       movb *r0+,@sound
+       dec  r2
+       jne  mute_sound_1
+;       li   r0,sfx_addr_1
+;       clr  *r0+
+;       clr  *r0+
+;       clr  *r0+
+;       clr  *r0
+*      Return
+       b    *r11
+mute_table:
+       byte >9f, >bf, >df, >ff
+*// mute_sound
+
+*********************************************************************
+*
+* Play shot
+*
+play_shot:
+       li   r0,sfx_shot
+       clr  r1
+       jmp  play_sfx
+*// play_shot
+
+*********************************************************************
+*
+* Play boing
+*
+play_boing:
+       li   r0,sfx_boing
+       li   r1,2
+       jmp  play_sfx
+*// play_boing
+
+*********************************************************************
+*
+* Play bing
+*
+play_bing:
+       li   r0,sfx_bing
+       li r1,4
+       jmp  play_sfx
+*// play_boing
+
+*********************************************************************
+*
+* Play zap
+*
+play_zap:
+       li   r0,sfx_zap
+       li r1,6
+       jmp  play_sfx
+*// play_zap
+
+*********************************************************************
+*
+* Play crash
+*
+play_crash:
+       li   r0,sfx_crash
+       clr  r1
+       jmp  play_sfx
+*// play_crash
+
+*********************************************************************
+*
+* Play sound fx
+*
+* r0: Contains address of sound sx to play
+* r1: Channel offset (0 = channel 1, 2 = channel 2, 4 = channel 3, 6 = channel 4)
+*
+* Modifies r0-r2
+*
+play_sfx:
+       mov  r0,@sfx_addr_1(r1)
+       movb *r0+,@sfx_duration_1+1(r1) ; Duration (assume MSB is zero)
+       movb *r0+,r2                    ; Operation
+       movb *r0+,@sfx_attn_1(r1)       ; Attenuation
+       ci   r2,>e000                   ; Test for noise
+       jhe  play_sfx_1                 ; Yes - skip frequency
+       inc  r0                         ; Skip attenuation step
+       movb *r0+,@sfx_freq_1(r1)       ; Frequency
+play_sfx_1:
+       b    *r11
+
+*********************************************************************
+*
+* Sound fx player
+*
+* Modifies r0-r3
+*
+sfx_player:
+       li   r1,sound
+       li   r2,6
+sfx_player_1:
+       mov  @sfx_addr_1(r2),r3
+       jeq  sfx_player_4
+       movb @sfx_operation(r3),r0
+       mov  @sfx_duration_1(r2),r4
+       jgt  sfx_player_2
+       clr  @sfx_addr_1(r2)
+       ori  r0,>1f00                   ; Full attenuation
+       movb r0,*r1
+       jmp  sfx_player_4
+sfx_player_2:
+       movb r0,*r1                     ; Write op
+       ci   r0,>e000
+       jhe  sfx_player_3
+       movb @sfx_freq_1(r2),*r1        ; Write freq
+sfx_player_3:
+       andi r0,>f000
+       ori  r0,>1000                   ; Change op to attenuation
+       socb @sfx_attn_1(r2),r0
+       movb r0,*r1
+       ab   @sfx_freq_step(r3),@sfx_freq_1(r2)
+       ab   @sfx_attn_step(r3),@sfx_attn_1(r2)
+       dec  @sfx_duration_1(r2)
+sfx_player_4:
+       dect r2
+       jgt  sfx_player_1
+       jeq  sfx_player_1
+       b    *r11
+
+* Sound FX structure
+sfx_duration:                          ; Number of frames
+       equ  0
+sfx_operation:                         ; 80=T1, A0=T2, C0=T3, E4=W0, E5=W1, E6=W2
+       equ  1
+sfx_attn_start:                        ; 0-15
+       equ  2
+sfx_attn_step:                         ; Signed
+       equ  3
+sfx_freq_start:                        ; MSB only, n/a for noise                                ;
+       equ  4
+sfx_freq_step:                         ; Signed, n/a for noise
+       equ  5
+
+sfx_shot:
+       byte >08,>E4,>00,>02
+sfx_boing:
+       byte >10,>80,>00,>01,>30,->02
+sfx_bing:
+       byte >10,>A0,>00,>01,>04,>00
+sfx_zap:
+       byte >10,>C0,>00,>01,>04,>01
+sfx_crash:
+       byte >10,>E6,>00,>01
+
+sfx_addr_1:                            ; Sound fx address channel 1
+       data >0000
+sfx_addr_2:                            ; Sound fx address channel 2
+       data >0000
+sfx_addr_3:                            ; Sound fx address channel 3
+       data >0000
+sfx_addr_4:                            ; Sound fx address channel 4
+       data >0000
+sfx_duration_1:                        ; Sound fx counter channel 1
+       data >0000
+sfx_duration_2:                        ; Sound fx counter channel 2
+       data >0000
+sfx_duration_3:                        ; Sound fx counter channel 3
+       data >0000
+sfx_duration_4:                        ; Sound fx counter channel 4
+       data >0000
+sfx_attn_1:                            ; Sound fx attenuation channel 1
+       data >0000
+sfx_attn_2:                            ; Sound fx attenuation channel 2
+       data >0000
+sfx_attn_3:                            ; Sound fx attenuation channel 3
+       data >0000
+sfx_attn_4:                            ; Sound fx attenuation channel 4
+       data >0000
+sfx_freq_1:                            ; Sound fx frequency channel 1
+       data >0000
+sfx_freq_2:                            ; Sound fx frequency channel 2
+       data >0000
+sfx_freq_3:                            ; Sound fx frequency channel 3
+       data >0000
+sfx_freq_4:                            ; Sound fx frequency channel 4
+       data >0000

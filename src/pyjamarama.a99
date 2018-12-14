@@ -441,6 +441,7 @@ game_init_stats_3:
        copy "subroutines.a99"
        copy "arcade_invaders.a99"
        copy "demo.a99"
+       copy "sound.a99"
 
 *********************************************************************
 *
@@ -457,7 +458,6 @@ game_init_stats_3:
        copy "roll-rock.a99"                ; Read
        copy "wally-resurrect-table.a99"    ; Read
        copy "strings.a99"                  ; Read
-*      copy "tiplayersfx.a99"
 
 **
 * Sprite tables

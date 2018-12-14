@@ -17,6 +17,7 @@ game_loop:
        bl   @food_check_pickup
        bl   @room_test_events
        bl   @upload_sprites
+       bl   @sfx_player
        inc  @frame
        bl   @game_exit_check
        mov  r0,r0
@@ -130,6 +131,7 @@ wally_handler_end:
 * Subroutine: Wally Jump
 *
 wally_jump:
+       bl   @play_boing
        mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
        jeq  wally_jump_10
        b    @wally_shoot_create

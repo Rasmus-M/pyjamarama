@@ -307,12 +307,17 @@ milk_decrease_by_amount_1:
 *
 room_enter:
        .proc
+       li   r0,>01a2                   ; Screen off
+       bl   @vwtr
+       bl   @mute_sound
        bl   @room_init
        bl   @deallocate_sprites
        bl   @wally_erase
        bl   @screen_clear_room
        bl   @room_draw
        bl   @inventory_redraw
+       li   r0,>01e2                   ; Screen on
+       bl   @vwtr
        .endproc
 *// room_enter
 
@@ -566,8 +571,6 @@ txt_empty:
 *
 room_draw:
        .proc
-       li   r0,>01a2                   ; Screen off
-       bl   @vwtr
        mov  @wally_room_no,r4          ; Get room number.
        sla  r4,1                       ; Work out address of room pointer.
        mov  @room_data(r4),r4          ; Get address to room description data.
@@ -622,8 +625,6 @@ room_draw_5:
        movb *r3,@r0lb
        ai   r0,>50
        bl   @bitmap_16_draw
-       li   r0,>01e2                   ; Screen on
-       bl   @vwtr
        .endproc
 *// room_draw
 

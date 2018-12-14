@@ -163,7 +163,7 @@ demo_data:
        byte >02
        byte >01,8-1
        byte >02
-       byte >01,4-1
+       byte >01,8                        ; 4-1
        byte >02
        byte >01,1-1
        byte >02
@@ -171,7 +171,7 @@ demo_data:
        byte >FF,>18,>10,>70
        byte >01,12-1
        byte >02
-       byte >01,40-1
+       byte >01,40
        byte >02
        byte >02
        byte >01,21-1

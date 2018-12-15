@@ -1274,6 +1274,7 @@ deallocate_sprite_2:
 * Deallocate all sprites except Wally
 *
 deallocate_sprites:
+       .proc
        li   r0,sprite_table+(2*sprite_size)
        li   r1,>c000
        mov  @max_sprite,r2
@@ -1289,7 +1290,9 @@ deallocate_sprites_1:
 deallocate_sprites_2:
        li   r0,1
        mov  r0,@max_sprite
-       rt
+*      Garbage collect
+       bl   @garbage_collect_sprites
+       .endproc
 *// deallocate_sprites
 
 *********************************************************************
@@ -1344,7 +1347,7 @@ get_sprite_pattern_1:
        dec  r2
        jne  get_sprite_pattern_1
 *      Not found
-       bl   @garbage_collect
+       bl   @garbage_collect_sprites
        jmp  get_sprite_pattern_0       ; Restart
 get_sprite_pattern_2:
        dec  r0                         ; Backtrack
@@ -1381,7 +1384,7 @@ get_sprite_pattern_5:
 *
 * Garbage collect sprite patterns
 *
-garbage_collect:
+garbage_collect_sprites:
        .proc
 *      Copy existing
        li   r0,sprite_pattern_map
@@ -1415,7 +1418,7 @@ garbage_collect_3:
        dec  r2
        jne  garbage_collect_2
        .endproc
-*// garbage_collect
+*// garbage_collect_sprites
 
 *********************************************************************
 *
@@ -1629,7 +1632,7 @@ vwtr:
        swpb r0
        ori  r0,>8000                   ; Set up a VDP register write operation (10)
        movb r0,@vdpwa                  ; Send high byte (address) of VDP register
-       b    *r11
+       rt
 *// vwtr
 
 *********************************************************************
@@ -1646,7 +1649,7 @@ vwad:
        swpb r0
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       b    *r11
+       rt
 *// vwad
 
 *********************************************************************
@@ -1660,7 +1663,7 @@ vrad:
        movb r0,@vdpwa                  ; Send low byte of VDP RAM red address
        swpb r0
        movb r0,@vdpwa                  ; Send high byte of VDP RAM read address
-       b    *r11
+       rt
 *// vrad
 
 *********************************************************************
@@ -1675,7 +1678,7 @@ vsbr:
        andi r0,>3fff
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
        movb @vdprd,r1                  ; Read byte from VDP RAM
-       b    *r11
+       rt
 *// vsbr
 
 *********************************************************************
@@ -1692,7 +1695,7 @@ vsbw:
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
        movb r1,*15                     ; Write byte to VDP RAM
-       b    *r11
+       rt
 *// vsbw
 
 *********************************************************************
@@ -1713,7 +1716,7 @@ vsmw_1:
        movb r1,*15                     ; Write byte to VDP RAM
        dec  r2                         ; Byte counter
        jne  vsmw_1
-       b    *r11
+       rt
 *// vsmw
 
 *********************************************************************
@@ -1735,7 +1738,7 @@ vmbr_1:
        movb *r0,*r1+                   ; Read byte from VDP RAM
        dec  r2                         ; Byte counter
        jne  vmbr_1                     ; Check if finished
-       b    *r11
+       rt
 *// vmbr
 
 *********************************************************************
@@ -1913,5 +1916,5 @@ rand:
        ai   r0,31873                   ; Add a prime number
        src  r0,7                       ; Shift to break odd/even pattern
        mov  r0,@rand_no
-       b    *r11
+       rt
 *// rand

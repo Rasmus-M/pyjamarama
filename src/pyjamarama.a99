@@ -512,7 +512,6 @@ attr_table:
 **
 * Lower memory
 *
-
        aorg >2000
 
        copy "bmp-milk.a99"                 ; Read
@@ -527,4 +526,17 @@ rooms_visited_table:
        bss  30                             ; Read-write
 
        data -1
+
+**
+* Cartridge space
+*
+       aorg >6000
+
+       copy "fireworks.a99"
+
+       data -1
+
+**
+* End of game
+*
        end  main

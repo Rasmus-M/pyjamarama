@@ -119,6 +119,7 @@ demo_10:
 demo_16:
        bl   @animation_frame
        bl   @any_key
+       jne  demo_11
        b    @demo_loop
 demo_11:
        .endproc

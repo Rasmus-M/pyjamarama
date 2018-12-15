@@ -20,6 +20,7 @@ invaders_loop:
        bl   @invaders_update_bombs
        bl   @wally_check_for_death
        bl   @upload_sprites
+       bl   @sfx_player
        inc  @frame
        bl   @game_exit_check
        mov  r0,r0

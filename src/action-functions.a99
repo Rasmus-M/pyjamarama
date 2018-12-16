@@ -408,5 +408,7 @@ action13_enter_arcade:
 *
 action14_win:
 ;      TODO: ring alarm clock
-;      TODO: fireworks
+       .ifeq include_fireworks,1
+       bl   @fireworks
+       .endif
        b    @screen_congrats

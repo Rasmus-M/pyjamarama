@@ -1,459 +1,200 @@
 *********************************************************************
 *
-* Animate the fireworks.
-* The fireworks are update by the use of a script, which holds the position and bitmap of every frame of the animation.
+* Draw fireworks.
 *
 fireworks:
        .proc
-;LB654  LD B,>0A                        ; Number of fireworks to display / update.
-;LB656  LD IX,firework_ptrs             ; Address of table that points to the current info on each firework.
-fireworks_0:
-       equ  $
-;LB65A  PUSH BC
-;LB65B  LD E,(IX+>02)                   ; Get the current frame for current firework, from the script.
-;LB65E  LD D,(IX+>03)
-;LB661  LD L,(IX+>04)                   ; Get the end address of firework script.
-;LB664  LD H,(IX+>05)
-;LB667  INC DE                          ; Move address onto the next pair of firework info in the script.
-;LB668  INC DE
-;LB669  INC DE
-;LB66A  INC DE
-;LB66B  INC DE
-;LB66C  INC DE
-;LB66D  OR A                            ; See if address has reached the end of the script.
-;LB66E  SBC HL,DE                       ; Skip on if HL == DE
-;LB670  LD A,H
-;LB671  OR L
-;LB672  JP Z,firework_reset
-;LB675  LD (IX+>02),E                   ; Store new address for next time.
-;LB678  LD (IX+>03),D
-;LB67B  LD H,D
-;LB67C  LD L,E
+       bl   @screen_clear
+       li   r0,fireworks_box_tiles
+       mov  r0,@tile_start_ptr
+       li   r0,>160e
+       li   r1,furniture_fireworks_box
+       bl   @furniture_draw
+       li   r2,>005c                   ; Was >00b8
+       li   r0,fireworks_tiles
+       mov  r0,@tile_start_ptr
 fireworks_1:
-       equ  $
-;LB67D  LD A,(HL)                       ; Get tile
-;LB67E  INC HL
-;LB67F  LD E,(HL)                       ; Get position
-;LB680  INC HL
-;LB681  LD D,(HL)
-;LB682  INC HL
-;LB683  LD C,(IX+>06)                   ; Get colour
-;LB686  CP >FE                          ; Check for special commands in the tile value.
-;LB688  CALL Z,firework_explode
-;LB68B  CP >FD
-;LB68D  CALL Z,firework_erase
-;LB690  CP >FB
-;LB692  CALL Z,firework_split
-;LB695  INC E                           ; Position right by two cells and draw.
-;LB696  INC E
-;LB697  CALL TileDraw
-;LB69A  LD A,(HL)                       ; Get info for second of the pair in the script.
-;LB69B  INC HL
-;LB69C  LD E,(HL)
-;LB69D  INC HL
-;LB69E  LD D,(HL)
-;LB69F  CP >FE                          ; Check for special commands in the tile value.
-;LB6A1  CALL Z,firework_explode
-;LB6A4  CP >FD
-;LB6A6  CALL Z,firework_erase
-;LB6A9  CP >FB
-;LB6AB  CALL Z,firework_split
-;LB6AE  INC E                           ; Position right by two cells and draw.
-;LB6AF  INC E
-;LB6B0  CALL TileDraw
-;LB6B3  LD DE,>0007                     ; Address of next firework.
-;LB6B6  ADD IX,DE
-;LB6B8  LD BC,>0352
-fireworks_2:
-       equ  $
-;LB6BB  DEC BC  Pause
-;LB6BC  LD A,B
-;LB6BD  OR C
-;LB6BE  JR NZ,fireworks_2
-;LB6C0  POP BC
-;LB6C1  DJNZ fireworks_0
-;LB6C3  RET                             ; Next.
+       .push r2
+       bl   @fireworks_draw
+       .pop r2
+       dec  r2
+       jne  fireworks_1
+       .endproc
+*// fireworks
+
+*********************************************************************
+*
+* Animate the fireworks.
+* The fireworks are update by the use of a script, which holds the position and bitmap of every frame of the animation.
+*
+fireworks_draw:
+       .proc
+       li   r4,firework_ptrs           ; Address of table that points to the current info on each firework.
+       li   r5,10                      ; Number of fireworks to display / update.
+fireworks_draw_0:
+       bl   @vsync
+       mov  @2(r4),r6                  ; DE Get the current frame for current firework, from the script.
+       mov  @4(r4),r7                  ; HL Get the end address of firework script.
+       ai   r6,6                       ; Move address onto the next pair of firework info in the script.
+       c    r6,r7                      ; See if address has reached the end of the script.
+       jeq  firework_reset             ; Skip on if so
+       mov  r6,@2(r4)                  ; Store new address for next time.
+fireworks_draw_2:
+       li   r8,2
+fireworks_draw_1:
+       movb *r6+,r0                    ; Get tile
+       movb *r6+,@r1lb                 ; Get position x
+       movb *r6+,r1                    ; Get position y
+       mov  @6(r4),r2                  ; Get colour
+       cb   r0,@byte_fe                ; Check for special commands in the tile value.
+       jne  fireworks_draw_1a
+       bl   @firework_explode
+       jmp  fireworks_draw_1c
+fireworks_draw_1a:
+       cb   r0,@byte_fd
+       jne  fireworks_draw_1b
+       bl   @firework_erase
+       jmp  fireworks_draw_1c
+fireworks_draw_1b:
+       cb   r0,@byte_fb
+       jne  fireworks_draw_1c
+       bl   @firework_split
+       jmp  fireworks_draw_1c
+fireworks_draw_1c:
+       inct r1                         ; Position right by two cells and draw.
+       bl   @tile_draw
+       dec  r8
+       jne  fireworks_draw_1
+       ai   r4,8                       ; Address of next firework.
+       dec  r5
+       jne  fireworks_draw_0           ; Next
+       .endproc
 *      Reset firework.
 firework_reset:
-       equ  $
-;LB6C4  LD A,R                          ; Create a random colour other than 'Blue'
-;LB6C6  AND >07
-;LB6C8  CP >01
-;LB6CA  JR Z,firework_reset
-;LB6CC  SET 6,A
-;LB6CE  LD (IX+>06),A
-;LB6D1  LD A,(IX+>00)                   ; Get start address of script and put into 'current' pointer.
-;LB6D4  LD (IX+>02),A
-;LB6D7  LD L,A
-;LB6D8  LD A,(IX+>01)
-;LB6DB  LD (IX+>03),A
-;LB6DE  LD H,A
-;LB6DF  PUSH HL
-;LB6E0  PUSH BC
-;LB6E1  PUSH DE
-;LB6E2  LD BC,>320A                     ; Make explosion noise.
-;LB6E5  LD DE,>0114
-;LB6E8  LD HL,>7698
-;LB6EB  CALL Beep_Effect
-;LB6EE  POP DE
-;LB6EF  POP BC
-;LB6F0  POP HL
-;LB6F1  JP fireworks_1                  ; Update firework.
-*      Start explosion animation.
-firework_explode:
-       equ  $
-;LB6F4  LD A,>10                        ; Draws the two tiles that make up an exploding firework.
-;LB6F6  INC E
-;LB6F7  INC E
-;LB6F8  CALL TileDraw
-;LB6FB  INC A
-;LB6FC  INC E
-;LB6FD  CALL TileDraw
-;LB700  INC A
-;LB701  RET
-*      Erase firework frame.
-firework_erase:
-       equ  $
-;LB702  XOR A                           ; Draw two blank tiles over the firework.
-;LB703  INC E
-;LB704  INC E
-;LB705  CALL TileDraw
-;LB708  INC E
-;LB709  CALL TileDraw
-;LB70C  RET
-*      Draw firework splitting into three.
-firework_split:
-       equ  $
-;LB70D  LD A,>13                        ; Draws two tiles that show a firework splitting.
-;LB70F  INC E
-;LB710  INC E
-;LB711  CALL TileDraw
-;LB714  INC E
-;LB715  INC A
-;LB716  CALL TileDraw
-;LB719  INC A
-;LB71A  RET
-       .endproc
-*// Fireworks
+       bl   @rand                      ; Create a random color
+       andi r0,>f000
+       ci   r0,>2000
+       jl   firework_reset
+       ori  r0,>0100
+       mov  r0,@6(r4)
+       mov  *r4,r6                     ; Get start address of script and put into 'current' pointer.
+       mov  r6,@2(r4)
+;      TODO                            ; Make explosio noise
+       jmp  fireworks_draw_2
+*// fireworks_draw
 
-**
+*********************************************************************
+*
+* Start explosion animation.
+*
+firework_explode:
+       .proc
+       li   r0,>1000                   ; Draws the two tiles that make up an exploding firework.
+       inct r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       ab   r13,r0
+       inc  r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       ab   r13,r0
+       .endproc
+*// firework_explode
+
+*********************************************************************
+*
+* Erase firework frame.
+*
+firework_erase:
+       .proc
+       clr  r0                         ; Draw two blank tiles over the firework.
+       inct r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       inc  r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       .endproc
+*// firework_erase
+
+*********************************************************************
+*
+* Draw firework splitting into three.
+*
+firework_split:
+       .proc
+       li   r0,>1300                   ; Draws two tiles that show a firework splitting.
+       inct r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       ab   r13,r0
+       inc  r1
+       .push r1
+       bl   @tile_draw
+       .pop r1
+       ab   r13,r0
+       .endproc
+*// firework_split
+
+*********************************************************************
+*
 * Table of pointers for each firework.
 *
+       even
 * Firework 1.
 firework_ptrs:
        equ  $
 LB71B  data LB761                      ; Start of firework script.
-LB71D  data LB761
+LB71D  data LB761                      ; Current address
 LB71F  data LB7D9                      ; End of script.
-LB721  byte >42                        ; Colour of firework.
+LB721  data attr_42                    ; Colour of firework.
 * Firework 2.
 LB722  data LB7DA
 LB724  data LB7FE
 LB726  data LB852
-LB728  byte >43
+LB728  data attr_43
 * Firework 3.
 LB729  data LB853
 LB72B  data LB853
 LB72D  data LB8D7
-LB72F  byte >44
+LB72F  data attr_44
 * Firework 4.
 LB730  data LB8D8
 LB732  data LB8D8
 LB734  data LB974
-LB736  byte >45
+LB736  data attr_45
 * Firework 5.
 LB737  data LB975
 LB739  data LB999
 LB73B  data LB9F9
-LB73D  byte >46
+LB73D  data attr_46
 * Firework 6.
 LB73E  data LB9FA
 LB740  data LB9FA
 LB742  data LBA96
-LB744  byte >47
+LB744  data attr_47
 * Firework 7.
 LB745  data LBA97
 LB747  data LBABB
 LB749  data LBB33
-LB74B  byte >42
+LB74B  data attr_42
 * Firework 8.
 LB74C  data LBB34
 LB74E  data LBB3A
 LB750  data LBB9A
-LB752  byte >43
+LB752  data attr_43
 * Firework 9.
 LB753  data LBB9B
 LB755  data LBBBF
 LB757  data LBC01
-LB759  byte >44
+LB759  data attr_44
 * Firework 10.
 LB75A  data LBC02
 LB75C  data LBC26
 LB75E  data LBC9E
-LB760  byte >45
-
-**
-* Firework scripts.
-* Script for each firework and where to display them.
-*
-* Firework 1.
-LB761  byte >01,>0E,>15,>01,>0E,>15    ; [Tile, X, Y], [Tile, X, Y]
-LB767  byte >02,>0D,>14,>00,>0E,>15
-LB76D  byte >02,>0C,>14,>00,>0D,>14
-LB773  byte >02,>0B,>13,>00,>0C,>14
-LB779  byte >02,>0A,>13,>00,>0B,>13
-LB77F  byte >02,>09,>12,>00,>0A,>13
-LB785  byte >02,>08,>12,>00,>09,>12
-LB78B  byte >02,>07,>11,>00,>08,>12
-LB791  byte >03,>06,>11,>00,>07,>11
-LB797  byte >03,>05,>11,>00,>06,>11
-LB79D  byte >04,>04,>11,>00,>05,>11
-LB7A3  byte >05,>03,>11,>00,>04,>11
-LB7A9  byte >06,>03,>12,>00,>03,>11
-LB7AF  byte >07,>03,>13,>00,>03,>12
-LB7B5  byte >08,>03,>13,>08,>03,>13
-LB7BB  byte >FB,>02,>13,>00,>03,>13
-LB7C1  byte >FB,>02,>13,>FB,>02,>13
-LB7C7  byte >FE,>02,>13,>FE,>02,>13
-LB7CD  byte >FE,>02,>13,>FE,>02,>13
-LB7D3  byte >FE,>02,>13,>FD,>02,>13
-LB7D9  byte >FF
-* Firework 2.
-LB7DA  byte >01,>0F,>15,>01,>0F,>15    ; etc, etc, etc.
-LB7E0  byte >0A,>10,>14,>00,>0F,>15
-LB7E6  byte >0A,>11,>14,>00,>10,>14
-LB7EC  byte >0A,>12,>13,>00,>11,>14
-LB7F2  byte >0A,>13,>13,>00,>12,>13
-LB7F8  byte >0A,>14,>12,>00,>13,>13
-LB7FE  byte >0A,>15,>12,>00,>14,>12
-LB804  byte >0A,>16,>11,>00,>15,>12
-LB80A  byte >0B,>17,>11,>00,>16,>11
-LB810  byte >0B,>18,>11,>00,>17,>11
-LB816  byte >0C,>19,>11,>00,>18,>11
-LB81C  byte >0D,>1A,>11,>00,>19,>11
-LB822  byte >06,>1A,>12,>00,>1A,>11
-LB828  byte >07,>1A,>13,>00,>1A,>12
-LB82E  byte >08,>1A,>13,>08,>1A,>13
-LB834  byte >FB,>19,>14,>00,>1A,>13
-LB83A  byte >FB,>19,>14,>FB,>19,>14
-LB840  byte >FE,>19,>14,>FE,>19,>14
-LB846  byte >FE,>19,>14,>FE,>19,>14
-LB84C  byte >FE,>19,>14,>FD,>19,>14
-LB852  byte >FF
-* Firework 3.
-LB853  byte >01,>0E,>15,>01,>0E,>15
-LB859  byte >0E,>0E,>14,>00,>0E,>15
-LB85F  byte >0E,>0E,>13,>00,>0E,>14
-LB865  byte >02,>0D,>12,>00,>0E,>13
-LB86B  byte >02,>0C,>11,>00,>0D,>12
-LB871  byte >02,>0B,>10,>00,>0C,>11
-LB877  byte >02,>0A,>0F,>00,>0B,>10
-LB87D  byte >02,>09,>0E,>00,>0A,>0F
-LB883  byte >02,>08,>0D,>00,>09,>0E
-LB889  byte >02,>07,>0C,>00,>08,>0D
-LB88F  byte >02,>06,>0B,>00,>07,>0C
-LB895  byte >03,>05,>0A,>00,>06,>0B
-LB89B  byte >04,>04,>0A,>00,>05,>0A
-LB8A1  byte >05,>03,>0A,>00,>04,>0A
-LB8A7  byte >06,>03,>0B,>00,>03,>0A
-LB8AD  byte >07,>03,>0C,>00,>03,>0B
-LB8B3  byte >08,>03,>0C,>08,>03,>0C
-LB8B9  byte >FB,>02,>0D,>00,>03,>0C
-LB8BF  byte >FB,>02,>0D,>FB,>02,>0D
-LB8C5  byte >FE,>02,>0D,>FE,>02,>0D
-LB8CB  byte >FE,>02,>0D,>FE,>02,>0D
-LB8D1  byte >FE,>02,>0D,>FD,>02,>0D
-LB8D7  byte >FF
-* Firework 4.
-LB8D8  byte >01,>0E,>15,>01,>0E,>15
-LB8DE  byte >01,>0E,>14,>00,>0E,>15
-LB8E4  byte >01,>0E,>13,>00,>0E,>14
-LB8EA  byte >01,>0E,>12,>00,>0E,>13
-LB8F0  byte >01,>0E,>11,>00,>0E,>12
-LB8F6  byte >01,>0E,>10,>00,>0E,>11
-LB8FC  byte >01,>0E,>0F,>00,>0E,>10
-LB902  byte >01,>0E,>0E,>00,>0E,>0F
-LB908  byte >01,>0E,>0D,>00,>0E,>0E
-LB90E  byte >01,>0E,>0C,>00,>0E,>0D
-LB914  byte >01,>0E,>0B,>00,>0E,>0C
-LB91A  byte >01,>0E,>0A,>00,>0E,>0B
-LB920  byte >01,>0E,>09,>00,>0E,>0A
-LB926  byte >01,>0E,>08,>00,>0E,>09
-LB92C  byte >01,>0E,>07,>00,>0E,>08
-LB932  byte >01,>0E,>06,>00,>0E,>07
-LB938  byte >04,>0E,>05,>00,>0E,>06
-LB93E  byte >05,>0D,>05,>00,>0E,>05
-LB944  byte >06,>0D,>06,>00,>0D,>05
-LB94A  byte >07,>0D,>07,>00,>0D,>06
-LB950  byte >08,>0D,>07,>08,>0D,>07
-LB956  byte >FB,>0C,>08,>00,>0D,>07
-LB95C  byte >FB,>0C,>08,>FB,>0C,>08
-LB962  byte >FE,>0C,>08,>FE,>0C,>08
-LB968  byte >FE,>0C,>08,>FE,>0C,>08
-LB96E  byte >FE,>0C,>08,>FD,>0C,>08
-LB974  byte >FF
-* Firework 5.
-LB975  byte >01,>0E,>15,>01,>0E,>15
-LB97B  byte >01,>0E,>14,>00,>0E,>15
-LB981  byte >0F,>0E,>13,>00,>0E,>14
-LB987  byte >0A,>0F,>12,>00,>0E,>13
-LB98D  byte >0A,>10,>11,>00,>0F,>12
-LB993  byte >0A,>11,>10,>00,>10,>11
-LB999  byte >0A,>12,>0F,>00,>11,>10
-LB99F  byte >0A,>13,>0E,>00,>12,>0F
-LB9A5  byte >0A,>14,>0D,>00,>13,>0E
-LB9AB  byte >0A,>15,>0C,>00,>14,>0D
-LB9B1  byte >0A,>16,>0B,>00,>15,>0C
-LB9B7  byte >0B,>17,>0A,>00,>16,>0B
-LB9BD  byte >0C,>18,>0A,>00,>17,>0A
-LB9C3  byte >0D,>19,>0A,>00,>18,>0A
-LB9C9  byte >06,>19,>0B,>00,>19,>0A
-LB9CF  byte >07,>19,>0C,>00,>19,>0B
-LB9D5  byte >08,>19,>0C,>08,>19,>0C
-LB9DB  byte >FB,>18,>0D,>00,>19,>0C
-LB9E1  byte >FB,>18,>0D,>FB,>18,>0D
-LB9E7  byte >FE,>18,>0D,>FE,>18,>0D
-LB9ED  byte >FE,>18,>0D,>FE,>18,>0D
-LB9F3  byte >FE,>18,>0D,>FD,>18,>0D
-LB9F9  byte >FF
-* Firework 6.
-LB9FA  byte >01,>0E,>15,>01,>0E,>15
-LBA00  byte >01,>0E,>14,>00,>0E,>15
-LBA06  byte >01,>0E,>13,>00,>0E,>14
-LBA0C  byte >01,>0E,>12,>00,>0E,>13
-LBA12  byte >0E,>0E,>11,>00,>0E,>12
-LBA18  byte >0E,>0D,>10,>00,>0E,>11
-LBA1E  byte >0E,>0D,>0F,>00,>0D,>10
-LBA24  byte >0E,>0C,>0E,>00,>0D,>0F
-LBA2A  byte >0E,>0C,>0D,>00,>0C,>0E
-LBA30  byte >0E,>0B,>0C,>00,>0C,>0D
-LBA36  byte >0E,>0B,>0B,>00,>0B,>0C
-LBA3C  byte >0E,>0A,>0A,>00,>0B,>0B
-LBA42  byte >0E,>0A,>09,>00,>0A,>0A
-LBA48  byte >0E,>09,>08,>00,>0A,>09
-LBA4E  byte >0E,>09,>07,>00,>09,>08
-LBA54  byte >0E,>08,>06,>00,>09,>07
-LBA5A  byte >04,>07,>05,>00,>08,>06
-LBA60  byte >05,>06,>05,>00,>07,>05
-LBA66  byte >06,>06,>06,>00,>06,>05
-LBA6C  byte >07,>06,>07,>00,>06,>06
-LBA72  byte >08,>06,>07,>08,>06,>07
-LBA78  byte >FB,>05,>08,>00,>06,>07
-LBA7E  byte >FB,>05,>08,>FB,>05,>08
-LBA84  byte >FE,>05,>08,>FE,>05,>08
-LBA8A  byte >FE,>05,>08,>FE,>05,>08
-LBA90  byte >FE,>05,>08,>FD,>05,>08
-LBA96  byte >FF
-* Firework 7.
-LBA97  byte >01,>0E,>15,>01,>0E,>15
-LBA9D  byte >01,>0E,>14,>00,>0E,>15
-LBAA3  byte >01,>0E,>13,>00,>0E,>14
-LBAA9  byte >01,>0E,>12,>00,>0E,>13
-LBAAF  byte >0F,>0E,>11,>00,>0E,>12
-LBAB5  byte >0F,>0F,>10,>00,>0E,>11
-LBABB  byte >0F,>0F,>0F,>00,>0F,>10
-LBAC1  byte >0F,>10,>0E,>00,>0F,>0F
-LBAC7  byte >0F,>10,>0D,>00,>10,>0E
-LBACD  byte >0F,>11,>0C,>00,>10,>0D
-LBAD3  byte >0F,>11,>0B,>00,>11,>0C
-LBAD9  byte >0F,>12,>0A,>00,>11,>0B
-LBADF  byte >0F,>12,>09,>00,>12,>0A
-LBAE5  byte >0F,>13,>08,>00,>12,>09
-LBAEB  byte >0F,>13,>07,>00,>13,>08
-LBAF1  byte >0F,>14,>06,>00,>13,>07
-LBAF7  byte >0C,>15,>05,>00,>14,>06
-LBAFD  byte >0D,>16,>05,>00,>15,>05
-LBB03  byte >06,>16,>06,>00,>16,>05
-LBB09  byte >07,>16,>07,>00,>16,>06
-LBB0F  byte >08,>16,>07,>08,>16,>07
-LBB15  byte >FB,>15,>08,>00,>16,>07
-LBB1B  byte >FB,>15,>08,>FB,>15,>08
-LBB21  byte >FE,>15,>08,>FE,>15,>08
-LBB27  byte >FE,>15,>08,>FE,>15,>08
-LBB2D  byte >FE,>15,>08,>FD,>15,>08
-LBB33  byte >FF
-* Firework 8.
-LBB34  byte >0E,>0E,>15,>0E,>0E,>15
-LBB3A  byte >02,>0D,>14,>00,>0E,>15
-LBB40  byte >02,>0C,>13,>00,>0D,>14
-LBB46  byte >02,>0B,>12,>00,>0C,>13
-LBB4C  byte >02,>0A,>11,>00,>0B,>12
-LBB52  byte >02,>09,>10,>00,>0A,>11
-LBB58  byte >03,>08,>0F,>00,>09,>10
-LBB5E  byte >04,>07,>0F,>00,>08,>0F
-LBB64  byte >05,>06,>0F,>00,>07,>0F
-LBB6A  byte >06,>06,>10,>00,>06,>0F
-LBB70  byte >07,>06,>11,>00,>06,>10
-LBB76  byte >08,>06,>11,>08,>06,>11
-LBB7C  byte >FB,>05,>12,>00,>06,>11
-LBB82  byte >FB,>05,>12,>FB,>05,>12
-LBB88  byte >FE,>05,>12,>FE,>05,>12
-LBB8E  byte >FE,>05,>12,>FE,>05,>12
-LBB94  byte >FE,>05,>12,>FD,>05,>12
-LBB9A  byte >FF
-* Firework 9.
-LBB9B  byte >0F,>0E,>15,>0F,>0E,>15
-LBBA1  byte >0A,>0F,>14,>00,>0E,>15
-LBBA7  byte >0A,>10,>13,>00,>0F,>14
-LBBAD  byte >0A,>11,>12,>00,>10,>13
-LBBB3  byte >0A,>12,>11,>00,>11,>12
-LBBB9  byte >0A,>13,>10,>00,>12,>11
-LBBBF  byte >0B,>14,>0F,>00,>13,>10
-LBBC5  byte >0C,>15,>0F,>00,>14,>0F
-LBBCB  byte >0D,>16,>0F,>00,>15,>0F
-LBBD1  byte >06,>16,>10,>00,>16,>0F
-LBBD7  byte >07,>16,>11,>00,>16,>10
-LBBDD  byte >08,>16,>11,>08,>16,>11
-LBBE3  byte >FB,>15,>12,>00,>16,>11
-LBBE9  byte >FB,>15,>12,>FB,>15,>12
-LBBEF  byte >FE,>15,>12,>FE,>15,>12
-LBBF5  byte >FE,>15,>12,>FE,>15,>12
-LBBFB  byte >FE,>15,>12,>FD,>15,>12
-LBC01  byte >FF
-* Firework 10.
-LBC02  byte >01,>0E,>15,>01,>0E,>15
-LBC08  byte >01,>0E,>14,>00,>0E,>15
-LBC0E  byte >01,>0E,>13,>00,>0E,>14
-LBC14  byte >01,>0E,>12,>00,>0E,>13
-LBC1A  byte >01,>0E,>11,>00,>0E,>12
-LBC20  byte >01,>0E,>10,>00,>0E,>11
-LBC26  byte >01,>0E,>0F,>00,>0E,>10
-LBC2C  byte >01,>0E,>0E,>00,>0E,>0F
-LBC32  byte >01,>0E,>0D,>00,>0E,>0E
-LBC38  byte >0F,>0E,>0C,>00,>0E,>0D
-LBC3E  byte >0F,>0F,>0B,>00,>0E,>0C
-LBC44  byte >0F,>0F,>0A,>00,>0F,>0B
-LBC4A  byte >0F,>10,>09,>00,>0F,>0A
-LBC50  byte >0F,>10,>08,>00,>10,>09
-LBC56  byte >01,>10,>07,>00,>10,>08
-LBC5C  byte >0F,>10,>06,>00,>10,>07
-LBC62  byte >0C,>10,>05,>00,>10,>06
-LBC68  byte >0D,>11,>05,>00,>10,>05
-LBC6E  byte >06,>11,>06,>00,>11,>05
-LBC74  byte >07,>11,>07,>00,>11,>06
-LBC7A  byte >08,>11,>07,>08,>11,>07
-LBC80  byte >FB,>10,>08,>00,>11,>07
-LBC86  byte >FB,>10,>08,>FB,>10,>08
-LBC8C  byte >FE,>10,>08,>FE,>10,>08
-LBC92  byte >FE,>10,>08,>FE,>10,>08
-LBC98  byte >FE,>10,>08,>FD,>10,>08
-LBC9E  byte >FF
-
-furniture_fireworks_box:
-       equ  $
-LBD4F  byte >FB,>65,>BD,>FE,>45,>00,>01,>02      ; The standard fireworks box.
-LBD57  byte >03,>04,>FC,>FB,>01,>05,>06,>07
-LBD5F  byte >08,>09,>FB,>9F,>BC,>FF
-
-fireworks_box_tiles:
-       equ  $
-LBD65  byte >30,>B7,>B7,>30,>BF,>B1,>B7,>B1
-LBD6D  byte >00,>FF,>FF,>00,>FF,>1B,>B5,>B1
-LBD75  byte >00,>FF,>FF,>00,>FF,>69,>2A,>4A
-LBD7D  byte >00,>FF,>FF,>00,>FF,>D9,>AA,>8A
-LBD85  byte >0C,>ED,>ED,>0C,>FD,>9D,>AD,>AD
-LBD8D  byte >BD,>BD,>B1,>BF,>30,>B7,>B7,>00
-LBD95  byte >B5,>B5,>B5,>FF,>00,>FF,>FF,>00
-LBD9D  byte >6A,>6A,>69,>FF,>00,>FF,>FF,>00
-LBDA5  byte >A9,>AA,>AA,>FF,>00,>FF,>FF,>00
-LBDAD  byte >AD,>AD,>9D,>FD,>0C,>ED,>ED,>00
+LB760  data attr_45

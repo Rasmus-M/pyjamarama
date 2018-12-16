@@ -19,6 +19,8 @@ immunity:
        equ  0
 slow_animations:
        equ  1
+include_fireworks:
+       equ  1
 
 **
 * Constants
@@ -263,7 +265,8 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @one_time_init
-loop:  bl   @main_menu
+loop:
+       bl   @main_menu
        bl   @game_start
        jmp  loop
 
@@ -289,9 +292,6 @@ one_time_init_1:
 *      Set start room
        li   r0,start_room
        mov  r0,@start_room_no
-*      Tile start pointer
-       li   r0,bmp_tiles
-       mov  r0,@tile_start_ptr
 *      Choose joystick
        seto @input_flag
        .endproc
@@ -306,6 +306,8 @@ main_menu:
 main_menu_5:
        bl   @screen_clear
 *      Display screen
+       li   r0,bmp_tiles
+       mov  r0,@tile_start_ptr
 main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
@@ -442,6 +444,9 @@ game_init_stats_3:
        copy "arcade_invaders.a99"
        copy "demo.a99"
        copy "sound.a99"
+       .ifeq include_fireworks,1
+       copy "fireworks.a99"
+       .endif
 
 *********************************************************************
 *
@@ -530,11 +535,15 @@ rooms_visited_table:
 **
 * Cartridge space
 *
+       .ifeq include_fireworks,1
+
        aorg >6000
 
-       copy "fireworks.a99"
+       copy "fireworks-data.a99"
 
        data -1
+
+       .endif
 
 **
 * End of game

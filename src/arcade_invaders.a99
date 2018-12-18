@@ -91,7 +91,6 @@ invaders_init_5:
 * Initialise invaders x positions
 *
 invaders_init_x_pos:
-       .proc
        li   r0,invaders_data           ; Start with top row, left hand column.
        li   r1,>1000                   ; Left hand position.
        li   r2,8                       ; 8 columns.
@@ -110,7 +109,7 @@ invaders_init_x_pos_0:
        mov  r0,@invaders_current_dir
        li   r0,>0018
        mov  r0,@invaders_left
-       .endproc
+       rt
 *// invaders_init_x_pos
 
 *********************************************************************
@@ -118,7 +117,6 @@ invaders_init_x_pos_0:
 * Initialise invaders y positions
 *
 invaders_init_y_pos:
-       .proc
        li   r0,invaders_data+1	       ; Start with top row, left hand column for 8 columns.
        li   r1,>3800
        li   r3,>5800
@@ -133,7 +131,7 @@ invaders_init_y_pos_0:
        inct r0
        dec  r2
        jne  invaders_init_y_pos_0      ; Next column.
-       .endproc
+       rt
 *// invaders_init_y_pos
 
 *********************************************************************

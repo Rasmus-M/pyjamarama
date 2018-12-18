@@ -518,7 +518,6 @@ screen_congrats:
 * Checks to see if Wally has walked away from an object slot if just pick up and object.
 *
 wally_test_obj_slots:
-       .proc
        movb @obj_event_pause,r0        ; See if Wally has just picked up.
        jeq  wally_test_obj_slot_0
        mov  @wally_room_no,r3          ; If he has, see if he has now walked away from the object position.
@@ -532,7 +531,7 @@ wally_test_obj_slots:
        jhe  wally_test_obj_slot_0
        szcb r14,@obj_event_pause
 wally_test_obj_slot_0:
-       .endproc
+       rt
 *// wally_test_obj_slots
 
 *********************************************************************

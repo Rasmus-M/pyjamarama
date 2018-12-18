@@ -41,163 +41,166 @@ LE665  data update_room_1d
 update_room_00:
        .proc
 LE677  bl @update_rolling_rock
-LE67A  .endproc  
+LE67A  jmp  room_event_return_1
 
 update_room_01:
        .proc
 LE67B  bl @update_roll_ball
-LE67E  .endproc  
+LE67E  jmp  room_event_return_1
 
 update_room_02:
        .proc
 LE67F  bl @handler_angels
 LE682  bl @handler_food
 LE685  bl @handler_spooky_hand
-LE688  .endproc  
+LE688  jmp  room_event_return_1
 
 update_room_03:
        .proc
 LE689  bl @handler_chickens
-LE68C  .endproc  
+LE68C  jmp  room_event_return_1
 
 update_room_04:
        .proc
 LE68D  bl @handler_darts
-LE690  .endproc  
+LE690  jmp  room_event_return_1
 
 update_room_05:
        .proc
 LE691  bl @handler_bouncing_axe
-LE694  .endproc  
+LE694  jmp  room_event_return_1
 
 update_room_06:
        .proc
 LE695  bl @handler_savage_plant
-LE698  .endproc  
+LE698  jmp  room_event_return_1
 
 update_room_07:
        .proc
 LE699  bl @update_roll_ball
-LE69C  .endproc  
+LE69C  jmp  room_event_return_1
 
 update_room_08:
        .proc
 LE69D  bl @handler_darts
-LE6A0  .endproc  
+LE6A0  jmp  room_event_return_1
+
+room_event_return_1:
+       .endproc
 
 update_room_09:
        .proc
 LE6A1  bl @handler_food
 LE6A4  bl @handler_balloon_help
 LE6A7  bl @handler_spooky_hand
-LE6AA  .endproc  
+LE6AA  jmp  room_event_return_2
 
 update_room_0A:
        .proc
 LE6AB  bl @handler_bouncing_axe
-LE6AE  .endproc  
+LE6AE  jmp  room_event_return_2
 
 update_room_0B:
        .proc
 LE6AF  bl @handler_angels
-LE6B2  .endproc  
+LE6B2  jmp  room_event_return_2
 
 update_room_0C:
        .proc
 LE6B3  bl @handler_angels
 LE6B6  bl @handler_spooky_hand
-LE6B9  .endproc  
+LE6B9  jmp  room_event_return_2
 
 update_room_0D:
        .proc
 LE6BA  bl @handler_spooky_hand
-LE6BD  .endproc  
+LE6BD  jmp  room_event_return_2
 
 update_room_0E:
        .proc
 LE6BE  bl @handler_angels
-LE6C1  .endproc  
+LE6C1  jmp  room_event_return_2
 
 update_room_0F:
        .proc
 LE6C2  bl @handler_food
 LE6C5  bl @handler_books
-LE6C8  .endproc  
+LE6C8  jmp  room_event_return_2
 
 update_room_10:
        .proc
 LE6C9  bl @handler_moving_floor
 LE6CC  bl @animate_moving_floor
 LE6CF  bl @handler_spooky_hand
-LE6D2  .endproc  
+LE6D2  jmp  room_event_return_2
 
 update_room_11:
        .proc
 LE6D3  bl @handler_food
 LE6D6  bl @handler_angels
-LE6D9  .endproc  
+LE6D9  jmp  room_event_return_2
 
 update_room_12:
        .proc
 LE6DA  bl @handler_bouncing_axe
-LE6DD  .endproc  
+LE6DD  jmp  room_event_return_2
 
 update_room_13:
        .proc
 LE6DE  bl @handler_darts
-LE6E1  .endproc  
+LE6E1  jmp  room_event_return_2
 
 update_room_14:
        .proc
 LE6E2  bl @handler_spooky_hand
-LE6E5  .endproc  
+LE6E5  jmp  room_event_return_2
 
 update_room_15:
        .proc
 LE6E6  bl @handler_food
 LE6E9  bl @handler_bouncing_axe
-LE6EC  .endproc  
+LE6EC  jmp  room_event_return_2
 
 update_room_16:
        .proc
 LE6ED  bl @handler_ghosts
-LE6F0  .endproc  
+LE6F0  jmp  room_event_return_2
 
 update_room_17:
        .proc
 LE6F1  bl @handler_ghosts
 LE6F4  bl @handler_food
-LE6F7  .endproc  
+LE6F7  jmp  room_event_return_2
 
 update_room_18:
        .proc
 LE6F8  bl @handler_spooky_hand
-LE6FB  .endproc  
+LE6FB  jmp  room_event_return_2
 
 update_room_19:
        .proc
 LE6FC  bl @handler_invaders
 LE6FF  bl @pause_short
 LE702  bl @pause_short
-LE705  .endproc  
+LE705  jmp  room_event_return_2
 
 update_room_1a:
        .proc
 LE706  bl @handler_food
 LE709  bl @handler_three_ton
-LE70C  .endproc  
+LE70C  jmp  room_event_return_2
 
 update_room_1b:
        .proc
 LE70D  bl @handler_three_ton
 LE710  bl @handler_spooky_hand
-LE713  .endproc  
+LE713  jmp  room_event_return_2
 
 update_room_1c:
        .proc
 LE714  bl @handler_falling_blocks
 LE717  bl @handler_fire
-LE71A  .endproc  
+LE71A  jmp  room_event_return_2
 
 update_room_1d:
        .proc
@@ -207,10 +210,13 @@ LE721  bl @handler_mag_lock
 LE724  bl @handler_mag_lock
 LE727  bl @handler_mag_lock
 LE72A  bl @handler_mag_lock
-LE72D  .endproc  
+LE72D  jmp  room_event_return_2
 
 update_room_1e:
        rt
+
+room_event_return_2:
+       .endproc
 
 *********************************************************************
 *

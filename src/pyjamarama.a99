@@ -372,7 +372,6 @@ game_start:
 * Initialize game data
 *
 game_init_stats:
-       .proc
 *      Don't ignore energy
        clr  @demo_flag
        li   r0,>012c
@@ -429,7 +428,7 @@ game_init_stats_3:
        clr  @invaders_y_offset
 *      Clear frame counter
        clr  @frame
-       .endproc
+       rt
 *// game_init_stats
 
 *********************************************************************

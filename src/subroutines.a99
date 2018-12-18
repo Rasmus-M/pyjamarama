@@ -84,7 +84,6 @@ wally_init:
 * Wally reset
 *
 wally_reset
-       .proc
        clr  r0
        movb r0,@wally_frame
        movb r0,@wally_head_turned
@@ -97,7 +96,7 @@ wally_reset
        movb @byte_10,@wally_frame
        movb r13,@wally_last_dir
 wally_reset_0:
-       .endproc
+       rt
 *// wally_reset
 
 *********************************************************************
@@ -375,7 +374,6 @@ display_final_score:
 * r3: holds the total score on exit.
 *
 calculate_score:
-       .proc
        li   r1,object_found_table      ; Table holding which objects collected and percentage values of each object
        li   r2,>20                     ; Number of objects
        clr  r3                         ; Total percent
@@ -396,7 +394,7 @@ calculate_score_2:
        a    r0,r3
        dec  r2
        jne  calculate_score_2
-       .endproc
+       rt
 *// calculate_score
 
 *********************************************************************
@@ -1221,7 +1219,6 @@ init_sprite_maps_1:
 * Modifies r1-r2
 *
 allocate_sprite:
-       .proc
        li   r0,sprite_table
        li   r1,>c000
        li   r2,sprite_table_size
@@ -1242,7 +1239,7 @@ allocate_sprite_2:
        jlt  allocate_sprite_3
        mov  r1,@max_sprite
 allocate_sprite_3:
-       .endproc
+       rt
 *// allocate_sprite
 
 *********************************************************************
@@ -1255,7 +1252,6 @@ allocate_sprite_3:
 * Modifies r0
 *
 deallocate_sprite:
-       .proc
        movb @byte_c0,*r0
        mov  @max_sprite,r0
        sla  r0,2
@@ -1267,7 +1263,7 @@ deallocate_sprite_1:
        ai   r0,-sprite_size
        jgt  deallocate_sprite_1
 deallocate_sprite_2:
-       .endproc
+       rt
 *// deallocate_sprite
 
 *********************************************************************

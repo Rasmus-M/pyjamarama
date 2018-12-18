@@ -131,7 +131,7 @@ wally_handler_end:
 * Subroutine: Wally Jump
 *
 wally_jump:
-       bl   @play_boing
+;       bl   @play_boing
        mov  @is_arcade_mode,r0         ; Stop any jumping when in Arcade Mode
        jeq  wally_jump_10
        b    @wally_shoot_create
@@ -368,24 +368,24 @@ wally_turn_head_4:
 *
 wally_step_check:
        .proc
-       movb @wally_frame,r0
-       andi r0,7
+       movb @wally_x,r0
+       andi r0,>0700
        jeq  wally_step_check_0
        szcb r14,@wally_step_flag
-       jmp  wally_step_check_1
+       jmp  wally_steps_incr_2
 wally_step_check_0:
        movb @wally_step_flag,r0
-       jne  wally_step_check_1
+       jne  wally_steps_incr_2
        movb r13,@wally_step_flag
-       bl   @wally_steps_incr
-wally_step_check_1:
+       jmp  wally_steps_incr_1
+wally_steps_incr:
+       .proc
+wally_steps_incr_1:
+       inc  @steps_counter
+       bl   @play_step
+wally_steps_incr_2:
        .endproc
 *// wally_step_check
-
-wally_steps_incr:
-       inc  @steps_counter
-       rt
-*//
 
 *********************************************************************
 *
@@ -518,6 +518,7 @@ screen_congrats:
 * Checks to see if Wally has walked away from an object slot if just pick up and object.
 *
 wally_test_obj_slots:
+       .proc
        movb @obj_event_pause,r0        ; See if Wally has just picked up.
        jeq  wally_test_obj_slot_0
        mov  @wally_room_no,r3          ; If he has, see if he has now walked away from the object position.
@@ -530,8 +531,9 @@ wally_test_obj_slots:
        cb   r0,@byte_f4
        jhe  wally_test_obj_slot_0
        szcb r14,@obj_event_pause
+       bl   @play_pick_up
 wally_test_obj_slot_0:
-       rt
+       .endproc
 *// wally_test_obj_slots
 
 *********************************************************************
@@ -624,6 +626,7 @@ food_check_pickup_1:
        mov  r1,@food_active_ptr        ; Store address for next time.
        li   r0,10
        bl   @milk_increase_by_amount
+       bl   @play_food
 food_check_pickup_end:
        .endproc
 *// food_check_pickup

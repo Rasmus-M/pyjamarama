@@ -22,6 +22,38 @@ mute_table:
 
 *********************************************************************
 *
+* Play step
+*
+play_step:
+       li   r0,sfx_step
+       clr  r1
+       jmp  play_sfx
+*// play_step
+
+*********************************************************************
+*
+* Play pick up
+*
+play_pick_up:
+       li   r0,sfx_pick_up
+       li r1,2
+       jmp  play_sfx
+*// play_pick_up
+
+
+*********************************************************************
+*
+* Play food
+*
+play_food:
+       li   r0,sfx_food
+       li r1,4
+       jmp  play_sfx
+*// play_food
+
+
+*********************************************************************
+*
 * Play shot
 *
 play_shot:
@@ -39,26 +71,6 @@ play_boing:
        li   r1,2
        jmp  play_sfx
 *// play_boing
-
-*********************************************************************
-*
-* Play bing
-*
-play_bing:
-       li   r0,sfx_bing
-       li r1,4
-       jmp  play_sfx
-*// play_boing
-
-*********************************************************************
-*
-* Play zap
-*
-play_zap:
-       li   r0,sfx_zap
-       li r1,6
-       jmp  play_sfx
-*// play_zap
 
 *********************************************************************
 *
@@ -89,7 +101,7 @@ play_sfx:
        inc  r0                         ; Skip attenuation step
        movb *r0+,@sfx_freq_1(r1)       ; Frequency
 play_sfx_1:
-       b    *r11
+       rt
 
 *********************************************************************
 *
@@ -127,7 +139,7 @@ sfx_player_4:
        dect r2
        jgt  sfx_player_1
        jeq  sfx_player_1
-       b    *r11
+       rt
 
 * Sound FX structure
 sfx_duration:                          ; Number of frames
@@ -143,46 +155,17 @@ sfx_freq_start:                        ; MSB only, n/a for noise                
 sfx_freq_step:                         ; Signed, n/a for noise
        equ  5
 
+sfx_step:
+       byte >02,>E4,>04,>06
+sfx_pick_up:
+       byte >08,>80,>00,>00,>32,>fa
+sfx_food:
+       byte >10,>A0,>00,>01,>04,>00
+
+
 sfx_shot:
        byte >08,>E4,>00,>02
 sfx_boing:
        byte >10,>80,>00,>01,>30,->02
-sfx_bing:
-       byte >10,>A0,>00,>01,>04,>00
-sfx_zap:
-       byte >10,>C0,>00,>01,>04,>01
 sfx_crash:
        byte >10,>E6,>00,>01
-
-sfx_addr_1:                            ; Sound fx address channel 1
-       data >0000
-sfx_addr_2:                            ; Sound fx address channel 2
-       data >0000
-sfx_addr_3:                            ; Sound fx address channel 3
-       data >0000
-sfx_addr_4:                            ; Sound fx address channel 4
-       data >0000
-sfx_duration_1:                        ; Sound fx counter channel 1
-       data >0000
-sfx_duration_2:                        ; Sound fx counter channel 2
-       data >0000
-sfx_duration_3:                        ; Sound fx counter channel 3
-       data >0000
-sfx_duration_4:                        ; Sound fx counter channel 4
-       data >0000
-sfx_attn_1:                            ; Sound fx attenuation channel 1
-       data >0000
-sfx_attn_2:                            ; Sound fx attenuation channel 2
-       data >0000
-sfx_attn_3:                            ; Sound fx attenuation channel 3
-       data >0000
-sfx_attn_4:                            ; Sound fx attenuation channel 4
-       data >0000
-sfx_freq_1:                            ; Sound fx frequency channel 1
-       data >0000
-sfx_freq_2:                            ; Sound fx frequency channel 2
-       data >0000
-sfx_freq_3:                            ; Sound fx frequency channel 3
-       data >0000
-sfx_freq_4:                            ; Sound fx frequency channel 4
-       data >0000

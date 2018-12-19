@@ -20,7 +20,7 @@ immunity:
 slow_animations:
        equ  1
 include_fireworks:
-       equ  1
+       equ  0
 
 **
 * Constants

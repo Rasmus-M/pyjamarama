@@ -5,14 +5,14 @@
 do_game_loop:
        .proc
 game_loop:
-       bl   @vsync
-       bl   @vsync
+       bl   @vsync_and_sound
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
        bl   @wally_check_for_death
        bl   @wally_test_obj_slots
        bl   @wally_percent_update
+       bl   @vsync_and_sound
        bl   @room_event_caller
        bl   @food_check_pickup
        bl   @room_test_events

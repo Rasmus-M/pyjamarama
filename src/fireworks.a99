@@ -32,7 +32,7 @@ fireworks_draw:
        li   r4,firework_ptrs           ; Address of table that points to the current info on each firework.
        li   r5,10                      ; Number of fireworks to display / update.
 fireworks_draw_0:
-       bl   @vsync
+       bl   @vsync_and_sound
        mov  @2(r4),r6                  ; DE Get the current frame for current firework, from the script.
        mov  @4(r4),r7                  ; HL Get the end address of firework script.
        ai   r6,6                       ; Move address onto the next pair of firework info in the script.

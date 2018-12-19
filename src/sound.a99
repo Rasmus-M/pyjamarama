@@ -86,7 +86,7 @@ play_crash:
 *
 * Play sound fx
 *
-* r0: Contains address of sound sx to play
+* r0: Contains address of sound fx to play
 * r1: Channel offset (0 = channel 1, 2 = channel 2, 4 = channel 3, 6 = channel 4)
 *
 * Modifies r0-r2
@@ -105,11 +105,35 @@ play_sfx_1:
 
 *********************************************************************
 *
+* Play sound fx and wait
+*
+* r0: Contains address of sound fx to play
+* r1: Channel offset (0 = channel 1, 2 = channel 2, 4 = channel 3, 6 = channel 4)
+*
+* Modifies r0-r2
+*
+play_sfx_and_wait:
+       .proc
+       .push r1
+       bl   @play_sfx
+play_sfx_and_wait_1:
+       bl   @vsync_and_sound
+       .peek r1
+       mov  @sfx_duration_1(r1),r0
+       jgt  play_sfx_and_wait_1
+       .pop r1
+       bl   @vsync_and_sound
+       .endproc
+*// play_sfx_and_wait
+
+*********************************************************************
+*
 * Sound fx player
 *
 * Modifies r0-r3
 *
 sfx_player:
+       .push r4
        li   r1,sound
        li   r2,6
 sfx_player_1:
@@ -128,9 +152,11 @@ sfx_player_2:
        jhe  sfx_player_3
        movb @sfx_freq_1(r2),*r1        ; Write freq
 sfx_player_3:
-       andi r0,>f000
+       movb @sfx_attn_1(r2),r4
+       srl  r4,2
+       andi r0,>f000                   ; Op
        ori  r0,>1000                   ; Change op to attenuation
-       socb @sfx_attn_1(r2),r0
+       socb r4,r0
        movb r0,*r1
        ab   @sfx_freq_step(r3),@sfx_freq_1(r2)
        ab   @sfx_attn_step(r3),@sfx_attn_1(r2)
@@ -139,6 +165,7 @@ sfx_player_4:
        dect r2
        jgt  sfx_player_1
        jeq  sfx_player_1
+       .pop r4
        rt
 
 * Sound FX structure
@@ -146,7 +173,7 @@ sfx_duration:                          ; Number of frames
        equ  0
 sfx_operation:                         ; 80=T1, A0=T2, C0=T3, E4=W0, E5=W1, E6=W2
        equ  1
-sfx_attn_start:                        ; 0-15
+sfx_attn_start:                        ; 0-63
        equ  2
 sfx_attn_step:                         ; Signed
        equ  3
@@ -156,11 +183,11 @@ sfx_freq_step:                         ; Signed, n/a for noise
        equ  5
 
 sfx_step:
-       byte >02,>E4,>04,>06
+       byte >02,>E4,>04,>18
 sfx_pick_up:
        byte >08,>80,>00,>00,>32,>fa
 sfx_food:
-       byte >10,>A0,>00,>01,>04,>00
+       byte >40,>A0,>00,>01,>04,>00
 
 
 sfx_shot:

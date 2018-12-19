@@ -233,7 +233,7 @@ update_rolling_rock_0:
        li   r0,>0026                   ; Number of times to move and draw rock.
        mov  r0,@room_0_update_count
 update_rolling_rock_1:
-       bl   @vsync
+       bl   @vsync_and_sound
        li   r6,>0e00                   ; Y position of rock.
        movb @flag_rolling_rock,@r6lb   ; Use flag as X position of rock.
        bl   @rolling_rock_draw
@@ -1495,5 +1495,5 @@ invad_frame:
 *
 pause_short:
        .proc
-       bl   @vsync
+       bl   @vsync_and_sound
        .endproc

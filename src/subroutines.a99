@@ -5,16 +5,38 @@
 animation_frame:
        .proc
        .push r2
-       bl   @vsync
-       bl   @vsync
+       bl   @vsync_and_sound
        bl   @wally_draw
        bl   @room_event_caller
+       bl   @vsync_and_sound
        bl   @upload_sprites
        bl   @sfx_player
        inc  @frame
        .pop r2
        .endproc
 *// animation_frame
+
+*********************************************************************
+*
+* Wait for vertical retrace and play sound
+*
+vsync_and_sound:
+       .proc
+       bl   @vsync
+       bl   @sfx_player
+       .endproc
+*// vsync_and_sound
+
+*********************************************************************
+*
+* Wait for vertical retrace
+*
+vsync:
+       movb @vdpsta,r12
+       jgt  vsync
+       jeq  vsync
+       rt
+*// vsync
 
 *********************************************************************
 *
@@ -309,7 +331,7 @@ room_enter:
        .proc
        li   r0,>01a2                   ; Screen off
        bl   @vwtr
-       bl   @mute_sound
+*       bl   @mute_sound
        bl   @room_init
        bl   @deallocate_sprites
        bl   @wally_erase
@@ -1499,19 +1521,6 @@ tipal  byte 1,4,6,13,12,7,10,14,1,5,8,13,2,7,11,15
 * Not used: 3 L Green, 9 L Red
 * Not available: D Cyan, D Magenta
 *// ti_color
-
-*********************************************************************
-*
-* Wait for vertical retrace
-*
-vsync:
-       movb @vdpsta,r12
-vsync_1:
-       movb @vdpsta,r12
-       jgt  vsync_1
-       jeq  vsync_1
-       rt
-*// vsync
 
 *********************************************************************
 *

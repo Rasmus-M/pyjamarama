@@ -3,14 +3,14 @@
 * Game loop for Invaders game room
 *
 invaders_loop:
-       bl   @vsync
+       bl   @vsync_and_sound
        bl   @wally_draw
        bl   @wally_handler
        bl   @wally_step_check
        bl   @invaders_update
        bl   @invaders_update
        bl   @invaders_update
-       bl   @vsync
+       bl   @vsync_and_sound
        bl   @invaders_update
        bl   @invaders_update
        bl   @invaders_update

@@ -320,6 +320,7 @@ milk_decrease_by_amount_1:
        li   r0,13*8                    ; Destination
        li   r1,bmp_milk_empty          ; Source
        bl   @bmp_draw_lines
+       bl   @play_energy_drain
        .endproc
 *// milk_decrease_by_amount
 

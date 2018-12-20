@@ -57,6 +57,16 @@ play_axe:
 
 *********************************************************************
 *
+* Play energy drain
+*
+play_energy_drain:
+       li   r0,sfx_energy_drain
+       li r1,2
+       jmp  play_sfx
+*// play_energy_drain
+
+*********************************************************************
+*
 * Play shot
 *
 play_shot:
@@ -234,6 +244,13 @@ sfx_leave_room:
        byte 1                          ; Attn step
        byte 255                        ; Freq start
        byte -16                        ; Freq step
+sfx_energy_drain:
+       byte 6                          ; Frames
+       byte T1
+       byte 0                          ; Attn start
+       byte 0                          ; Attn step
+       byte 32                         ; Freq start
+       byte -32                        ; Freq step
 sfx_shot:
        byte 8                          ; Frames
        byte W0

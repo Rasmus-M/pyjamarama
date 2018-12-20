@@ -153,12 +153,13 @@ test08_boxing_glove_safe_1:
        jne  test08_boxing_glove_safe_0          ; False, next command / test.
        mov  @boxing_trap_next_ptr,r0   ; Move the trap onto the next room in the list.
        movb *r0+,@boxing_trap_room+1   ; Value for next time
-       cb   *r0,r14               ; If we reach the end of the list, then reset back to start of list.
+       cb   *r0,r14                    ; If we reach the end of the list, then reset back to start of list.
        jne  test08_boxing_glove_safe_2
        li   r0,boxing_trap_rooms
 test08_boxing_glove_safe_2:
        .push r4
        mov  r0,@boxing_trap_next_ptr
+       bl   @play_glove
        movb r13,@death_flag       ; Die
        li   r0,>00e8
        mov  r0,@bitmap_x

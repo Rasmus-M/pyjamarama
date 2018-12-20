@@ -98,6 +98,16 @@ play_explosion:
 
 *********************************************************************
 *
+* Play boxing glove
+*
+play_glove:
+       li   r0,sfx_glove
+       li   r1,6
+       jmp  play_sfx
+*// play_glove
+
+*********************************************************************
+*
 * Play sound fx
 *
 * r0: Contains address of sound fx to play
@@ -141,6 +151,7 @@ play_sfx_and_wait_1:
        jgt  play_sfx_and_wait_1
        .pop r1
        bl   @vsync_and_sound
+       bl   @mute_sound
        .endproc
 *// play_sfx_and_wait
 
@@ -266,5 +277,10 @@ sfx_bomb:
 sfx_explosion:
        byte 64                         ; Frames
        byte W2
+       byte 0                          ; Attn start
+       byte 1                          ; Attn step
+sfx_glove:
+       byte 64                         ; Frames
+       byte W1
        byte 0                          ; Attn start
        byte 1                          ; Attn step

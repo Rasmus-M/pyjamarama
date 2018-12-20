@@ -760,6 +760,9 @@ handler_bouncing_axe_0:
        jl   handler_bouncing_axe_2
 handler_bouncing_axe_1:
        neg  @axe_velocity_y            ; Change direction of the Y velocity.
+       .push r0
+       bl   @play_axe
+       .pop r0
        jmp  handler_bouncing_axe_3
 handler_bouncing_axe_2:
        cb   r0,@byte_38

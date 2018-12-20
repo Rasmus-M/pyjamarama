@@ -233,6 +233,7 @@ invaders_update_10:
        jeq  invaders_update_11
        mov  r4,*r0+
        mov  r3,*r0
+       bl   @play_bomb
 invaders_update_11:
        .endproc
 *// invaders_update
@@ -397,6 +398,7 @@ wally_shoot_create:
        jeq  wally_shoot_create_1
        mov  r4,*r0+
        mov  r3,*r0
+       bl   @play_shot
 wally_shoot_create_1:
        b    @wally_handler_5
 *// wally_shoot_create
@@ -430,6 +432,7 @@ invaders_create_explosions_1:
        swpb r4                         ; Swap x and y
        mov  r4,*r0+                    ; Set sprite position
        mov  r3,*r0                     ; set sprite pattern and color
+       bl   @play_explosion
 invaders_create_explosions_2:
        .endproc
 *// invaders_create_explosions
@@ -441,7 +444,7 @@ invaders_create_explosions_2:
 invaders_next_stage:
        .proc
        mov  @invaders_type_ptr,r0      ; See if reached the last stage.
-       cb   *r0,r14               ; If not then reset invaders for next stage.
+       cb   *r0,r14                    ; If not then reset invaders for next stage.
        jne  invaders_next_stage_1
        mov  @wally_lives,r0
        ci   r0,3                       ; Cap the max number of lives, player ca only have upto three lives.

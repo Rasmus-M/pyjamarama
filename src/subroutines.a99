@@ -329,9 +329,11 @@ milk_decrease_by_amount_1:
 *
 room_enter:
        .proc
+       li   r0,sfx_leave_room
+       li   r1,2
+       bl   @play_sfx_and_wait
        li   r0,>01a2                   ; Screen off
        bl   @vwtr
-*       bl   @mute_sound
        bl   @room_init
        bl   @deallocate_sprites
        bl   @wally_erase

@@ -90,9 +90,6 @@ action01_pick_up:
 * Enters a new room.
 *
 action02_enter_room:
-       li   r0,sfx_pick_up
-       li   r1,2
-       bl   @play_sfx_and_wait
        movb *r4+,@wally_room_no+1      ; Get new room number and set.
        movb *r4+,@wally_x              ; Get new position for wally.
        movb *r4+,@wally_y              ; Get new position for wally.
@@ -394,6 +391,9 @@ action12_grab_rope_3:                  ; Slide down bannister
 * Sets up the Arcade Room
 *
 action13_enter_arcade:
+       li   r0,sfx_leave_room
+       li   r1,2
+       bl   @play_sfx_and_wait
        li   r0,>9810                   ; Position Wally to the left.
        mov  r0,@wally_y
        bl   @wally_reset               ; Make sure Wally isn't jumping etc.

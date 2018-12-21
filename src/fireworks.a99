@@ -80,7 +80,6 @@ firework_reset:
        mov  r0,@6(r4)
        mov  *r4,r6                     ; Get start address of script and put into 'current' pointer.
        mov  r6,@2(r4)
-;      TODO                            ; Make explosio noise
        jmp  fireworks_draw_2
 *// fireworks_draw
 

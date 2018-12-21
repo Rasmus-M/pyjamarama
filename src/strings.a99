@@ -54,9 +54,9 @@ str_main_keyboard_color:
        text "JUMP/FIRE="
        byte >FE,>43                    ; Magenta
        byte >03
-       byte >FC,>F1,>04
-       byte >FE,>07                    ; Grey
-       text "PRESS ENTER TO START"
+       byte >FC,>EE,>04
+       byte >FE,>03                    ; Grey
+       text "PRESS ENTER/FIRE TO START"
        byte >FF
 
 str_lose:

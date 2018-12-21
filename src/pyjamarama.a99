@@ -380,10 +380,14 @@ main_menu_2:
        jne  main_menu_4
        bl   @demo
        jmp  main_menu_5
-main_menu_4
+main_menu_4:
        li   r0,KEY_EN
        bl   @check_key
+       jne  main_menu_6
+       li   r0,KEY_FI
+       bl   @check_key
        jeq  main_menu_0
+main_menu_6:
        bl   @mute_sound
        clr  @music_on
        .endproc

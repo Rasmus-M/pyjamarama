@@ -11,6 +11,6 @@ xdm99.py pyjamarama.dsk -a PYJB
 xdm99.py pyjamarama.dsk -a PYJC
 xdm99.py pyjamarama.dsk -a PYJD
 xdm99.py pyjamarama.dsk -a PYJE
-xdm99.py pyjamarama.dsk -a PYJF
+rem xdm99.py pyjamarama.dsk -a PYJF
 
 java -jar tools/ea5tocart.jar PYJA "PYJAMARAMA" 0 64k > make.log

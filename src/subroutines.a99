@@ -1932,7 +1932,7 @@ any_key_1:
        jne  any_key_1
        jmp  any_key_4                  ; eq ok
 any_key_2:
-       ci   r1,6
+       ci   r1,7
        jne  any_key_3                  ; neq ok
 *       inc  @user_input_device         ; Still neq
        jmp  any_key_4

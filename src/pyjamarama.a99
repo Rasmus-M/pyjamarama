@@ -258,9 +258,10 @@ sfx_freq_3:                            ; Sound fx frequency channel 3
        equ  sfx_freq_2+2
 sfx_freq_4:                            ; Sound fx frequency channel 4
        equ  sfx_freq_3+2
-pad_max:
+music_on:
        equ  sfx_freq_4+2
-
+pad_max:
+       equ  music_on+2
 **
 * Macros
 *
@@ -326,6 +327,9 @@ one_time_init_1:
        mov  r0,@start_room_no
 *      Choose joystick
        seto @input_flag
+       .ifeq supercart,1
+       bl   @allstopsfx
+       .endif
        .endproc
 *// one_time_init
 
@@ -335,11 +339,11 @@ one_time_init_1:
 *
 main_menu:
        .proc
-main_menu_5:
-       bl   @screen_clear
        .ifeq supercart,1
        bl   @init_music
        .endif
+main_menu_5:
+       bl   @screen_clear
 *      Display screen
        li   r0,bmp_tiles
        mov  r0,@tile_start_ptr
@@ -381,6 +385,7 @@ main_menu_4
        bl   @check_key
        jeq  main_menu_0
        bl   @mute_sound
+       clr  @music_on
        .endproc
 *// main_menu
 

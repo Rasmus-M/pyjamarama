@@ -2,15 +2,23 @@
 *
 * Play music
 *
+play_music_if_int:
+       .proc
+       abs  @music_on
+       jeq  play_music_2
+       movb @vdpsta,r12
+       jlt  play_music_1
+       jmp  play_music_2
 play_music:
        .proc
+play_music_1:
        bl   @stplaysfx
        lwpi wrksp
-       mov  @sndws+14,r0               ; Check if music is done
-       jne  playm1
+       mov  @sndws+14,r12              ; Check if music is done
+       jne  play_music_2
 *      Restart music
        bl   @init_music
-playm1:
+play_music_2:
        .endproc
 *// play_music
 
@@ -20,8 +28,13 @@ playm1:
 *
 init_music:
        .proc
+       .push r1
+       .push r2
        li   r1,music
        clr  r2
        bl   @stinitsfx
+       seto @music_on
+       .pop r2
+       .pop r1
        .endproc
 *// init_music

@@ -244,18 +244,34 @@ LA36B  byte >00,>00,>00,>00,>00,>00,>00,>00
 LA373  byte >00,>00,>1F,>F8,>1B,>F6,>1B,>F2
 LA37B  byte >0B,>F2,>0D,>EC,>07,>E0,>00,>00
 LA383  byte >3E,>FC,>1F,>F8,>03,>C0,>00,>00
-LA38B  byte >03,>C0,>0F,>F0,>1F,>18,>3F,>0C
-LA393  byte >7F,>CE,>7F,>E6,>FF,>F7,>FF,>FB
-LA39B  byte >FF,>FB,>EF,>FF,>6F,>FE,>67,>FE
-LA3A3  byte >33,>FC,>1B,>F8,>0F,>F0,>03,>C0
-LA3AB  byte >03,>C0,>0F,>F0,>1F,>98,>3F,>8C
-LA3B3  byte >7F,>CE,>7F,>E6,>FF,>F7,>FF,>FB
-LA3BB  byte >DF,>FB,>EF,>FB,>6F,>FE,>77,>FE
-LA3C3  byte >3B,>FC,>1D,>F8,>0F,>F0,>03,>C0
-LA3CB  byte >03,>C0,>0F,>F0,>1F,>98,>3F,>8C
-LA3D3  byte >7F,>E6,>7F,>E6,>FF,>E7,>FF,>F3
-LA3DB  byte >CF,>FB,>CF,>FB,>67,>FE,>77,>FE
-LA3E3  byte >33,>FC,>1D,>F8,>0F,>F0,>03,>C0
+
+*      Rasmus changed oblong ball into proper circle
+       DATA >07E0,>1FF8,>3FFC,>7FDE
+       DATA >7F8E,>FFDF,>BFFF,>FFFF
+       DATA >FFFF,>BFFF,>DFFF,>4FFE
+       DATA >67FE,>30EC,>1C38,>07E0
+       DATA >07E0,>1FF8,>3FFC,>7FDE
+       DATA >7F8E,>BFDF,>FFFF,>FFFF
+       DATA >BFFF,>BFFF,>DFFF,>4FFE
+       DATA >67FE,>30FC,>1C58,>07E0
+       DATA >07E0,>1FF8,>3FFC,>5FDE
+       DATA >7F8E,>FFDF,>FFFF,>BFFF
+       DATA >BFFF,>9FFF,>DFFF,>4FFE
+       DATA >67FE,>31FC,>1CB8,>07E0
+
+;LA38B  byte >03,>C0,>0F,>F0,>1F,>18,>3F,>0C
+;LA393  byte >7F,>CE,>7F,>E6,>FF,>F7,>FF,>FB
+;LA39B  byte >FF,>FB,>EF,>FF,>6F,>FE,>67,>FE
+;LA3A3  byte >33,>FC,>1B,>F8,>0F,>F0,>03,>C0
+;LA3AB  byte >03,>C0,>0F,>F0,>1F,>98,>3F,>8C
+;LA3B3  byte >7F,>CE,>7F,>E6,>FF,>F7,>FF,>FB
+;LA3BB  byte >DF,>FB,>EF,>FB,>6F,>FE,>77,>FE
+;LA3C3  byte >3B,>FC,>1D,>F8,>0F,>F0,>03,>C0
+;LA3CB  byte >03,>C0,>0F,>F0,>1F,>98,>3F,>8C
+;LA3D3  byte >7F,>E6,>7F,>E6,>FF,>E7,>FF,>F3
+;LA3DB  byte >CF,>FB,>CF,>FB,>67,>FE,>77,>FE
+;LA3E3  byte >33,>FC,>1D,>F8,>0F,>F0,>03,>C0
+
 LA3EB  byte >00,>00,>00,>00,>00,>00,>00,>00
 LA3F3  byte >00,>00,>00,>00,>70,>00,>F8,>F0
 LA3FB  byte >0F,>6B,>F8,>F0,>70,>00,>00,>00
@@ -482,8 +498,3 @@ LAACB  byte >DF,>F7,>4F,>FB,>5F,>FD,>4F,>FE
 LAAD3  byte >DF,>FF,>D2,>03,>D4,>D7,>D2,>53
 LAADB  byte >D6,>D7,>D6,>53,>DF,>FF,>D8,>07
 LAAE3  byte >CF,>FE,>DF,>FD,>4F,>FB,>DF,>F7
-empty_object:
-       byte >00,>00,>00,>00,>00,>00,>00,>00
-       byte >00,>00,>00,>00,>00,>00,>00,>00
-       byte >00,>00,>00,>00,>00,>00,>00,>00
-       byte >00,>00,>00,>00,>00,>00,>00,>00

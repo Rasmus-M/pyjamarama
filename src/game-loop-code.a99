@@ -377,12 +377,12 @@ wally_step_check_0:
        movb @wally_step_flag,r0
        jne  wally_steps_incr_2
        movb r13,@wally_step_flag
+       bl   @play_step
        jmp  wally_steps_incr_1
 wally_steps_incr:
        .proc
 wally_steps_incr_1:
        inc  @steps_counter
-       bl   @play_step
 wally_steps_incr_2:
        .endproc
 *// wally_step_check

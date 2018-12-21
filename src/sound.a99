@@ -9,8 +9,13 @@ mute_sound_1:
        movb *r0+,@sound
        dec  r2
        jne  mute_sound_1
+       li   r0,sfx_addr_1
+       clr  *r0+
+       clr  *r0+
+       clr  *r0+
+       clr  *r0
 *      Return
-       b    *r11
+       rt
 mute_table:
        byte >9f, >bf, >df, >ff
 *// mute_sound
@@ -108,6 +113,26 @@ play_glove:
 
 *********************************************************************
 *
+* Play rocket_1
+*
+play_rocket_1:
+       li   r0,sfx_rocket_1
+       li   r1,2
+       jmp  play_sfx
+*// play_rocket
+
+*********************************************************************
+*
+* Play rocket_2
+*
+play_rocket_2:
+       li   r0,sfx_rocket_2
+       li   r1,6
+       jmp  play_sfx
+*// play_rocket_2
+
+*********************************************************************
+*
 * Play sound fx
 *
 * r0: Contains address of sound fx to play
@@ -187,8 +212,8 @@ sfx_player_2:
 sfx_player_3:
        andi r0,>f000                   ; Operation
        ori  r0,>1000                   ; Change operation to attenuation
-       movb @sfx_attn_1(r2),r4         ; Get attenuation x 4
-       srl  r4,2                       ; Attenuation
+       movb @sfx_attn_1(r2),r4         ; Get attenuation x 16
+       srl  r4,4                       ; Attenuation
        socb r4,r0                      ; Combine with operation
        movb r0,*r1                     ; Write attenuation
        ab   @sfx_freq_step(r3),@sfx_freq_1(r2)    ; Change frequency
@@ -206,7 +231,7 @@ sfx_duration:                          ; Number of frames
        equ  0
 sfx_operation:                         ; 80=T1, A0=T2, C0=T3, E4=W0, E5=W1, E6=W2
        equ  1
-sfx_attn_start:                        ; 0-63
+sfx_attn_start:                        ; 0-255
        equ  2
 sfx_attn_step:                         ; Signed
        equ  3
@@ -225,8 +250,8 @@ W2     equ  >E6
 sfx_step:
        byte 2                          ; Frames
        byte W0
-       byte 8                          ; Attn start
-       byte 24                         ; Attn step
+       byte 32                          ; Attn start
+       byte 96                         ; Attn step
 sfx_pick_up:
        byte 8                          ; Frames
        byte T1
@@ -238,21 +263,21 @@ sfx_food:
        byte 64                         ; Frames
        byte T2
        byte 0                          ; Attn start
-       byte 1                          ; Attn step
+       byte 4                          ; Attn step
        byte 16                         ; Freq start
        byte 0                          ; Freq step
 sfx_axe:
        byte 6                          ; Frames
        byte T3
-       byte 8                          ; Attn start
-       byte 4                          ; Attn step
+       byte 32                         ; Attn start
+       byte 16                         ; Attn step
        byte 192                        ; Freq start
        byte 8                          ; Freq step
 sfx_leave_room:
        byte 14                         ; Frames
        byte T1
        byte 0                          ; Attn start
-       byte 1                          ; Attn step
+       byte 4                          ; Attn step
        byte 255                        ; Freq start
        byte -16                        ; Freq step
 sfx_energy_drain:
@@ -266,7 +291,7 @@ sfx_shot:
        byte 8                          ; Frames
        byte W0
        byte 0                          ; Attn start
-       byte 8                          ; Attn step
+       byte 32                          ; Attn step
 sfx_bomb:
        byte 32                         ; Frames
        byte T3
@@ -278,9 +303,21 @@ sfx_explosion:
        byte 64                         ; Frames
        byte W2
        byte 0                          ; Attn start
-       byte 1                          ; Attn step
+       byte 4                          ; Attn step
 sfx_glove:
        byte 64                         ; Frames
        byte W1
+       byte 0                          ; Attn start
+       byte 4                          ; Attn step
+sfx_rocket_1:
+       byte 160                        ; Frames
+       byte T2
+       byte 0                          ; Attn start
+       byte 1                          ; Attn step
+       byte 8                          ; Freq start
+       byte 0                          ; Freq step
+sfx_rocket_2:
+       byte 160                        ; Frames
+       byte W0
        byte 0                          ; Attn start
        byte 1                          ; Attn step

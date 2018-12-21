@@ -283,6 +283,9 @@ invaders_exit_check:
        mov  r0,@wally_room_no          ; Move into the next room and update.
        li   r0,>98d0
        mov  r0,@wally_y
+       li   r0,sfx_leave_room
+       li   r1,2
+       bl   @play_sfx_and_wait
        bl   @room_enter
        li   r10,stack+4                ; Reset stack
        szcb r14,@is_arcade_mode
@@ -341,7 +344,7 @@ invaders_bullet_update_3:
        .push r1
        bl   @bitmap_16_erase           ; Erase invader
        .pop r1
-       bl   @invaders_create_explosions
+       bl   @invaders_create_explosion
        dec  @invaders_left
        jne  invaders_bullet_update_4
        bl   @invaders_next_stage
@@ -370,6 +373,8 @@ invaders_update_bombs_1:
        bl   @wally_hit_test
        jmp  invaders_update_bombs_2
 invaders_update_bombs_3:
+       swpb r1
+       bl   @invaders_create_explosion
        mov  r6,r0
        bl   @deallocate_sprite
        clr  *r7
@@ -409,18 +414,18 @@ wally_shoot_create_1:
 *
 * r1: position x MSB, y LSB
 *
-invaders_create_explosions:
+invaders_create_explosion:
        .proc
        mov  r1,r4
        li   r5,invaders_explosion_slots
-invaders_create_explosions_0:
+invaders_create_explosion_0:
        mov  *r5,r0
-       jeq  invaders_create_explosions_1
+       jeq  invaders_create_explosion_1
        ci   r0,>ffff
-       jeq  invaders_create_explosions_2
+       jeq  invaders_create_explosion_2
        ai   r5,4
-       jmp  invaders_create_explosions_0
-invaders_create_explosions_1:
+       jmp  invaders_create_explosion_0
+invaders_create_explosion_1:
        li   r0,>009f                   ; Bitmap frame
        mov  r0,@2(r5)                  ; Store it
        bl   @get_sprite_pattern
@@ -428,14 +433,14 @@ invaders_create_explosions_1:
        movb @byte_0b,@r3lb             ; Color yellow
        bl   @allocate_sprite
        mov  r0,*r5
-       jeq  invaders_create_explosions_2
+       jeq  invaders_create_explosion_2
        swpb r4                         ; Swap x and y
        mov  r4,*r0+                    ; Set sprite position
        mov  r3,*r0                     ; set sprite pattern and color
        bl   @play_explosion
-invaders_create_explosions_2:
+invaders_create_explosion_2:
        .endproc
-*// invaders_create_explosions
+*// invaders_create_explosion
 
 *********************************************************************
 *

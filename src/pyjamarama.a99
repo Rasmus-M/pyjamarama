@@ -19,7 +19,7 @@ immunity:
        equ  0
 slow_animations:
        equ  1
-include_fireworks:
+supercart:
        equ  0
 
 **
@@ -475,7 +475,8 @@ game_init_stats_3:
        copy "arcade_invaders.a99"
        copy "demo.a99"
        copy "sound.a99"
-       .ifeq include_fireworks,1
+       .ifeq supercart,1
+       copy "tiplayersfx.a99"
        copy "fireworks.a99"
        .endif
 
@@ -484,18 +485,18 @@ game_init_stats_3:
 * Data
 *
        copy "byte-constants.a99"
-       copy "room-logic.a99"               ; Read
        copy "room-object-slots.a99"        ; Read-write
-       copy "furniture.a99"                ; Read
-       copy "scoreboard-item.a99"          ; Read
        copy "object-found-table.a99"       ; Read-write
        copy "food-table.a99"               ; Read-write
-       .ifeq include_fireworks,0
+       copy "strings.a99"                  ; Read-write
+       copy "furniture.a99"                ; Read
+       copy "wally-resurrect-table.a99"    ; Read
+       copy "room-logic.a99"               ; Read
+       .ifeq supercart,0
+       copy "scoreboard-item.a99"          ; Read
+       copy "roll-rock.a99"                ; Read
        copy "bmp-tiles.a99"                ; Read
        .endif
-       copy "roll-rock.a99"                ; Read
-       copy "wally-resurrect-table.a99"    ; Read
-       copy "strings.a99"                  ; Read
 
 **
 * Sprite tables
@@ -568,12 +569,15 @@ rooms_visited_table:
 **
 * Cartridge space
 *
-       .ifeq include_fireworks,1
+       .ifeq supercart,1
 
        aorg >6000
 
-       copy "fireworks-data.a99"
-       copy "bmp-tiles.a99"                ; Read.endif
+       copy "scoreboard-item.a99"          ; Read
+       copy "roll-rock.a99"                ; Read
+       copy "bmp-tiles.a99"                ; Read
+       copy "fireworks-data.a99"           ; Read
+       bcopy "../sound/main-theme.vgm.spf" ; Read
 
        data -1
 

@@ -416,7 +416,7 @@ action13_enter_arcade:
 *
 action14_win:
        bl   @play_alarm_clock
-       .ifeq include_fireworks,1
+       .ifeq supercart,1
        bl   @fireworks
        .endif
        b    @screen_congrats

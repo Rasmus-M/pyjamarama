@@ -490,7 +490,9 @@ game_init_stats_3:
        copy "scoreboard-item.a99"          ; Read
        copy "object-found-table.a99"       ; Read-write
        copy "food-table.a99"               ; Read-write
+       .ifeq include_fireworks,0
        copy "bmp-tiles.a99"                ; Read
+       .endif
        copy "roll-rock.a99"                ; Read
        copy "wally-resurrect-table.a99"    ; Read
        copy "strings.a99"                  ; Read
@@ -571,6 +573,7 @@ rooms_visited_table:
        aorg >6000
 
        copy "fireworks-data.a99"
+       copy "bmp-tiles.a99"                ; Read.endif
 
        data -1
 

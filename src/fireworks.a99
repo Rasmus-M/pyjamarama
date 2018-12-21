@@ -19,6 +19,7 @@ fireworks_1:
        .pop r2
        dec  r2
        jne  fireworks_1
+       bl   @mute_sound
        .endproc
 *// fireworks
 
@@ -96,9 +97,14 @@ firework_explode:
        .pop r1
        ab   r13,r0
        inc  r1
+       .push r0
        .push r1
+       .push r2
        bl   @tile_draw
+       bl   @play_explosion
+       .pop r2
        .pop r1
+       .pop r0
        ab   r13,r0
        .endproc
 *// firework_explode

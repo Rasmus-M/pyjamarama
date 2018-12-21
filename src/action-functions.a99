@@ -415,7 +415,7 @@ action13_enter_arcade:
 * Won the game
 *
 action14_win:
-;      TODO: ring alarm clock
+       bl   @play_alarm_clock
        .ifeq include_fireworks,1
        bl   @fireworks
        .endif

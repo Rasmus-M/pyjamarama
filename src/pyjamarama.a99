@@ -20,7 +20,7 @@ immunity:
 slow_animations:
        equ  1
 supercart:
-       equ  0
+       equ  1
 
 **
 * Constants
@@ -337,6 +337,9 @@ main_menu:
        .proc
 main_menu_5:
        bl   @screen_clear
+       .ifeq supercart,1
+       bl   @init_music
+       .endif
 *      Display screen
        li   r0,bmp_tiles
        mov  r0,@tile_start_ptr
@@ -347,6 +350,9 @@ main_menu_3:
        clr  @frame
 main_menu_0:
        bl   @vsync
+       .ifeq supercart,1
+       bl   @play_music
+       .endif
 *      Check keys
        li   r0,KEY_1
        bl   @check_key
@@ -374,6 +380,7 @@ main_menu_4
        li   r0,KEY_EN
        bl   @check_key
        jeq  main_menu_0
+       bl   @mute_sound
        .endproc
 *// main_menu
 
@@ -476,6 +483,7 @@ game_init_stats_3:
        copy "demo.a99"
        copy "sound.a99"
        .ifeq supercart,1
+       copy "tiplayer-code.a99"
        copy "tiplayersfx.a99"
        copy "fireworks.a99"
        .endif
@@ -577,6 +585,7 @@ rooms_visited_table:
        copy "roll-rock.a99"                ; Read
        copy "bmp-tiles.a99"                ; Read
        copy "fireworks-data.a99"           ; Read
+music: even
        bcopy "../sound/main-theme.vgm.spf" ; Read
 
        data -1

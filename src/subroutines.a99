@@ -23,7 +23,17 @@ animation_frame:
 vsync_and_sound:
        .proc
        bl   @vsync
+       .ifeq supercart,1
+       abs  @demo_flag
+       jne  vsync_and_sound_1
+       .endif
        bl   @sfx_player
+       .ifeq supercart,1
+       jmp  vsync_and_sound_2
+vsync_and_sound_1:
+       bl   @play_music
+       .endif
+vsync_and_sound_2:
        .endproc
 *// vsync_and_sound
 

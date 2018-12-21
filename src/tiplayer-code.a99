@@ -1,0 +1,27 @@
+*********************************************************************************
+*
+* Play music
+*
+play_music:
+       .proc
+       bl   @stplaysfx
+       lwpi wrksp
+       mov  @sndws+14,r0               ; Check if music is done
+       jne  playm1
+*      Restart music
+       bl   @init_music
+playm1:
+       .endproc
+*// play_music
+
+*********************************************************************************
+*
+* Initialize music
+*
+init_music:
+       .proc
+       li   r1,music
+       clr  r2
+       bl   @stinitsfx
+       .endproc
+*// init_music

@@ -1,8 +1,28 @@
 str_main_menu:
-       byte >FC,>03,>00
+       byte >FC,>02,>00
        byte >FE,>47                    ; White
-       text "P Y J A M A R A M A"
-       byte >FC,>ED,>04
+       text "P "
+       byte >FE,>42                    ; Red
+       text "Y "
+       byte >FE,>02                    ; Red
+       text "J "
+       byte >FE,>45                    ; Cyan
+       text "A "
+       byte >FE,>41                    ; Blue
+       text "M "
+       byte >FE,>45                    ; Cyan
+       text "A "
+       byte >FE,>44                    ; Green
+       text "R "
+       byte >FE,>45                    ; Cyan
+       text "A "
+       byte >FE,>46                    ; Yellow
+       text "M "
+       byte >FE,>45                    ; Cyan
+       text "A "
+       byte >FE,>43                    ; Magenta
+       text "!"
+       byte >FC,>EC,>04
        byte >FE,>44                    ; Green
        text "KEY:-   "
        byte >FE

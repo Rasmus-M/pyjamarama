@@ -272,8 +272,13 @@ action10_lift_off_from_earth:
        li   r8,>06c0                   ; VDP address 7*256+24*8
        li   r9,17                      ; Height in rows
 lift_off_0:
+       .ifeq supercart,1
+       abs  @demo_flag
+       jne  lift_off_skip_sound
+       .endif
        bl   @play_rocket_1
        bl   @play_rocket_2
+lift_off_skip_sound
        .push r4
        bl   @wally_erase
 *      Read bitmap from VDP

@@ -16,7 +16,7 @@
 * Assembly options
 *
 immunity:
-       equ  0
+       equ  1
 slow_animations:
        equ  1
 
@@ -24,7 +24,7 @@ slow_animations:
 * Constants
 *
 start_room:
-       equ  >1
+       equ  >0
 pocket_1_start:
        equ  0                          ; The Round Key
 pocket_2_start:

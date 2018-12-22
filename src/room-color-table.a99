@@ -1,7 +1,7 @@
 room_color_table:
        equ  $
-LE20A  byte >05,>46,>46,>47,>46,>46,>44,>47  
+LE20A  byte >01,>46,>46,>47,>46,>46,>44,>47    ; Changed 1st from >05 to >01, since the TI-99/4A doesn't have two cyans.
 LE212  byte >46,>46,>46,>46,>46,>46,>46,>46  
 LE21A  byte >46,>46,>46,>43,>46,>46,>47,>44  
-LE222  byte >43,>47,>46,>47,>46,>46,>44,>05    ; Changed 4th from end from >05 to >46
-LE22A  byte >43,>47,>46,>05,>44,>43
+LE222  byte >43,>47,>46,>47,>46,>46,>44,>01    ; Changed 4th from end from >05 to >46. Changed last from >05 to >01.
+LE22A  byte >43,>47,>46,>01,>44,>43            ; Changed 3rd from the end from >05 to >01.

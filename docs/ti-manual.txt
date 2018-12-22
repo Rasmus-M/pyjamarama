@@ -1,0 +1,48 @@
+PYJAMARAMA!
+
+Welcome to the nightmare world of Wally Week.
+
+Even Wallys have to sleep - the trouble is, being a Wally, nightmares are more troublesome than you would think.
+
+Sweet dreams, Wally? NO CHANCE.
+
+Being a Wally, nightmares are more common than pleasant dreams, and the one you have entered is the worst ever. Not only are you still looking and acting like a Wally, you can't even sleep like normal people, and you are having the Daddy of all nightmares.
+
+OK Wally, don't you just lie there suffering in your nightmare, do something about it.
+
+Well how would you normally wake yourself up? That's right, with an alarm clock. No problem, or is it? Just find the clock, wind it up, and your nightmare is over. Parts of your nightmare may repeat themselves, repeat themselves, repeat themselves. Of course, being a nightmare and you being a Wally things ain't gonna be that easy.
+
+For a start everything suddenly seems larger than life, so even everyday objects somehow present difficulties. And being a Wally, you may find it even harder to release yourself from your predicament. Parts of your nightmare may repeat themselves, repeat themselves, repeat themselves.
+
+You may be totally incapable of working out what order to collect things, use them, or even what you need to use. Can't help you there, Wally, but if you want to wake up you've got to keep trying. Parts of your nightmare may repeat themselves, repeat themselves, repeat themselves.
+
+So straighten your cap, tighten your pyjama cord, slip into your slippers and get moving.
+
+There are 3 options for running the game:
+
+* With 32K expansion and disk system: Run E/A#5 DSK1.PYJA1. Includes full game but has no music and a limited ending.
+* With 32K expansion, disk system and Supercart: Run E/A#5 DSK1.PYJASC1. Includes everything except the title screen.
+* With 32K and 64K non-inverted cartridge, plus FinalGROM99 and emulators: Burn and run pyjamarama-8.bin. Includes everything.
+
+Upon loading you are faced with a menu screen on which you will see:-
+
+Key 1		Joystick
+Key 2		Keyboard
+
+The programme automatically sets
+
+O-LEFT		P-RIGHT		Space-JUMP
+
+You can leave an ongoing game by pressing Ctrl-Q.
+
+Wally really is in trouble this time. He has fallen asleep and in his nightmare everything is enlarged to many times its normal size. To release himself from torment he must find the alarm clock and wind it up.
+
+This however is nowhere nearly as simple as it may sound because many objects are needed to achieve different tasks which will become apparent as the game progresses.
+
+In many cases a particular object will be needed in order to collect or use another one to satisfy a certain task. A seemingly impossible action may merely require a different approach or object.
+
+Only two objects can be carried at one time. To change an object, pass over the one required and it will be exchanged automatically (to avoid exchange, jump over the unwanted object).
+
+There are many rooms in the house and a wide variety of "distractions" to overcome. Keys will be required to open some doors, to open others, just jump at the handle.
+
+Even though you are asleep, energy is also a factor in this game. At the top of the screen you will see a glass of milk with "Snooze Energy". A short while after the start of the programme this will begin to decrease. It will also decrease if you are hit by an object or you hit an object. To replenish this lost energy there are items of food in the house, which will appear singly, and in different locations. Once one has been consumed the next will appear elsewhere, but always in its same location. When your Snooze Energy has run out 3 times, losing 3 lives, you will have to start the game again.

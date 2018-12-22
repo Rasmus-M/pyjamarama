@@ -36,7 +36,7 @@ xas99.py -b -o bin/cart-bank-4 src/cart-bank-4.a99
 tools\pad.exe bin\cart-bank-4_6100_b4 bin\cart-bank-4.bin 7936
 
 copy /b ^
-PYJA8.bin + ^
+bin\PYJA8.bin + ^
 bin\empty256.bin + bin\cart-bank-4.bin + ^
 bin\empty-2k.bin + graphics\WALLY.TIAP + ^
 bin\empty-2k.bin + graphics\WALLY.TIAC + ^

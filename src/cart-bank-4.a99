@@ -1,0 +1,10 @@
+       aorg >6100,4
+
+       copy "scoreboard-item.a99"          ; Read
+       copy "roll-rock.a99"                ; Read
+       copy "bmp-tiles.a99"                ; Read
+       copy "fireworks-data.a99"           ; Read
+music: even
+       bcopy "../sound/main-theme.vgm.spf" ; Read
+
+       data -1

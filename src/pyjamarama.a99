@@ -380,9 +380,6 @@ title_screen_2:
 *
 main_menu:
        .proc
-       .ifeq supercart,1
-       bl   @init_music
-       .endif
 main_menu_5:
        bl   @screen_clear
 *      Display screen
@@ -392,7 +389,12 @@ main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
        bl   @string_draw_double
-       li   r0,>01e2                   ; Screen on
+       .ifeq supercart,1
+       abs  @music_on
+       jne  !
+       bl   @init_music
+       .endif
+!      li   r0,>01e2                   ; Screen on
        bl   @vwtr
        clr  @frame
 main_menu_0:

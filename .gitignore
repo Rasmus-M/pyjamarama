@@ -6,9 +6,5 @@
 *.lst
 *.log
 *.bin
-PYJA
-PYJB
-PYJC
-PYJD
-PYJE
-PYJF
+*.dsk
+PYJA*

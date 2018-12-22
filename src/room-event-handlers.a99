@@ -310,7 +310,7 @@ update_roll_ball:
        mov  r0,@roll_ball_frame
        bl   @get_sprite_pattern
        movb r1,*r4+
-       movb @byte_04,*r4               ; Color
+       movb @byte_0b,*r4               ; Color
        jmp  update_roll_ball_4
 update_roll_ball_0:
        mov  @roll_ball_sprite,r4

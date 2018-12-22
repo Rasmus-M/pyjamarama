@@ -19,8 +19,6 @@ immunity:
        equ  0
 slow_animations:
        equ  1
-supercart:
-       equ  1
 
 **
 * Constants
@@ -298,6 +296,10 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @one_time_init
+       .ifdef cartridge
+       bl   @title_screen
+       seto @>6008
+       .endif
 loop:
        bl   @main_menu
        bl   @game_start
@@ -309,9 +311,6 @@ loop:
 *
 one_time_init:
        .proc
-       .ifeq supercart,1
-       seto @>6008
-       .endif
        mov  @rndsd,@rand_no            ; Save random number seed
        li   r13,>0100                  ; Constant 1
        li   r14,>ff00                  ; Constart -1
@@ -338,6 +337,45 @@ one_time_init_1:
 
 *********************************************************************
 *
+* Title screen
+*
+       .ifdef cartridge
+title_screen:
+       .proc
+       li   r0,>01a2                   ; Screen off
+       bl   @vwtr
+       seto @>600a
+       li   r0,ptrntb
+       li   r1,>6800
+       li   r2,>1800
+       bl   @vmbw
+       seto @>600c
+       li   r0,colrtb
+       li   r1,>6800
+       li   r2,>1800
+       bl   @vmbw
+       li   r0,>070f                   ; Border white
+       bl   @vwtr
+       li   r0,>01e2                   ; Screen on
+       bl   @vwtr
+       li   r3,240
+title_screen_1:
+       bl   @vsync
+       bl   @any_key
+       jne  title_screen_2
+       dec  r3
+       jne  title_screen_1
+title_screen_2:
+       li   r0,>01a2                   ; Screen off
+       bl   @vwtr
+       li   r0,>0701                   ; Border black
+       bl   @vwtr
+       .endproc
+       .endif
+*// title_screen
+
+*********************************************************************
+*
 * Display main menu
 *
 main_menu:
@@ -354,6 +392,8 @@ main_menu_3:
        li   r0,str_main_menu
        li   r1,>0003
        bl   @string_draw_double
+       li   r0,>01e2                   ; Screen on
+       bl   @vwtr
        clr  @frame
 main_menu_0:
        bl   @vsync

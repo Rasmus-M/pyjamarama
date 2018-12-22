@@ -1,4 +1,4 @@
-xas99.py -R -L pyramarama.lst src/pyjamarama.a99
+xas99.py -R src/pyjamarama.a99
 
 IF EXIST pyjamarama.dsk GOTO :dskok
 xdm99.py pyjamarama.dsk --initialize DSSD -n PYJAMARAMA
@@ -11,9 +11,8 @@ xdm99.py pyjamarama.dsk -a PYJB
 xdm99.py pyjamarama.dsk -a PYJC
 xdm99.py pyjamarama.dsk -a PYJD
 xdm99.py pyjamarama.dsk -a PYJE
-rem xdm99.py pyjamarama.dsk -a PYJF
 
-xas99.py -R -D supercart cartridge -i src/pyjamarama.a99 -o PYJA
+xas99.py -R -L pyramarama.lst -D supercart cartridge -i src/pyjamarama.a99 -o PYJA
 
 java -jar tools/ea5tocart.jar PYJA "PYJAMARAMA" 0 > make.log
 

@@ -351,9 +351,6 @@ room_enter:
        bl   @screen_clear_room
        bl   @room_draw
        bl   @inventory_redraw
-       .ifeq supercart,1
-       bl   @play_music_if_int
-       .endif
        li   r0,>01e2                   ; Screen on
        bl   @vwtr
        .endproc
@@ -646,9 +643,6 @@ room_draw_4:
        sla  r1,1
        mov  @furniture_table(r1),r1    ; Workout address of item string.
        bl   @furniture_draw
-       .ifeq supercart,1
-       bl   @play_music_if_int
-       .endif
        jmp  room_draw_1
 *      Draw object
 room_draw_5:
@@ -665,9 +659,6 @@ room_draw_5:
        movb *r3,@r0lb
        ai   r0,>50
        bl   @bitmap_16_draw
-       .ifeq supercart,1
-       bl   @play_music_if_int
-       .endif
        .endproc
 *// room_draw
 
@@ -767,9 +758,6 @@ draw_ceiling_wall_floor_2:
        inc  r6
        dec  r8
        jne  draw_ceiling_wall_floor_2
-       .ifeq supercart,1
-       bl   @play_music_if_int
-       .endif
 *      Left wall
        li   r2,attr_42
        li   r6,>0600
@@ -959,6 +947,9 @@ tile_draw_1:
        movb *r1,*r15
        dec  r1
 tile_draw_2:
+       .ifeq supercart,1
+       bl   @play_music_if_int
+       .endif
        .endproc
 *// tile_draw
 
@@ -1004,6 +995,9 @@ tile_draw_double_height_1:
        ai   r3,>0100
        dec  r0
        jne  tile_draw_double_height_1
+       .ifeq supercart,1
+       bl   @play_music_if_int
+       .endif
        .endproc
 *// tile_draw_double_height
 
@@ -1767,8 +1761,12 @@ vsmw:
        movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
-       srl  r2,2
+       srl  r2,3
 vsmw_1:
+       movb r1,*15                     ; Write byte to VDP RAM
+       movb r1,*15                     ; Write byte to VDP RAM
+       movb r1,*15                     ; Write byte to VDP RAM
+       movb r1,*15                     ; Write byte to VDP RAM
        movb r1,*15                     ; Write byte to VDP RAM
        movb r1,*15                     ; Write byte to VDP RAM
        movb r1,*15                     ; Write byte to VDP RAM

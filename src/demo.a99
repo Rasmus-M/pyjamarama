@@ -39,9 +39,6 @@ demo_13:
        movb *r4+,@wally_y
        mov  r4,@demo_next_ptr
        bl   @wally_reset
-       .ifeq supercart,1
-       bl   @play_music_if_int
-       .endif
        bl   @room_enter
        jmp  demo_10
 demo_0:

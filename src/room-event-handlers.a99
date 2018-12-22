@@ -182,6 +182,7 @@ update_room_19:
 LE6FC  bl @handler_invaders
 LE6FF  bl @pause_short
 LE702  bl @pause_short
+       bl @pause_short
 LE705  jmp  room_event_return_2
 
 update_room_1a:

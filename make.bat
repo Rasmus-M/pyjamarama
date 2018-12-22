@@ -8,28 +8,28 @@ xas99.py -R -L pyramarama32k.lst src/pyjamarama.a99
 
 REM E/A#5 for 32K only
 
-xas99.py -R -i src/pyjamarama.a99 -o PYJA1
+xas99.py -R -i src/pyjamarama.a99 -o bin/PYJA1
 
-xdm99.py pyjamarama.dsk -a PYJA1
-xdm99.py pyjamarama.dsk -a PYJA2
-xdm99.py pyjamarama.dsk -a PYJA3
-xdm99.py pyjamarama.dsk -a PYJA4
+xdm99.py pyjamarama.dsk -a bin/PYJA1
+xdm99.py pyjamarama.dsk -a bin/PYJA2
+xdm99.py pyjamarama.dsk -a bin/PYJA3
+xdm99.py pyjamarama.dsk -a bin/PYJA4
 
 REM E/A#5 for 32K + Supercart
 
-xas99.py -R -D supercart -i src/pyjamarama.a99 -o PYJASC1
+xas99.py -R -D supercart -i src/pyjamarama.a99 -o bin/PYJASC1
 
-xdm99.py pyjamarama.dsk -a PYJASC1
-xdm99.py pyjamarama.dsk -a PYJASC2
-xdm99.py pyjamarama.dsk -a PYJASC3
-xdm99.py pyjamarama.dsk -a PYJASC4
-xdm99.py pyjamarama.dsk -a PYJASC5
+xdm99.py pyjamarama.dsk -a bin/PYJASC1
+xdm99.py pyjamarama.dsk -a bin/PYJASC2
+xdm99.py pyjamarama.dsk -a bin/PYJASC3
+xdm99.py pyjamarama.dsk -a bin/PYJASC4
+xdm99.py pyjamarama.dsk -a bin/PYJASC5
 
 REM Cartridge + 32K
 
-xas99.py -R -L pyramarama.lst -D supercart cartridge -i src/pyjamarama.a99 -o PYJA
+xas99.py -R -L pyramarama.lst -D supercart cartridge -i src/pyjamarama.a99 -o bin/PYJA
 
-java -jar tools/ea5tocart.jar PYJA "PYJAMARAMA" 0 > make.log
+java -jar tools/ea5tocart.jar bin/PYJA "PYJAMARAMA" 0 > make.log
 
 xas99.py -b -o bin/cart-bank-4 src/cart-bank-4.a99
 

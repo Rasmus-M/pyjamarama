@@ -426,6 +426,7 @@ main_menu_2:
        bl   @demo
        jmp  main_menu_5
 main_menu_4:
+       bl   @check_quit
        li   r0,KEY_SP
        bl   @check_key
        jne  main_menu_6

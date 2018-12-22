@@ -56,7 +56,7 @@ str_main_keyboard_color:
        byte >03
        byte >FC,>EE,>04
        byte >FE,>03                    ; Grey
-       text "PRESS ENTER/FIRE TO START"
+       text "PRESS SPACE/FIRE TO START"
        byte >FF
 
 str_lose:

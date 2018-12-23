@@ -1301,7 +1301,7 @@ handler_fire:
        li   r0,>000a                   ; See if Wally is carrying a fire extinguisher, if so have no fire.
        c    r0,@pocket_1
        jeq  handler_fire_2
-       c    r0,@pocket_1
+       c    r0,@pocket_2
        jeq  handler_fire_2
        mov  @fire_frame,r0
        li   r1,>0098

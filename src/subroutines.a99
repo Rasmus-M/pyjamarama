@@ -396,7 +396,10 @@ display_final_score:
        li   r1,>100f
        li   r2,attr_47
        li   r3,2
-       bl   @display_number
+       ci   r0,100
+       jne  !
+       inc  r3
+!      bl   @display_number
        bl   @wait_key
        .endproc
 *// display_final_score
@@ -429,6 +432,10 @@ calculate_score_2:
        a    r0,r3
        dec  r2
        jne  calculate_score_2
+       ci   r3,98
+       jne  calculate_score_3
+       inct r3
+calculate_score_3:
        rt
 *// calculate_score
 
@@ -1923,18 +1930,7 @@ check_key:
 * Resets EQ (neq) if any key is pressed
 *
 any_key:
-*      Check Ctrl
-       li   r0,KEY_SH                  ; Shift
-       li   r12,>0024                  ; CRU address of the column decoder
-       ldcr r0,3                       ; Select column
-       andi r0,>00ff
-       mov  r0,r12                     ; Select row
-       tb   0                          ; Test key, EQ if not pressed
-       jeq  any_key_0
-       c    r0,r0                      ; Set eq
-       jmp  any_key_4
 *      Check all columns
-any_key_0:
        li   r1,>0000                   ; Column
 any_key_1:
        li   r12,>0024                  ; CRU address of the column decoder
@@ -1949,17 +1945,7 @@ any_key_1:
        inc  r1
        ci   r1,8
        jne  any_key_1
-       jmp  any_key_4                  ; eq ok
 any_key_2:
-       ci   r1,7
-       jne  any_key_3                  ; neq ok
-*       inc  @user_input_device         ; Still neq
-       jmp  any_key_4
-any_key_3:
-*       clr  @user_input_device         ; Sets eq
-       seto r0                         ; Reset eq
-       jmp  any_key_4
-any_key_4:
        rt
 *// any_key
 

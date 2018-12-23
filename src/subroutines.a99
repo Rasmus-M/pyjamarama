@@ -414,7 +414,7 @@ calculate_score:
        clr  r3                         ; Total percent
 calculate_score_0:
        mov  *r1+,r0
-       cb   r0,r13                ; See if objects has been picked up
+       cb   r0,r13                     ; See if objects has been picked up
        jne  calculate_score_1          ; Skip object (if not marked as carried)
        andi r0,>00ff
        a    r0,r3                      ; If it has, then add value of object to total percentage.

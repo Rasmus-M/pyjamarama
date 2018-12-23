@@ -506,11 +506,12 @@ game_init_stats_2:
        jne  game_init_stats_2
 *      Clear all rooms visited
        li   r0,rooms_visited_table
-       li   r2,>23
+       li   r2,30
 game_init_stats_3:
        movb r1,*r0+
        dec  r2
        jne  game_init_stats_3
+       clr  @steps_counter
 *      Arcade invaders
        li   r0,invaders_first_type+2
        mov  r0,@invaders_type_ptr

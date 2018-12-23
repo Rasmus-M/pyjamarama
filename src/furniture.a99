@@ -259,7 +259,7 @@ LD75B  byte >02,>00,>05,>FC,>FC,>01,>04,>FC
 LD763  byte >02,>00,>05,>FF
 * Furniture
 LD767  byte >FB,>80,>CC,>FE
-LD76B  byte >05,>06,>06,>FC,>00,>01,>05,>FC
+LD76B  byte >01,>06,>06,>FC,>00,>01,>05,>FC    ; Changed 1st from >05 to >01, since the TI-99/4A doesn't have two cyans.
 LD773  byte >FF,>01,>05,>FC,>FD,>01,>07,>07
 LD77B  byte >FE,>47,>FB,>A0,>C1,>FC,>FE,>FB
 LD783  byte >53,>4D,>41,>53,>48,>FC,>FB,>01

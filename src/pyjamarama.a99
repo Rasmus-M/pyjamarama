@@ -16,7 +16,7 @@
 * Assembly options
 *
 immunity:
-       equ  1
+       equ  0
 slow_animations:
        equ  1
 

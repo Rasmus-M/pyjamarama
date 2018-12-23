@@ -547,8 +547,10 @@ wally_percent_update:
        mov  @wally_room_no,r1          ; Mark room as visited
        movb r0,@rooms_visited_table(r1)
        mov  @pocket_1,r1               ; Make the first object being carried for percentage score.
+       sla  r1,1
        movb r0,@object_found_table(r1)
        mov  @pocket_2,r1               ; Make the first object being carried for percentage score.
+       sla  r1,1
        movb r0,@object_found_table(r1)
        rt
 *// wally_percent_update

@@ -149,7 +149,7 @@ test08_boxing_glove_safe:
 test08_boxing_glove_safe_0:
        b    @room_test_events_next_cmd
 test08_boxing_glove_safe_1:
-       c    @boxing_trap_room,@wally_room_no    ; Is Wally in the same room as where the trap has been made active?
+       c    @ boxing_trap_room,@wally_room_no    ; Is Wally in the same room as where the trap has been made active?
        jne  test08_boxing_glove_safe_0          ; False, next command / test.
        mov  @boxing_trap_next_ptr,r0   ; Move the trap onto the next room in the list.
        movb *r0+,@boxing_trap_room+1   ; Value for next time
@@ -189,6 +189,8 @@ test08_boxing_glove_safe_4:
        movb @milk_level,r0
        cb   r0,@byte_1a
        jl   test08_boxing_glove_safe_5
+       li   r0,game_loop
+       .push r0                        ; Return to game_loop from wally_death
        b    @wally_death
 test08_boxing_glove_safe_5:
        clr  r0

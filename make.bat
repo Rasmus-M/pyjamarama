@@ -44,3 +44,9 @@ bin\empty.bin ^
 pyjamarama-8.bin
 
 java -jar tools/CopyHeader.jar pyjamarama-8.bin 60 60
+
+WHERE jar
+@IF %ERRORLEVEL% NEQ 0 GOTO :end
+jar -cvf pyjamarama.rpk pyjamarama-8.bin layout.xml > make.log
+
+:end

@@ -22,7 +22,7 @@ There are 3 options for running the game:
 
 * With 32K expansion and disk system: Run E/A#5 DSK1.PYJA1. Includes full game but has no music and a limited ending.
 * With 32K expansion, disk system and Supercart: Run E/A#5 DSK1.PYJASC1. Includes everything except the title screen.
-* With 32K and 64K non-inverted cartridge, plus FinalGROM99 and emulators: Burn and run pyjamarama-8.bin. Includes everything.
+* With 32K and 64K physical (non-inverted) cartridge, FinalGROM99, or emulators: Burn and run pyjamarama-8.bin. Includes everything.
 
 Upon loading you are faced with a menu screen on which you will see:-
 

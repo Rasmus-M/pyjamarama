@@ -491,6 +491,8 @@ wally_resurrect_3:
 *
 screen_you_lost:
        bl   @screen_clear
+       li   r0,bmp_tiles
+       mov  r0,@tile_start_ptr
        li   r0,str_lose
        clr  r1
        bl   @string_draw_double

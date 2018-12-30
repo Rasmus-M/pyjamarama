@@ -8,6 +8,8 @@
 * November-December 2018
 * Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
 *
+* Version 1.1: Fix to reset tile ptr when dying in arcade room.
+*
 *********************************************************************
 
        def  main

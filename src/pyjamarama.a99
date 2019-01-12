@@ -9,6 +9,7 @@
 * Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
 *
 * Version 1.1: Fix to reset tile ptr when dying in arcade room.
+* Version 1.2: Check vsync using CRU instead of VDP status
 *
 *********************************************************************
 
@@ -21,6 +22,8 @@ immunity:
        equ  0
 slow_animations:
        equ  1
+vdp_int_from_status:
+       equ  0
 
 **
 * Constants

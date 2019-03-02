@@ -42,9 +42,9 @@ vsync_and_sound_2:
 * Wait for vertical retrace
 *
 vsync:
-       .ifeq vdp_int_from_status,0
+       .ifeq vdp_int_from_status,1
        movb @vdpsta,r12
-       jgt  vsync
+       andi r12,>8000
        jeq  vsync
        .else
        clr  r12

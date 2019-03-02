@@ -5,9 +5,9 @@
 /dist
 /bin/cart-bank-4_6100_b4
 /bin/cart-bank-4.bin
+/bin/PYJ*
 /*.bin
 *.obj
 *.lst
 *.log
 *.dsk
-PYJ*

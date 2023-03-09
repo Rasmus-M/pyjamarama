@@ -117,7 +117,7 @@ invaders_init_x_pos_0:
 * Initialise invaders y positions
 *
 invaders_init_y_pos:
-       li   r0,invaders_data+1	       ; Start with top row, left hand column for 8 columns.
+       li   r0,invaders_data+1         ; Start with top row, left hand column for 8 columns.
        li   r1,>3800
        li   r3,>5800
        li   r4,>7800

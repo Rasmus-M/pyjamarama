@@ -483,7 +483,7 @@ game_init_stats:
        li   r0,food_table              ; Reset active food
        mov  r0,@food_active_ptr
 *      Clear all the object flags
-       li   r2,>16                      .
+       li   r2,>16
        li   r0,lift_count
 game_init_stats_0:
        clr  *r0+
@@ -621,6 +621,7 @@ attr_table:
 * Lower memory
 *
        aorg >2000
+       b    @>a000
 
        copy "bmp-milk.a99"                 ; Read
        copy "bmp-wally.a99"                ; Read

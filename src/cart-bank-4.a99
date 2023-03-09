@@ -1,4 +1,4 @@
-       aorg >6100,4
+       aorg >6100
 
        copy "scoreboard-item.a99"          ; Read
        copy "roll-rock.a99"                ; Read

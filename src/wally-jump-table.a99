@@ -1,7 +1,7 @@
        even
 wally_jump_table:
        equ  $
-LAF84  byte >02,>FC,>00                 [X vector, Y vector, Sprite Frame].
+LAF84  byte >02,>FC,>00                 ; [X vector, Y vector, Sprite Frame].
 LAF87  byte >02,>FC,>02
 LAF8A  byte >02,>FC,>04
 LAF8D  byte >02,>FC,>04

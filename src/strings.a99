@@ -1,143 +1,143 @@
 str_main_menu:
        byte >FC,>02,>00
        byte >FE,>47                    ; White
-       text "P "
+       text 'P '
        byte >FE,>42                    ; Red
-       text "Y "
+       text 'Y '
        byte >FE,>02                    ; Red
-       text "J "
+       text 'J '
        byte >FE,>45                    ; Cyan
-       text "A "
+       text 'A '
        byte >FE,>41                    ; Blue
-       text "M "
+       text 'M '
        byte >FE,>45                    ; Cyan
-       text "A "
+       text 'A '
        byte >FE,>44                    ; Green
-       text "R "
+       text 'R '
        byte >FE,>45                    ; Cyan
-       text "A "
+       text 'A '
        byte >FE,>46                    ; Yellow
-       text "M "
+       text 'M '
        byte >FE,>45                    ; Cyan
-       text "A "
+       text 'A '
        byte >FE,>43                    ; Magenta
-       text "!"
+       text '!'
        byte >FC,>EC,>04
        byte >FE,>44                    ; Green
-       text "KEY:-   "
+       text 'KEY:-   '
        byte >FE
 str_main_joystick_color:
        byte >47                        ; White
-       text "1"
+       text '1'
        byte >FE,>44                    ; Green
-       text ".JOYSTICK"
+       text '.JOYSTICK'
        byte >FC,>EE,>05
-       text "KEY:-   "
+       text 'KEY:-   '
        byte >FE
 str_main_keyboard_color:
        byte >44                        ; Green
-       text "2"
+       text '2'
        byte >FE,>44                    ; Green
-       text ".KEYBOARD"
+       text '.KEYBOARD'
        byte >FC,>EC,>05
        byte >FE,>46                    ; Yellow
-       text "LEFT="
+       text 'LEFT='
        byte >FE,>43                    ; Magenta
-       text "O"
+       text 'O'
        byte >FC,>0B,>00
        byte >FE,>46                    ; Yellow
-       text "RIGHT="
+       text 'RIGHT='
        byte >FE,>43                    ; Magenta
-       text "P"
+       text 'P'
        byte >FC,>EE,>03
        byte >FE,>46                    ; Yellow
-       text "JUMP/FIRE="
+       text 'JUMP/FIRE='
        byte >FE,>43                    ; Magenta
        byte >03
        byte >FC,>EE,>04
        byte >FE,>03                    ; Grey
-       text "PRESS SPACE/FIRE TO START"
+       text 'PRESS SPACE/FIRE TO START'
        byte >FF
 
 str_lose:
        byte >FE
-       text "FYOU DIPSTICK! BECAUSE YOU DIDN'T"
+       text 'FYOU DIPSTICK! BECAUSE YOU DIDN''T'
        byte >FC
        byte >E0
        byte >03
-       text "WAKE WALLY FOR WORK,  HIS GAFFER"
+       text 'WAKE WALLY FOR WORK,  HIS GAFFER'
        byte >FC
        byte >E0
        byte >03
-       text "HAS GIVEN HIM THE ELBOW!"
+       text 'HAS GIVEN HIM THE ELBOW!'
        byte >FC
        byte >E8
        byte >05
        byte >FE
-       text "DIT'S ALL YOUR FAULT."
+       text 'DIT''S ALL YOUR FAULT.'
        byte >FC
        byte >EC
        byte >05
        byte >FE
-       text "CYOU'D  BETTER  HAVE ANOTHER  GO,"
+       text 'CYOU''D  BETTER  HAVE ANOTHER  GO,'
        byte >FC
        byte >E0
        byte >03
-       text "AND MAKE  SURE THAT YOU WAKE HIM"
+       text 'AND MAKE  SURE THAT YOU WAKE HIM'
        byte >FC
        byte >E0
        byte >03
-       text "UP THIS TIME."
+       text 'UP THIS TIME.'
        byte >FF
 
 str_congrats:
        byte >FE
-       text "F C O N G R A T U L A T I O N S !"
+       text 'F C O N G R A T U L A T I O N S !'
        byte >FC
        byte >E1
        byte >05
        byte >FE
-       text "CWALLY'S WOKEN UP. FOR THE FIRST"
+       text 'CWALLY''S WOKEN UP. FOR THE FIRST'
        byte >FC
        byte >E1
        byte >04
-       text "TIME  IN  HIS LIFE HE  WILL  BE"
+       text 'TIME  IN  HIS LIFE HE  WILL  BE'
        byte >FC
        byte >E1
        byte >04
-       text "EARLY FOR WORK."
+       text 'EARLY FOR WORK.'
        byte >FC
        byte >F8
        byte >05
        byte >FE
-       text "DNOW WATCH OUT FOR"
+       text 'DNOW WATCH OUT FOR'
        byte >FC
        byte >F0
        byte >04
        byte >FE
-       text "E'LIFE OF WALLY'"
+       text 'E''LIFE OF WALLY'
        byte >FF
 
 str_final_score:
        byte >FE
-       text "CWALLY HAS WALKED"
+       text 'CWALLY HAS WALKED'
        byte >FC
        byte >F9
        byte >05
-       text "PACES"
+       text 'PACES'
        byte >FC
        byte >F2
        byte >05
-       text "AND  HAS  SOLVED"
+       text 'AND  HAS  SOLVED'
        byte >FC
        byte >F9
        byte >04
        byte >FE
-       text "G%"
+       text 'G%'
        byte >FE
-       text "C"
+       text 'C'
        byte >FC
        byte >F6
        byte >04
-       text "OF THE ADVENTURE"
+       text 'OF THE ADVENTURE'
        byte >FF
